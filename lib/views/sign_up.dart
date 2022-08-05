@@ -7,9 +7,11 @@ import 'package:top/widgets/input_filed.dart';
 import 'package:top/widgets/button.dart';
 import 'package:top/widgets/toast.dart';
 
-class LogIn extends StatelessWidget {
+class SignUp extends StatelessWidget {
+  final TextEditingController name = TextEditingController();
   final TextEditingController email = TextEditingController();
   final TextEditingController password = TextEditingController();
+  final TextEditingController confirmPassword = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +45,11 @@ class LogIn extends StatelessWidget {
                     child: Image.asset('assets/logo.png'),
                   ),
                 ),
-                SizedBox(height: 75.h),
+                SizedBox(height: 55.h),
 
                 //heading
                 Text(
-                  "Login to TOP",
+                  "Signup to TOP",
                   style: GoogleFonts.sourceSansPro(
                     fontWeight: FontWeight.w600,
                     fontSize: 35.sp,
@@ -55,8 +57,59 @@ class LogIn extends StatelessWidget {
                 ),
                 SizedBox(height: 35.h),
 
+                //role
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 15.w),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(color: kDisabled)
+                  ),
+                  child: DropdownButton(
+                      underline: SizedBox.shrink(),
+                      isExpanded: true,
+                      hint: Text("Select your role", style: TextStyle(color: kDisabled),),
+                      value: '2',
+                      items: [
+                        DropdownMenuItem(value: '1',child: Text("Website Tasks", style: TextStyle(color: kDisabled)),),
+                        DropdownMenuItem(value: '2',child: Text("Manual Tasks", style: TextStyle(color: kDisabled)),),
+                      ],
+                      onChanged: (value){}
+                  ),
+                ),
+                SizedBox(height: 10.h),
+
+                //speciality
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 15.w),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(color: kDisabled)
+                  ),
+                  child: DropdownButton(
+                      underline: SizedBox.shrink(),
+                      isExpanded: true,
+                      hint: Text("Select your speciality", style: TextStyle(color: kDisabled),),
+                      value: '1',
+                      items: [
+                        DropdownMenuItem(value: '1',child: Text("Website Tasks", style: TextStyle(color: kDisabled)),),
+                        DropdownMenuItem(value: '2',child: Text("Manual Tasks", style: TextStyle(color: kDisabled)),),
+                      ],
+                      onChanged: (value){}
+                  ),
+                ),
+                SizedBox(height: 10.h),
+
 
                 //text fields
+                InputFiled(
+                  text: 'Name',
+                  controller: name,
+                ),
+                SizedBox(height: 10.h),
                 InputFiled(
                   text: 'Email',
                   controller: email,
@@ -67,87 +120,20 @@ class LogIn extends StatelessWidget {
                   controller: password,
                   isPassword: true,
                 ),
-
-
-                //forget password
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(25.w,25.h,0,40.h),
-                    child: GestureDetector(
-                      onTap: () async {
-                        if (email.text.trim().isEmpty) {
-                          ToastBar(text: 'Please fill email!', color: Colors.red).show();
-                        } else {
-                          ToastBar(text: 'Please wait...', color: Colors.orange).show();
-
-                          // bool success =
-                          // await Provider.of<UserController>(context, listen: false)
-                              // .forgetPassword(email.text.trim());
-                          // if (success) {
-                          //   ToastBar(
-                          //       text: 'Password reset link sent to your email! Check your inbox or spam folders.',
-                          //       color: Colors.green)
-                          //       .show();
-                          // }
-                        }
-                      },
-                      child: Text(
-                        'Forgot Password ?',
-                        style:
-                        TextStyle(color: kGreen, fontSize: 18.sp, fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                  ),
+                SizedBox(height: 10.h),
+                InputFiled(
+                  text: 'Confirm Password',
+                  controller: confirmPassword,
+                  isPassword: true,
                 ),
-
-                //buttons
-                SizedBox(
-                  width: double.infinity,
-                  child: Button(
-                    text: 'Login',
-                    color: kRed,
-                    onPressed: () async {
-                      if (email.text.trim().isEmpty || password.text.trim().isEmpty) {
-                        ToastBar(text: 'Please fill all the fields!', color: Colors.red)
-                            .show();
-                      } else {
-                        ToastBar(text: 'Please wait...', color: Colors.orange).show();
-
-                        // bool isUserLoggedIn =
-                        // await Provider.of<UserController>(context, listen: false)
-                        //     .signIn(email.text.trim(), password.text.trim());
-                        // if (isUserLoggedIn) {
-                        //   Navigator.pushAndRemoveUntil(
-                        //       context,
-                        //       CupertinoPageRoute(builder: (context) => Home()),
-                        //           (Route<dynamic> route) => false);
-                        // }
-                      }
-                    },
-                  ),
-                ),
-
-                //or
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 40.h),
-                  child: Center(
-                    child: Text(
-                      "OR",
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        color: kDisabled
-                      ),
-                    ),
-                  ),
-                ),
+                SizedBox(height: 50.h),
 
                 //buttons
                 SizedBox(
                   width: double.infinity,
                   child: Button(
                     text: 'Signup',
-                    color: kGreen,
+                    color: kRed,
                     onPressed: () async {
                       if (email.text.trim().isEmpty || password.text.trim().isEmpty) {
                         ToastBar(text: 'Please fill all the fields!', color: Colors.red)

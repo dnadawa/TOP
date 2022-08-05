@@ -41,6 +41,8 @@ class _InputFiledState extends State<InputFiled> {
       decoration: InputDecoration(
         isDense: true,
         hintText: widget.text,
+        filled: true,
+        fillColor: Colors.white,
         hintStyle: TextStyle(color: kDisabled, fontWeight: FontWeight.w400, fontSize: 18.sp,),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5.r),

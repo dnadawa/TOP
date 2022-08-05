@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:top/controllers/user_controller.dart';
 import 'package:top/views/log_in.dart';
+import 'package:top/views/sign_up.dart';
 
 void main() {
   runApp(MyApp());
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
               ),
             ),
           ),
-          home: LogIn(),
+          home: SignUp(),
         ),
       ),
     );

@@ -10,6 +10,9 @@ class Backdrop extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: double.infinity,
+      decoration: BoxDecoration(
+        image: DecorationImage(image: AssetImage('assets/back.png'), fit: BoxFit.cover),
+      ),
       child: child,
     );
   }
