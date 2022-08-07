@@ -22,7 +22,17 @@ class MyShifts extends StatelessWidget {
           padding: EdgeInsets.all(30.w),
           child: Column(
             children: [
-              SizedBox(height: ScreenUtil().statusBarHeight),
+              SizedBox(
+                  height: released
+                      ? ScreenUtil().statusBarHeight - 30.w
+                      : ScreenUtil().statusBarHeight),
+              if (released)
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: BackButton(
+                    color: kGreyText,
+                  ),
+                ),
               Expanded(
                 child: HeadingCard(
                   title: released ? 'Shifts' : 'My Shifts',
