@@ -20,7 +20,7 @@ class AvailabilityTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(10.r),
       ),
       elevation: 3,
-      margin: EdgeInsets.only(bottom: 16.h),
+      margin: EdgeInsets.only(bottom: 16.h, left: 8, right: 5),
       child: Padding(
         padding: EdgeInsets.all(15.h),
         child: Row(
