@@ -58,11 +58,11 @@ class Home extends StatelessWidget {
                       children: [
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 20.w),
-                          child: InputFiled(text: 'Email'),
+                          child: InputField(text: 'Email'),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 20.w),
-                          child: InputFiled(text: 'Speciality'),
+                          child: InputField(text: 'Speciality'),
                         ),
                       ],
                     ),

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:top/constants.dart';
 
-class InputFiled extends StatefulWidget {
+class InputField extends StatefulWidget {
   final String text;
   final bool isPassword;
   final TextInputType? keyboard;
   final TextEditingController? controller;
   final bool enabled;
 
-  const InputFiled({
+  const InputField({
     super.key,
     required this.text,
     this.isPassword = false,
@@ -18,10 +18,10 @@ class InputFiled extends StatefulWidget {
   });
 
   @override
-  State<InputFiled> createState() => _InputFiledState();
+  State<InputField> createState() => _InputFieldState();
 }
 
-class _InputFiledState extends State<InputFiled> {
+class _InputFieldState extends State<InputField> {
   bool hideText = false;
 
   @override

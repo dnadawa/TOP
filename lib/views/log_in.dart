@@ -57,12 +57,12 @@ class LogIn extends StatelessWidget {
 
 
                 //text fields
-                InputFiled(
+                InputField(
                   text: 'Email',
                   controller: email,
                 ),
                 SizedBox(height: 10.h),
-                InputFiled(
+                InputField(
                   text: 'Password',
                   controller: password,
                   isPassword: true,

@@ -105,23 +105,23 @@ class SignUp extends StatelessWidget {
 
 
                 //text fields
-                InputFiled(
+                InputField(
                   text: 'Name',
                   controller: name,
                 ),
                 SizedBox(height: 10.h),
-                InputFiled(
+                InputField(
                   text: 'Email',
                   controller: email,
                 ),
                 SizedBox(height: 10.h),
-                InputFiled(
+                InputField(
                   text: 'Password',
                   controller: password,
                   isPassword: true,
                 ),
                 SizedBox(height: 10.h),
-                InputFiled(
+                InputField(
                   text: 'Confirm Password',
                   controller: confirmPassword,
                   isPassword: true,

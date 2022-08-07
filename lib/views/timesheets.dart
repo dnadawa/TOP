@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:top/constants.dart';
 import 'package:top/views/edit_availability.dart';
+import 'package:top/views/single_timesheet.dart';
 import 'package:top/widgets/availability_tile.dart';
 import 'package:top/widgets/backdrop.dart';
 import 'package:top/widgets/button.dart';
@@ -31,33 +32,36 @@ class TimeSheets extends StatelessWidget {
                         itemCount: 3,
                         itemBuilder: (context, i) => Padding(
                           padding: EdgeInsets.only(bottom: 20.h),
-                          child: IntrinsicHeight(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Expanded(
-                                  child: ShiftTile(
-                                    hospital: 'Akuressa Central Hospital',
-                                    suburb: 'Matara',
-                                    shiftType: "PM",
-                                    shiftTime: "13:00 to 23:53",
-                                    showBackStrip: true,
-                                  ),
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: kRed,
-                                    borderRadius: BorderRadius.horizontal(right: Radius.circular(10.r)),
-                                  ),
-                                  child: SizedBox(
-                                    child: Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: Colors.white,
-                                      size: 20,
+                          child: GestureDetector(
+                            onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SingleTimesheet())),
+                            child: IntrinsicHeight(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Expanded(
+                                    child: ShiftTile(
+                                      hospital: 'Akuressa Central Hospital',
+                                      suburb: 'Matara',
+                                      shiftType: "PM",
+                                      shiftTime: "13:00 to 23:53",
+                                      showBackStrip: true,
                                     ),
                                   ),
-                                )
-                              ],
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: kRed,
+                                      borderRadius: BorderRadius.horizontal(right: Radius.circular(10.r)),
+                                    ),
+                                    child: SizedBox(
+                                      child: Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         ),
