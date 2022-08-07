@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:top/constants.dart';
+import 'package:top/views/availability.dart';
 import 'package:top/views/home.dart';
 
 class PageSelector extends StatefulWidget {
@@ -31,7 +32,7 @@ class _PageSelectorState extends State<PageSelector> {
         physics: NeverScrollableScrollPhysics(),
         children: [
           Home(),
-          Container(width: double.infinity, height: double.infinity,color: Colors.green,),
+          Availability(),
           Container(width: double.infinity, height: double.infinity,color: Colors.blue,),
           Container(width: double.infinity, height: double.infinity,color: Colors.amber,),
           Container(width: double.infinity, height: double.infinity,color: Colors.purple,),
