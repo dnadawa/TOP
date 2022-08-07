@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:top/constants.dart';
 import 'package:top/views/availability.dart';
 import 'package:top/views/home.dart';
+import 'package:top/views/my_shifts.dart';
 
 class PageSelector extends StatefulWidget {
 
@@ -33,8 +34,8 @@ class _PageSelectorState extends State<PageSelector> {
         children: [
           Home(),
           Availability(),
-          Container(width: double.infinity, height: double.infinity,color: Colors.blue,),
-          Container(width: double.infinity, height: double.infinity,color: Colors.amber,),
+          MyShifts(released: false),
+          MyShifts(released: true),
           Container(width: double.infinity, height: double.infinity,color: Colors.purple,),
         ],
       ),
