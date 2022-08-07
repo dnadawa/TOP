@@ -23,42 +23,44 @@ class ReleasedShiftTile extends StatelessWidget {
         ),
         elevation: 3,
         margin: EdgeInsets.only(bottom: 16.h, left: 8, right: 5),
-        child: Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(15.h),
-                child: Row(
-                  children: [
-                    Text(
-                      dateString,
-                      style: GoogleFonts.sourceSansPro(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w600,
-                        color: kGreyText,
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.all(15.h),
+                  child: Row(
+                    children: [
+                      Text(
+                        dateString,
+                        style: GoogleFonts.sourceSansPro(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w600,
+                          color: kGreyText,
+                        ),
                       ),
-                    ),
-                    Expanded(child: SizedBox.shrink()),
-                    Badge(text: count, color: kGreyText, enabled: true),
-                  ],
+                      Expanded(child: SizedBox.shrink()),
+                      Badge(text: count, color: kGreyText, enabled: true),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: kRed,
-                borderRadius: BorderRadius.horizontal(right: Radius.circular(10.r)),
-              ),
-              child: SizedBox(
-                height: 65.h,
-                child: Icon(
-                  Icons.arrow_forward_ios,
-                  color: Colors.white,
-                  size: 20,
+              Container(
+                decoration: BoxDecoration(
+                  color: kRed,
+                  borderRadius: BorderRadius.horizontal(right: Radius.circular(10.r)),
+                ),
+                child: SizedBox(
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -5,6 +5,7 @@ import 'package:top/views/availability.dart';
 import 'package:top/views/home.dart';
 import 'package:top/views/my_shifts.dart';
 import 'package:top/views/released_shifts.dart';
+import 'package:top/views/timesheets.dart';
 
 class PageSelector extends StatefulWidget {
 
@@ -35,9 +36,9 @@ class _PageSelectorState extends State<PageSelector> {
         children: [
           Home(),
           Availability(),
-          MyShifts(released: false),
+          MyShifts(),
           ReleasedShifts(),
-          Container(width: double.infinity, height: double.infinity,color: Colors.purple,),
+          TimeSheets()
         ],
       ),
 
