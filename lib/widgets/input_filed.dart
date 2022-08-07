@@ -6,14 +6,16 @@ class InputFiled extends StatefulWidget {
   final String text;
   final bool isPassword;
   final TextInputType? keyboard;
-  final TextEditingController controller;
+  final TextEditingController? controller;
+  final bool enabled;
 
-  const InputFiled(
-      {super.key,
-      required this.text,
-      this.isPassword = false,
-      this.keyboard,
-      required this.controller});
+  const InputFiled({
+    super.key,
+    required this.text,
+    this.isPassword = false,
+    this.keyboard,
+    this.controller, this.enabled = true,
+  });
 
   @override
   State<InputFiled> createState() => _InputFiledState();
@@ -32,18 +34,20 @@ class _InputFiledState extends State<InputFiled> {
   Widget build(BuildContext context) {
     return TextField(
       controller: widget.controller,
-      style: TextStyle(
-        color: kDisabled,
-      ),
       keyboardType: widget.keyboard,
       obscureText: hideText,
       cursorColor: kGreen,
+      enabled: widget.enabled,
       decoration: InputDecoration(
         isDense: true,
-        hintText: widget.text,
+        labelText: widget.text,
         filled: true,
         fillColor: Colors.white,
-        hintStyle: TextStyle(color: kDisabled, fontWeight: FontWeight.w400, fontSize: 18.sp,),
+        labelStyle: TextStyle(
+          color: kDisabled,
+          fontWeight: FontWeight.w400,
+          fontSize: 18.sp,
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5.r),
           borderSide: BorderSide(
@@ -60,7 +64,11 @@ class _InputFiledState extends State<InputFiled> {
         suffixIcon: IconButton(
           splashColor: Colors.transparent,
           icon: Icon(
-            widget.isPassword ? hideText ? Icons.visibility_off : Icons.visibility : null,
+            widget.isPassword
+                ? hideText
+                    ? Icons.visibility_off
+                    : Icons.visibility
+                : null,
             color: kDisabled,
             size: 22,
           ),
