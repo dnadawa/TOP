@@ -50,6 +50,8 @@ class SingleTimesheet extends StatelessWidget {
                               suburb: 'Matara',
                               shiftType: "PM",
                               shiftTime: "13:00 to 23:53",
+                              shiftDate: 'Wednesday August 2',
+                              specialty: 'Speciality 1',
                               showFrontStrip: true,
                             ),
                             SizedBox(height: 50.h),
@@ -102,6 +104,7 @@ class SingleTimesheet extends StatelessWidget {
                                   context: context,
                                   builder: (context) => SignaturePad(
                                     onComplete: (Uint8List? sign) {},
+                                    needSignName: true,
                                   ),
                                 ),
                                 color: Colors.green,

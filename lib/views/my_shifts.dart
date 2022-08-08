@@ -50,6 +50,8 @@ class MyShifts extends StatelessWidget {
                             suburb: 'Matara',
                             shiftType: "PM",
                             shiftTime: "13:00 to 23:53",
+                            shiftDate: 'Wednesday August 2',
+                            specialty: 'Speciality 1',
                             showAcceptButton: released,
                             showFrontStrip: true,
                           ),

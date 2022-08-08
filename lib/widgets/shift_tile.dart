@@ -10,6 +10,8 @@ class ShiftTile extends StatelessWidget {
   final String suburb;
   final String shiftType;
   final String shiftTime;
+  final String shiftDate;
+  final String specialty;
   final bool showFrontStrip;
   final bool showBackStrip;
   final Function? onAcceptButtonPressed;
@@ -23,7 +25,7 @@ class ShiftTile extends StatelessWidget {
     required this.shiftTime,
     this.showFrontStrip = false,
     this.showBackStrip = false,
-    this.onAcceptButtonPressed,
+    this.onAcceptButtonPressed, required this.specialty, required this.shiftDate,
   });
 
   @override
@@ -48,6 +50,7 @@ class ShiftTile extends StatelessWidget {
             padding: EdgeInsets.all(15.h),
             child: Column(
               children: [
+                //hospital
                 Row(
                   children: [
                     SizedBox(
@@ -68,6 +71,8 @@ class ShiftTile extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 8.h),
+
+                //suburb
                 Row(
                   children: [
                     SizedBox(
@@ -88,12 +93,14 @@ class ShiftTile extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 8.h),
+
+                //specialty
                 Row(
                   children: [
                     SizedBox(
                       width: 80.w,
                       child: Text(
-                        'Shift Type',
+                        'Speciality',
                         style: TextStyle(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.w500,
@@ -101,13 +108,37 @@ class ShiftTile extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      shiftType,
+                      specialty,
                       style: GoogleFonts.sourceSansPro(
                           fontSize: 15.sp, fontWeight: FontWeight.w400, color: kGreyText),
                     ),
                   ],
                 ),
                 SizedBox(height: 8.h),
+
+                //shift date
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 80.w,
+                      child: Text(
+                        'Shift Date',
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      shiftDate,
+                      style: GoogleFonts.sourceSansPro(
+                          fontSize: 15.sp, fontWeight: FontWeight.w400, color: kGreyText),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8.h),
+
+                //shift time
                 Row(
                   children: [
                     SizedBox(
@@ -127,6 +158,29 @@ class ShiftTile extends StatelessWidget {
                     ),
                   ],
                 ),
+                SizedBox(height: 8.h),
+
+                //shift type
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 80.w,
+                      child: Text(
+                        'Shift Type',
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      shiftType,
+                      style: GoogleFonts.sourceSansPro(
+                          fontSize: 15.sp, fontWeight: FontWeight.w400, color: kGreyText),
+                    ),
+                  ],
+                ),
+
                 if (showAcceptButton) SizedBox(height: 30.h),
                 if (showAcceptButton)
                   SizedBox(

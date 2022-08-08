@@ -44,6 +44,8 @@ class TimeSheets extends StatelessWidget {
                                       suburb: 'Matara',
                                       shiftType: "PM",
                                       shiftTime: "13:00 to 23:53",
+                                      shiftDate: 'Wednesday August 2',
+                                      specialty: 'Speciality 1',
                                       showBackStrip: true,
                                     ),
                                   ),

@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:top/controllers/user_controller.dart';
 import 'package:top/views/log_in.dart';
+import 'package:top/views/my_shifts.dart';
 import 'package:top/views/page_selector.dart';
 import 'package:top/views/sign_up.dart';
 

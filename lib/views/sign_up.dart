@@ -48,11 +48,30 @@ class SignUp extends StatelessWidget {
                 SizedBox(height: 55.h),
 
                 //heading
+                RichText(
+                  text: TextSpan(
+                      text: 'Signup to',
+                      style: GoogleFonts.sourceSansPro(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 35.sp,
+                        color: Colors.black,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: ' TOP',
+                          style: TextStyle(
+                            color: kGreen,
+                          ),
+                        )
+                      ]
+                  ),
+                ),
                 Text(
-                  "Signup to TOP",
+                  "Theatre Operation Professional",
                   style: GoogleFonts.sourceSansPro(
                     fontWeight: FontWeight.w600,
-                    fontSize: 35.sp,
+                    fontSize: 23.sp,
+                    color: kGreen,
                   ),
                 ),
                 SizedBox(height: 35.h),

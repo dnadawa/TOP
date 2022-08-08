@@ -46,11 +46,30 @@ class LogIn extends StatelessWidget {
                 SizedBox(height: 75.h),
 
                 //heading
+                RichText(
+                  text: TextSpan(
+                    text: 'Login to',
+                      style: GoogleFonts.sourceSansPro(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 35.sp,
+                        color: Colors.black,
+                      ),
+                    children: [
+                      TextSpan(
+                        text: ' TOP',
+                        style: TextStyle(
+                          color: kGreen,
+                        ),
+                      )
+                    ]
+                  ),
+                ),
                 Text(
-                  "Login to TOP",
+                  "Theatre Operation Professional",
                   style: GoogleFonts.sourceSansPro(
                     fontWeight: FontWeight.w600,
-                    fontSize: 35.sp,
+                    fontSize: 23.sp,
+                    color: kGreen,
                   ),
                 ),
                 SizedBox(height: 35.h),
