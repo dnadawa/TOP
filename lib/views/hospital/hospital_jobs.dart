@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:top/constants.dart';
 import 'package:top/views/edit_availability.dart';
+import 'package:top/views/hospital/hospital_job_details.dart';
 import 'package:top/views/single_timesheet.dart';
 import 'package:top/widgets/availability_tile.dart';
 import 'package:top/widgets/backdrop.dart';
@@ -66,7 +67,7 @@ class HospitalJobs extends StatelessWidget {
                               itemBuilder: (context, i) => Padding(
                                 padding: EdgeInsets.only(bottom: 20.h),
                                 child: GestureDetector(
-                                  onTap: () {},
+                                  onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (_) => HospitalJobDetails())),
                                   child: IntrinsicHeight(
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.stretch,
