@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:top/controllers/user_controller.dart';
+import 'package:top/views/hospital/hospital_page_selector.dart';
 import 'package:top/views/log_in.dart';
 import 'package:top/views/my_shifts.dart';
 import 'package:top/views/page_selector.dart';
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
               ),
             ),
           ),
-          home: PageSelector(),
+          home: HospitalPageSelector(),
         ),
       ),
     );
