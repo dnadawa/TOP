@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Job {
   final String hospital;
   final String suburb;
@@ -20,4 +22,18 @@ class Job {
     required this.shiftType,
     required this.additionalDetails,
   });
+
+  static Job createJobFromDocument(QueryDocumentSnapshot doc) {
+    return Job(
+      hospital: doc['hospitalName'],
+      hospitalID: doc['hospitalID'],
+      suburb: doc['suburb'],
+      speciality: doc['speciality'],
+      shiftDate: doc['shiftDate'].toDate(),
+      shiftStartTime: doc['shiftStartTime'],
+      shiftEndTime: doc['shiftEndTime'],
+      shiftType: doc['shiftType'],
+      additionalDetails: doc['additionalDetails'],
+    );
+  }
 }

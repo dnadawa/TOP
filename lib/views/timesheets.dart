@@ -47,6 +47,7 @@ class TimeSheets extends StatelessWidget {
                                       shiftDate: 'Wednesday August 2',
                                       specialty: 'Speciality 1',
                                       showBackStrip: true,
+                                      additionalDetails: '',
                                     ),
                                   ),
                                   Container(

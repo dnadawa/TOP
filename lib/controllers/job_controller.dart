@@ -1,10 +1,21 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:top/constants.dart';
 import 'package:top/services/database_service.dart';
 import 'package:top/models/job_model.dart';
 import 'package:top/widgets/toast.dart';
 
-class JobController {
+class JobController extends ChangeNotifier {
   final DatabaseService _databaseService = DatabaseService();
+
+  String _selectedSpeciality = specialities[0];
+
+  String get selectedSpeciality => _selectedSpeciality;
+
+  set selectedSpeciality(String speciality){
+    _selectedSpeciality = speciality;
+    notifyListeners();
+  }
 
   Future<bool> createJob(Job job) async {
     try{
@@ -16,4 +27,9 @@ class JobController {
       return false;
     }
   }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getJobs(String hospitalID, JobStatus status) async {
+      return await _databaseService.getJobs(hospitalID, _selectedSpeciality, status);
+  }
+
 }

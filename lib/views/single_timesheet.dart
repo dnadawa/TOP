@@ -53,6 +53,7 @@ class SingleTimesheet extends StatelessWidget {
                               shiftDate: 'Wednesday August 2',
                               specialty: 'Speciality 1',
                               showFrontStrip: true,
+                              additionalDetails: '',
                             ),
                             SizedBox(height: 50.h),
 

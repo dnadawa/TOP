@@ -53,4 +53,14 @@ class DatabaseService {
       'nurse': null,
     });
   }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getJobs(String hospitalID, String speciality, JobStatus status) async {
+    var sub = await _firestore
+        .collection('jobs')
+        .where('hospitalID', isEqualTo: hospitalID)
+        .where('speciality', isEqualTo: speciality)
+        .where('status', isEqualTo: status.name)
+        .get();
+    return sub.docs;
+  }
 }

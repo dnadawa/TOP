@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:top/constants.dart';
 import 'package:top/widgets/button.dart';
+import 'package:top/widgets/input_filed.dart';
 
 class ShiftTile extends StatelessWidget {
   final bool showAcceptButton;
@@ -14,9 +15,10 @@ class ShiftTile extends StatelessWidget {
   final String specialty;
   final bool showFrontStrip;
   final bool showBackStrip;
+  final String additionalDetails;
   final Function? onAcceptButtonPressed;
 
-  const ShiftTile({
+  ShiftTile({
     super.key,
     this.showAcceptButton = false,
     required this.hospital,
@@ -25,11 +27,18 @@ class ShiftTile extends StatelessWidget {
     required this.shiftTime,
     this.showFrontStrip = false,
     this.showBackStrip = false,
-    this.onAcceptButtonPressed, required this.specialty, required this.shiftDate,
+    this.onAcceptButtonPressed,
+    required this.specialty,
+    required this.shiftDate,
+    required this.additionalDetails,
   });
+
+  final TextEditingController additionalDetailsController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    additionalDetailsController.text = additionalDetails;
+
     return Material(
       elevation: 5,
       borderRadius: BorderRadius.circular(10.r),
@@ -42,8 +51,10 @@ class ShiftTile extends StatelessWidget {
           margin: showFrontStrip ? EdgeInsets.only(left: 12.w) : EdgeInsets.zero,
           decoration: BoxDecoration(
             borderRadius: showFrontStrip
-                ? BorderRadius.horizontal(right: Radius.circular(10.r)) : showBackStrip ? BorderRadius.horizontal(left: Radius.circular(10.r))
-                : BorderRadius.circular(10.r),
+                ? BorderRadius.horizontal(right: Radius.circular(10.r))
+                : showBackStrip
+                    ? BorderRadius.horizontal(left: Radius.circular(10.r))
+                    : BorderRadius.circular(10.r),
             color: Colors.white,
           ),
           child: Padding(
@@ -180,6 +191,16 @@ class ShiftTile extends StatelessWidget {
                     ),
                   ],
                 ),
+
+                //additional details
+                if (additionalDetailsController.text.isNotEmpty) SizedBox(height: 20.h),
+                if (additionalDetailsController.text.isNotEmpty)
+                  InputField(
+                    text: 'Additional Details ',
+                    enabled: false,
+                    controller: additionalDetailsController,
+                    multiLine: true,
+                  ),
 
                 if (showAcceptButton) SizedBox(height: 30.h),
                 if (showAcceptButton)

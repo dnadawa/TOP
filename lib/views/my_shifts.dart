@@ -54,6 +54,7 @@ class MyShifts extends StatelessWidget {
                             specialty: 'Speciality 1',
                             showAcceptButton: released,
                             showFrontStrip: true,
+                            additionalDetails: '',
                           ),
                         ),
                       ),
