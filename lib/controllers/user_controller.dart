@@ -51,4 +51,6 @@ class UserController {
 
     return await _databaseService.getUserRole(user);
   }
+
+  Future<bool> signOut() async => await _authService.signOut();
 }
