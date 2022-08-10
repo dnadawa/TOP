@@ -1,15 +1,19 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:top/controllers/user_controller.dart';
-import 'package:top/views/hospital/hospital_page_selector.dart';
-import 'package:top/views/log_in.dart';
-import 'package:top/views/my_shifts.dart';
-import 'package:top/views/page_selector.dart';
-import 'package:top/views/sign_up.dart';
+import 'package:top/wrapper.dart';
+import 'package:top/firebase_options.dart';
 
-void main() {
+main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(MyApp());
 }
 
@@ -39,7 +43,7 @@ class MyApp extends StatelessWidget {
               ),
             ),
           ),
-          home: HospitalPageSelector(),
+          home: Wrapper(),
         ),
       ),
     );

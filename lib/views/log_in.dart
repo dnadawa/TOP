@@ -1,11 +1,18 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:top/constants.dart';
+import 'package:top/views/hospital/hospital_page_selector.dart';
+import 'package:top/views/page_selector.dart';
+import 'package:top/views/sign_up.dart';
 import 'package:top/widgets/backdrop.dart';
 import 'package:top/widgets/input_filed.dart';
 import 'package:top/widgets/button.dart';
 import 'package:top/widgets/toast.dart';
+
+import '../controllers/user_controller.dart';
 
 class LogIn extends StatelessWidget {
   final TextEditingController email = TextEditingController();
@@ -133,15 +140,16 @@ class LogIn extends StatelessWidget {
                       } else {
                         ToastBar(text: 'Please wait...', color: Colors.orange).show();
 
-                        // bool isUserLoggedIn =
-                        // await Provider.of<UserController>(context, listen: false)
-                        //     .signIn(email.text.trim(), password.text.trim());
-                        // if (isUserLoggedIn) {
-                        //   Navigator.pushAndRemoveUntil(
-                        //       context,
-                        //       CupertinoPageRoute(builder: (context) => Home()),
-                        //           (Route<dynamic> route) => false);
-                        // }
+                        Role? role =
+                        await Provider.of<UserController>(context, listen: false)
+                            .signIn(email.text.trim(), password.text.trim());
+
+                        if (role != null) {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              CupertinoPageRoute(builder: (context) => role == Role.Nurse ? PageSelector() : HospitalPageSelector()),
+                                  (Route<dynamic> route) => false);
+                        }
                       }
                     },
                   ),
@@ -167,24 +175,7 @@ class LogIn extends StatelessWidget {
                   child: Button(
                     text: 'Signup',
                     color: kGreen,
-                    onPressed: () async {
-                      if (email.text.trim().isEmpty || password.text.trim().isEmpty) {
-                        ToastBar(text: 'Please fill all the fields!', color: Colors.red)
-                            .show();
-                      } else {
-                        ToastBar(text: 'Please wait...', color: Colors.orange).show();
-
-                        // bool isUserLoggedIn =
-                        // await Provider.of<UserController>(context, listen: false)
-                        //     .signIn(email.text.trim(), password.text.trim());
-                        // if (isUserLoggedIn) {
-                        //   Navigator.pushAndRemoveUntil(
-                        //       context,
-                        //       CupertinoPageRoute(builder: (context) => Home()),
-                        //           (Route<dynamic> route) => false);
-                        // }
-                      }
-                    },
+                    onPressed: () => Navigator.push(context, CupertinoPageRoute(builder: (_) => SignUp())),
                   ),
                 ),
               ],

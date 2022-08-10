@@ -41,6 +41,9 @@ dependencies:
   table_calendar: ^3.0.6
   signature: ^5.1.0
   toggle_switch: ^2.0.1
+  firebase_auth: ^3.6.2
+  cloud_firestore: ^3.4.3
+  firebase_core: ^1.20.0
 
 dev_dependencies:
   flutter_test:

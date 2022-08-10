@@ -1,17 +1,31 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:top/constants.dart';
+import 'package:top/views/hospital/hospital_page_selector.dart';
+import 'package:top/views/page_selector.dart';
 import 'package:top/widgets/backdrop.dart';
 import 'package:top/widgets/input_filed.dart';
 import 'package:top/widgets/button.dart';
 import 'package:top/widgets/toast.dart';
+import 'package:top/controllers/user_controller.dart';
 
-class SignUp extends StatelessWidget {
+class SignUp extends StatefulWidget {
+  @override
+  State<SignUp> createState() => _SignUpState();
+}
+
+class _SignUpState extends State<SignUp> {
   final TextEditingController name = TextEditingController();
   final TextEditingController email = TextEditingController();
+  final TextEditingController suburb = TextEditingController();
   final TextEditingController password = TextEditingController();
   final TextEditingController confirmPassword = TextEditingController();
+
+  Role selectedRole = Role.Nurse;
+  List selectedSpecialities = ['S/S'];
 
   @override
   Widget build(BuildContext context) {
@@ -63,8 +77,7 @@ class SignUp extends StatelessWidget {
                             color: kGreen,
                           ),
                         )
-                      ]
-                  ),
+                      ]),
                 ),
                 Text(
                   "Theatre Operation Professional",
@@ -83,45 +96,59 @@ class SignUp extends StatelessWidget {
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(color: kDisabled)
-                  ),
+                      border: Border.all(color: kDisabled)),
                   child: DropdownButton(
                       underline: SizedBox.shrink(),
                       isExpanded: true,
-                      hint: Text("Select your role", style: TextStyle(color: kDisabled),),
-                      value: '2',
-                      items: [
-                        DropdownMenuItem(value: '1',child: Text("Website Tasks", style: TextStyle(color: kDisabled)),),
-                        DropdownMenuItem(value: '2',child: Text("Manual Tasks", style: TextStyle(color: kDisabled)),),
-                      ],
-                      onChanged: (value){}
-                  ),
+                      hint: Text(
+                        "Select your role",
+                        style: TextStyle(color: kDisabled),
+                      ),
+                      value: selectedRole,
+                      items: Role.values
+                          .map(
+                            (role) => DropdownMenuItem(
+                              value: role,
+                              child: Text(role.name, style: TextStyle(color: kDisabled)),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() => selectedRole = value as Role);
+                      }),
                 ),
                 SizedBox(height: 10.h),
 
                 //speciality
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 15.w),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(color: kDisabled)
+                if (selectedRole == Role.Nurse)
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 15.w),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(color: kDisabled)),
+                    child: DropdownButton(
+                        underline: SizedBox.shrink(),
+                        isExpanded: true,
+                        hint: Text(
+                          "Select your speciality",
+                          style: TextStyle(color: kDisabled),
+                        ),
+                        value: '1',
+                        items: [
+                          DropdownMenuItem(
+                            value: '1',
+                            child: Text("Website Tasks", style: TextStyle(color: kDisabled)),
+                          ),
+                          DropdownMenuItem(
+                            value: '2',
+                            child: Text("Manual Tasks", style: TextStyle(color: kDisabled)),
+                          ),
+                        ],
+                        onChanged: (value) {}),
                   ),
-                  child: DropdownButton(
-                      underline: SizedBox.shrink(),
-                      isExpanded: true,
-                      hint: Text("Select your speciality", style: TextStyle(color: kDisabled),),
-                      value: '1',
-                      items: [
-                        DropdownMenuItem(value: '1',child: Text("Website Tasks", style: TextStyle(color: kDisabled)),),
-                        DropdownMenuItem(value: '2',child: Text("Manual Tasks", style: TextStyle(color: kDisabled)),),
-                      ],
-                      onChanged: (value){}
-                  ),
-                ),
-                SizedBox(height: 10.h),
-
+                if (selectedRole == Role.Nurse) SizedBox(height: 10.h),
 
                 //text fields
                 InputField(
@@ -132,8 +159,17 @@ class SignUp extends StatelessWidget {
                 InputField(
                   text: 'Email',
                   controller: email,
+                  keyboard: TextInputType.emailAddress,
                 ),
                 SizedBox(height: 10.h),
+
+                if (selectedRole == Role.Hospital)
+                  InputField(
+                    text: 'Suburb',
+                    controller: suburb,
+                  ),
+                if (selectedRole == Role.Hospital) SizedBox(height: 10.h),
+
                 InputField(
                   text: 'Password',
                   controller: password,
@@ -154,25 +190,38 @@ class SignUp extends StatelessWidget {
                     text: 'Signup',
                     color: kRed,
                     onPressed: () async {
-                      if (email.text.trim().isEmpty || password.text.trim().isEmpty) {
-                        ToastBar(text: 'Please fill all the fields!', color: Colors.red)
-                            .show();
+                      if (name.text.trim().isEmpty ||
+                          email.text.trim().isEmpty ||
+                          password.text.trim().isEmpty ||
+                          confirmPassword.text.trim().isEmpty ||
+                          (selectedRole == Role.Hospital && suburb.text.trim().isEmpty) || (selectedRole == Role.Nurse && selectedSpecialities.isEmpty)) {
+                        ToastBar(text: 'Please fill all the fields!', color: Colors.red).show();
+                      } else if (password.text != confirmPassword.text) {
+                        ToastBar(text: 'Password does not match', color: Colors.red).show();
                       } else {
                         ToastBar(text: 'Please wait...', color: Colors.orange).show();
 
-                        // bool isUserLoggedIn =
-                        // await Provider.of<UserController>(context, listen: false)
-                        //     .signIn(email.text.trim(), password.text.trim());
-                        // if (isUserLoggedIn) {
-                        //   Navigator.pushAndRemoveUntil(
-                        //       context,
-                        //       CupertinoPageRoute(builder: (context) => Home()),
-                        //           (Route<dynamic> route) => false);
-                        // }
+                        bool isUserSignedUp =
+                            await Provider.of<UserController>(context, listen: false).signUp(
+                          email.text.trim(),
+                          password.text.trim(),
+                          name.text.trim(),
+                          selectedRole,
+                          suburb: suburb.text.trim(),
+                          specialties: selectedSpecialities,
+                        );
+
+                        if (isUserSignedUp) {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              CupertinoPageRoute(builder: (context) => selectedRole == Role.Hospital ? HospitalPageSelector() : PageSelector()),
+                              (Route<dynamic> route) => false);
+                        }
                       }
                     },
                   ),
                 ),
+                SizedBox(height: 30.h),
               ],
             ),
           ),
