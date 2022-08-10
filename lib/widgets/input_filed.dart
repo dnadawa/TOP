@@ -8,13 +8,15 @@ class InputField extends StatefulWidget {
   final TextInputType? keyboard;
   final TextEditingController? controller;
   final bool enabled;
+  final bool multiLine;
 
   const InputField({
     super.key,
     required this.text,
     this.isPassword = false,
     this.keyboard,
-    this.controller, this.enabled = true,
+    this.controller,
+    this.enabled = true, this.multiLine = false,
   });
 
   @override
@@ -38,6 +40,7 @@ class _InputFieldState extends State<InputField> {
       obscureText: hideText,
       cursorColor: kGreen,
       enabled: widget.enabled,
+      maxLines: widget.multiLine ? null : 1,
       decoration: InputDecoration(
         isDense: true,
         labelText: widget.text,
@@ -54,6 +57,12 @@ class _InputFieldState extends State<InputField> {
             color: kDisabled,
           ),
         ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(5.r),
+          borderSide: BorderSide(
+            color: kDisabled,
+          ),
+        ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5.r),
           borderSide: BorderSide(
@@ -61,14 +70,10 @@ class _InputFieldState extends State<InputField> {
             width: 2,
           ),
         ),
-        suffixIcon: IconButton(
+        suffixIcon: widget.isPassword ? IconButton(
           splashColor: Colors.transparent,
           icon: Icon(
-            widget.isPassword
-                ? hideText
-                    ? Icons.visibility_off
-                    : Icons.visibility
-                : null,
+            hideText ? Icons.visibility_off : Icons.visibility,
             color: kDisabled,
             size: 22,
           ),
@@ -79,7 +84,7 @@ class _InputFieldState extends State<InputField> {
               });
             }
           },
-        ),
+        ) : null,
       ),
     );
   }

@@ -17,7 +17,7 @@ class UserController {
       return null;
     }
 
-    Role role = await _databaseService.getUserRole(user.uid);
+    Role role = await _databaseService.getUserRole(user);
     user.role = role;
 
     return user;
@@ -49,6 +49,6 @@ class UserController {
       return null;
     }
 
-    return await _databaseService.getUserRole(user.uid);
+    return await _databaseService.getUserRole(user);
   }
 }

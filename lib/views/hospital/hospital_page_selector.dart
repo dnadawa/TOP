@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:top/constants.dart';
+import 'package:top/controllers/user_controller.dart';
+import 'package:top/models/user_model.dart';
 import 'package:top/views/availability.dart';
 import 'package:top/views/home.dart';
 import 'package:top/views/hospital/hospital_jobs.dart';
@@ -17,15 +20,17 @@ class HospitalPageSelector extends StatefulWidget {
 class _HospitalPageSelectorState extends State<HospitalPageSelector> {
   final PageController controller = PageController();
   int tabIndex = 0;
+  User? user;
+
+  getDetails() async {
+    user = await Provider.of<UserController>(context, listen: false).getCurrentUser();
+    setState((){});
+  }
 
   @override
   void initState() {
     super.initState();
-    // if(mounted){
-    //   controller.addListener(() {
-    //     setState(() => currentIndex = controller.page!.toInt());
-    //   });
-    // }
+    getDetails();
   }
 
   @override
@@ -35,15 +40,15 @@ class _HospitalPageSelectorState extends State<HospitalPageSelector> {
         controller: controller,
         physics: NeverScrollableScrollPhysics(),
         children: [
-          HospitalNewPost(),
+          HospitalNewPost(hospital: user),
           HospitalJobs(
             status: tabIndex == 1
                 ? JobStatus.Available
                 : tabIndex == 2
-                    ? JobStatus.Confirmed
-                    : tabIndex == 3
-                        ? JobStatus.Completed
-                        : JobStatus.Available,
+                ? JobStatus.Confirmed
+                : tabIndex == 3
+                ? JobStatus.Completed
+                : JobStatus.Available,
           ),
         ],
       ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:top/controllers/job_controller.dart';
 import 'package:top/controllers/user_controller.dart';
 import 'package:top/wrapper.dart';
 import 'package:top/firebase_options.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
       builder: (context, child) => MultiProvider(
         providers: [
           Provider<UserController>(create: (_) => UserController()),
+          Provider<JobController>(create: (_) => JobController()),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

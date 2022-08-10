@@ -8,10 +8,21 @@ import 'package:top/constants.dart';
 import 'package:top/widgets/button.dart';
 import 'package:top/widgets/heading_card.dart';
 import 'package:top/widgets/input_filed.dart';
+import 'package:top/models/user_model.dart';
 
 class HospitalNewPost extends StatelessWidget {
+  final User? hospital;
+
+  HospitalNewPost({super.key, required this.hospital});
+
+  final TextEditingController name = TextEditingController();
+  final TextEditingController email = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    name.text = hospital?.name ?? '';
+    email.text = hospital?.email ?? '';
+
     return Scaffold(
       body: Backdrop(
         child: SingleChildScrollView(
@@ -36,7 +47,7 @@ class HospitalNewPost extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            'Akuressa Central Hospital',
+                            hospital?.name ?? '',
                             style: TextStyle(
                                 color: kGreyText, fontSize: 28.sp, fontWeight: FontWeight.w600),
                           ),
@@ -61,11 +72,19 @@ class HospitalNewPost extends StatelessWidget {
                       children: [
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 20.w),
-                          child: InputField(text: 'Hospital Name'),
+                          child: InputField(
+                            text: 'Hospital Name',
+                            enabled: false,
+                            controller: name,
+                          ),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 20.w),
-                          child: InputField(text: 'Email'),
+                          child: InputField(
+                            text: 'Email',
+                            enabled: false,
+                            controller: email,
+                          ),
                         ),
                       ],
                     ),
@@ -77,7 +96,12 @@ class HospitalNewPost extends StatelessWidget {
                   width: double.infinity,
                   child: Button(
                     text: 'Post a New Job',
-                    onPressed: () => Navigator.push(context, CupertinoPageRoute(builder: (_) => HospitalCreatePost())),
+                    onPressed: () {
+                      if (hospital != null) {
+                        Navigator.push(
+                            context, CupertinoPageRoute(builder: (_) => HospitalCreatePost(hospital: hospital!)));
+                      }
+                    },
                   ),
                 ),
               ],
