@@ -63,4 +63,8 @@ class DatabaseService {
         .get();
     return sub.docs;
   }
+
+  deleteJob(String id) async {
+    await _firestore.collection('jobs').doc(id).delete();
+  }
 }

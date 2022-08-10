@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Job {
+  final String id;
   final String hospital;
   final String suburb;
   final String speciality;
@@ -12,6 +13,7 @@ class Job {
   final String hospitalID;
 
   Job({
+    required this.id,
     required this.hospital,
     required this.hospitalID,
     required this.suburb,
@@ -25,6 +27,7 @@ class Job {
 
   static Job createJobFromDocument(QueryDocumentSnapshot doc) {
     return Job(
+      id: doc.id,
       hospital: doc['hospitalName'],
       hospitalID: doc['hospitalID'],
       suburb: doc['suburb'],

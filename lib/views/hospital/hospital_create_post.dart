@@ -225,6 +225,7 @@ class _HospitalCreatePostState extends State<HospitalCreatePost> {
                           shiftType: selectedShiftType!,
                           additionalDetails: additionalDetails.text,
                           speciality: selectedSpeciality!,
+                          id: ''
                         );
 
                         bool isSuccess = await Provider.of<JobController>(context, listen: false).createJob(job);

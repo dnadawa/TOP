@@ -32,4 +32,15 @@ class JobController extends ChangeNotifier {
       return await _databaseService.getJobs(hospitalID, _selectedSpeciality, status);
   }
 
+  Future<bool> deleteJob(String id) async {
+    try{
+      await _databaseService.deleteJob(id);
+      ToastBar(text: "Job Deleted Successfully!", color: Colors.green).show();
+      return true;
+    } catch (e){
+      ToastBar(text: e.toString(), color: Colors.red).show();
+      return false;
+    }
+  }
+
 }

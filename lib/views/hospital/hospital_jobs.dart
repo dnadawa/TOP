@@ -92,7 +92,7 @@ class HospitalJobs extends StatelessWidget {
                                         onTap: () {
                                           if (status == JobStatus.Available) {
                                             Navigator.push(context,
-                                                CupertinoPageRoute(builder: (_) => HospitalJobDetails()));
+                                                CupertinoPageRoute(builder: (_) => HospitalJobDetails(job: job)));
                                           }
                                         },
                                         child: IntrinsicHeight(
