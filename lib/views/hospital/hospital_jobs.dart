@@ -14,12 +14,17 @@ import 'package:top/widgets/heading_card.dart';
 import 'package:top/widgets/shift_tile.dart';
 import 'package:top/models/user_model.dart';
 
-class HospitalJobs extends StatelessWidget {
+class HospitalJobs extends StatefulWidget {
   final JobStatus status;
   final User? hospital;
 
   const HospitalJobs({super.key, required this.status, required this.hospital});
 
+  @override
+  State<HospitalJobs> createState() => _HospitalJobsState();
+}
+
+class _HospitalJobsState extends State<HospitalJobs> {
   @override
   Widget build(BuildContext context) {
     var jobController = Provider.of<JobController>(context);
@@ -33,7 +38,7 @@ class HospitalJobs extends StatelessWidget {
               SizedBox(height: ScreenUtil().statusBarHeight),
               Expanded(
                 child: HeadingCard(
-                  title: "${status.name} Jobs",
+                  title: "${widget.status.name} Jobs",
                   child: Expanded(
                     child: Column(
                       children: [
@@ -66,73 +71,85 @@ class HospitalJobs extends StatelessWidget {
                         Expanded(
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 15.w),
-                            child: FutureBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
-                              future: jobController.getJobs(hospital?.uid ?? '', status),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                  return Center(
-                                    child: Text('No data to show!'),
-                                  );
-                                }
+                            child: RefreshIndicator(
+                              onRefresh: () async => setState((){}),
+                              child: FutureBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
+                                future: jobController.getJobs(widget.hospital?.uid ?? '', widget.status),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                    return Stack(
+                                      children: [
+                                        Center(
+                                          child: Text('No data to show!'),
+                                        ),
+                                        ListView(
+                                          physics: AlwaysScrollableScrollPhysics(),
+                                        ),
+                                      ],
+                                    );
+                                  }
 
-                                return ListView.builder(
-                                  physics: BouncingScrollPhysics(),
-                                  itemCount: snapshot.data!.length,
-                                  itemBuilder: (context, i) {
+                                  return ListView.builder(
+                                    physics: BouncingScrollPhysics(
+                                      parent: AlwaysScrollableScrollPhysics(),
+                                    ),
+                                    itemCount: snapshot.data!.length,
+                                    itemBuilder: (context, i) {
 
-                                    Job job = Job.createJobFromDocument(snapshot.data![i]);
+                                      Job job = Job.createJobFromDocument(snapshot.data![i]);
 
-                                    return Padding(
-                                      padding: EdgeInsets.only(bottom: 20.h),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          if (status == JobStatus.Available) {
-                                            Navigator.push(context,
-                                                CupertinoPageRoute(builder: (_) => HospitalJobDetails(job: job)));
-                                          }
-                                        },
-                                        child: IntrinsicHeight(
-                                          child: Row(
-                                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                                            children: [
-                                              Expanded(
-                                                child: ShiftTile(
-                                                  hospital: job.hospital,
-                                                  suburb: job.suburb,
-                                                  shiftType: job.shiftType,
-                                                  shiftTime: "${job.shiftStartTime} to ${job.shiftEndTime}",
-                                                  shiftDate: DateFormat('EEEE MMMM dd').format(job.shiftDate),
-                                                  specialty: job.speciality,
-                                                  additionalDetails: job.additionalDetails,
-                                                  showBackStrip: true,
-                                                ),
-                                              ),
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                  color: kRed,
-                                                  borderRadius: BorderRadius.horizontal(
-                                                      right: Radius.circular(10.r)),
-                                                ),
-                                                child: SizedBox(
-                                                  child: Icon(
-                                                    Icons.arrow_forward_ios,
-                                                    color: Colors.white,
-                                                    size: 20,
+                                      return Padding(
+                                        padding: EdgeInsets.only(bottom: 20.h),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            if (widget.status == JobStatus.Available) {
+                                              Navigator.push(context,
+                                                  CupertinoPageRoute(builder: (_) => HospitalJobDetails(job: job)));
+                                            }
+                                          },
+                                          child: IntrinsicHeight(
+                                            child: Row(
+                                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                                              children: [
+                                                Expanded(
+                                                  child: ShiftTile(
+                                                    hospital: job.hospital,
+                                                    suburb: job.suburb,
+                                                    shiftType: job.shiftType,
+                                                    shiftTime: "${job.shiftStartTime} to ${job.shiftEndTime}",
+                                                    shiftDate: DateFormat('EEEE MMMM dd').format(job.shiftDate),
+                                                    specialty: job.speciality,
+                                                    additionalDetails: job.additionalDetails,
+                                                    showBackStrip: true,
                                                   ),
                                                 ),
-                                              )
-                                            ],
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    color: kRed,
+                                                    borderRadius: BorderRadius.horizontal(
+                                                        right: Radius.circular(10.r)),
+                                                  ),
+                                                  child: SizedBox(
+                                                    child: Icon(
+                                                      Icons.arrow_forward_ios,
+                                                      color: Colors.white,
+                                                      size: 20,
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ),
