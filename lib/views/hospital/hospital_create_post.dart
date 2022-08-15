@@ -38,7 +38,7 @@ class _HospitalCreatePostState extends State<HospitalCreatePost> {
   @override
   Widget build(BuildContext context) {
     hospitalName.text = widget.hospital.name!;
-    suburb.text = widget.hospital.suburb!;
+    // suburb.text = widget.hospital.suburb!;
 
     return Scaffold(
       body: Backdrop(

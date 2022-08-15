@@ -8,7 +8,7 @@ final kGreyText = Color(0xff52575D);
 final kOrange = Color(0xffE68C36);
 
 enum JobStatus {Confirmed, Available, Completed}
-enum Role {Nurse, Hospital}
+enum Role {Nurse, Manager}
 
 final specialities = [
   'Anaesthetic',

@@ -12,12 +12,12 @@ class DatabaseService {
       'id': user.uid,
       'email': user.email,
       'role': user.role?.name,
+      'specialities': user.specialities,
+      'isApproved': false,
     };
 
-    if (user.role! == Role.Hospital) {
-      data['suburb'] = user.suburb;
-    } else {
-      data['specialities'] = user.specialities;
+    if (user.role! == Role.Manager) {
+      data['hospitalID'] = user.hospital;
     }
 
     await _firestore.collection('users').doc(user.uid).set(data);
@@ -26,13 +26,13 @@ class DatabaseService {
   Future<Role> getUserRole(User user) async {
     var doc = await _firestore.collection('users').doc(user.uid).get();
     user.name = doc.data()!['name'];
+    user.specialities = doc.data()!['specialities'];
+    user.isApproved = doc.data()!['isApproved'];
 
     Role role = Role.values.byName(doc.data()!['role']);
 
-    if (role == Role.Hospital) {
-      user.suburb = doc.data()!['suburb'];
-    } else {
-      user.specialities = doc.data()!['specialities'];
+    if (role == Role.Manager) {
+      user.hospital = doc.data()!['hospitalID'];
     }
 
     return role;
@@ -60,6 +60,13 @@ class DatabaseService {
         .where('hospitalID', isEqualTo: hospitalID)
         .where('speciality', isEqualTo: speciality)
         .where('status', isEqualTo: status.name)
+        .get();
+    return sub.docs;
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getHospitals() async {
+    var sub = await _firestore
+        .collection('hospitals')
         .get();
     return sub.docs;
   }

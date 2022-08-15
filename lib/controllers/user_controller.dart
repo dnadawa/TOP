@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:top/services/auth_service.dart';
 import 'package:top/constants.dart';
@@ -23,19 +24,20 @@ class UserController {
     return user;
   }
 
-  Future<bool> signUp(String email, String password, String name, Role role, {String? suburb, List? specialties}) async {
+  Future<bool> signUp(String email, String password, String name, Role role, List specialties, {String? hospitalID}) async {
     User? user = await _authService.signUp(email, password);
     if (user != null){
       user.name = name;
       user.role = role;
-      if (role == Role.Hospital) {
-        user.suburb = suburb;
-      } else {
-        user.specialities = specialties;
+      user.specialities = specialties;
+
+      if (role == Role.Manager) {
+        user.hospital = hospitalID;
       }
 
       await _databaseService.createUser(user);
-      ToastBar(text: '${role.name} successfully registered!', color: Colors.green).show();
+      await _authService.signOut();
+      ToastBar(text: '${role.name} successfully registered and waiting for admin approval!', color: Colors.green).show();
       return true;
     }
 
@@ -53,4 +55,8 @@ class UserController {
   }
 
   Future<bool> signOut() async => await _authService.signOut();
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getHospitals() async {
+    return _databaseService.getHospitals();
+  }
 }

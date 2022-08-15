@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,6 +13,8 @@ import 'package:top/widgets/button.dart';
 import 'package:top/widgets/toast.dart';
 import 'package:top/controllers/user_controller.dart';
 
+import '../widgets/chip_field.dart';
+
 class SignUp extends StatefulWidget {
   @override
   State<SignUp> createState() => _SignUpState();
@@ -20,12 +23,24 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final TextEditingController name = TextEditingController();
   final TextEditingController email = TextEditingController();
-  final TextEditingController suburb = TextEditingController();
   final TextEditingController password = TextEditingController();
   final TextEditingController confirmPassword = TextEditingController();
 
   Role selectedRole = Role.Nurse;
-  List selectedSpecialities = ['S/S'];
+  List selectedSpecialities = [];
+  String? selectedHospital;
+  List hospitals = [];
+
+  setDropDownData() async {
+    hospitals = await Provider.of<UserController>(context, listen: false).getHospitals();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setDropDownData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +124,7 @@ class _SignUpState extends State<SignUp> {
                           .map(
                             (role) => DropdownMenuItem(
                               value: role,
-                              child: Text(role.name, style: TextStyle(color: kDisabled)),
+                              child: Text(role.name),
                             ),
                           )
                           .toList(),
@@ -120,7 +135,18 @@ class _SignUpState extends State<SignUp> {
                 SizedBox(height: 10.h),
 
                 //speciality
-                if (selectedRole == Role.Nurse)
+                ChipField(
+                  text: 'Specialities',
+                  items: specialities,
+                  initialItems: [],
+                  onChanged: (value) {
+                    selectedSpecialities = value;
+                  },
+                ),
+                SizedBox(height: 10.h),
+
+                //hospitals
+                if (selectedRole == Role.Manager)
                   Container(
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(horizontal: 15.w),
@@ -129,26 +155,23 @@ class _SignUpState extends State<SignUp> {
                         borderRadius: BorderRadius.circular(8.r),
                         border: Border.all(color: kDisabled)),
                     child: DropdownButton(
-                        underline: SizedBox.shrink(),
-                        isExpanded: true,
-                        hint: Text(
-                          "Select your speciality",
-                          style: TextStyle(color: kDisabled),
-                        ),
-                        value: '1',
-                        items: [
-                          DropdownMenuItem(
-                            value: '1',
-                            child: Text("Website Tasks", style: TextStyle(color: kDisabled)),
-                          ),
-                          DropdownMenuItem(
-                            value: '2',
-                            child: Text("Manual Tasks", style: TextStyle(color: kDisabled)),
-                          ),
-                        ],
-                        onChanged: (value) {}),
+                      underline: SizedBox.shrink(),
+                      isExpanded: true,
+                      hint: Text(
+                        "Hospital",
+                        style: TextStyle(color: kDisabled),
+                      ),
+                      value: selectedHospital,
+                      items: hospitals
+                          .map((hospital) =>
+                              DropdownMenuItem(value: hospital.id, child: Text(hospital['name'])))
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() => selectedHospital = value as String?);
+                      },
+                    ),
                   ),
-                if (selectedRole == Role.Nurse) SizedBox(height: 10.h),
+                if (selectedRole == Role.Manager) SizedBox(height: 10.h),
 
                 //text fields
                 InputField(
@@ -162,13 +185,6 @@ class _SignUpState extends State<SignUp> {
                   keyboard: TextInputType.emailAddress,
                 ),
                 SizedBox(height: 10.h),
-
-                if (selectedRole == Role.Hospital)
-                  InputField(
-                    text: 'Suburb',
-                    controller: suburb,
-                  ),
-                if (selectedRole == Role.Hospital) SizedBox(height: 10.h),
 
                 InputField(
                   text: 'Password',
@@ -194,7 +210,8 @@ class _SignUpState extends State<SignUp> {
                           email.text.trim().isEmpty ||
                           password.text.trim().isEmpty ||
                           confirmPassword.text.trim().isEmpty ||
-                          (selectedRole == Role.Hospital && suburb.text.trim().isEmpty) || (selectedRole == Role.Nurse && selectedSpecialities.isEmpty)) {
+                          selectedSpecialities.isEmpty ||
+                          (selectedRole == Role.Manager && selectedHospital == null)) {
                         ToastBar(text: 'Please fill all the fields!', color: Colors.red).show();
                       } else if (password.text != confirmPassword.text) {
                         ToastBar(text: 'Password does not match', color: Colors.red).show();
@@ -207,15 +224,12 @@ class _SignUpState extends State<SignUp> {
                           password.text.trim(),
                           name.text.trim(),
                           selectedRole,
-                          suburb: suburb.text.trim(),
-                          specialties: selectedSpecialities,
+                          selectedSpecialities,
+                          hospitalID: selectedHospital,
                         );
 
                         if (isUserSignedUp) {
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              CupertinoPageRoute(builder: (context) => selectedRole == Role.Hospital ? HospitalPageSelector() : PageSelector()),
-                              (Route<dynamic> route) => false);
+                          Navigator.pop(context);
                         }
                       }
                     },

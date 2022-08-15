@@ -5,8 +5,9 @@ class User {
   final String? email;
   String? name;
   Role? role;
-  String? suburb;
+  String? hospital;
   List? specialities;
+  bool? isApproved;
 
   User(this.uid, this.email);
 }

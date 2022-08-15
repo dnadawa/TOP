@@ -56,6 +56,7 @@ class _ChipFieldState extends State<ChipField> {
               horizontal: 15.w,
             ),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 if (selectedItems.contains(element))
                   Padding(
@@ -128,8 +129,7 @@ class _ChipFieldState extends State<ChipField> {
           ),
           child: Padding(
             padding: EdgeInsets.all(8.w),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            child: Wrap(
               children: items,
             ),
           ),
