@@ -1,14 +1,34 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:top/widgets/backdrop.dart';
 import 'package:top/constants.dart';
 import 'package:top/widgets/heading_card.dart';
 import 'package:top/widgets/input_filed.dart';
+import 'package:top/models/user_model.dart';
+
+import '../controllers/user_controller.dart';
+import '../widgets/button.dart';
+import '../widgets/toast.dart';
+import '../wrapper.dart';
 
 class Home extends StatelessWidget {
+  final User? user;
+
+  Home({super.key, required this.user});
+
+  final TextEditingController speciality = TextEditingController();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController phone = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    speciality.text = user?.specialities!.join(', ') ?? '';
+    email.text = user?.email ?? '';
+    phone.text = user?.phone ?? '';
+
     return Scaffold(
       body: Backdrop(
         child: SingleChildScrollView(
@@ -33,7 +53,7 @@ class Home extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            'Sanjula Hasaranga',
+                            user?.name ?? '',
                             style: TextStyle(
                                 color: kGreyText, fontSize: 28.sp, fontWeight: FontWeight.w600),
                           ),
@@ -58,14 +78,52 @@ class Home extends StatelessWidget {
                       children: [
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 20.w),
-                          child: InputField(text: 'Email'),
+                          child: InputField(
+                            text: 'Email',
+                            enabled: false,
+                            controller: email,
+                          ),
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 20.w),
-                          child: InputField(text: 'Speciality'),
+                          child: InputField(
+                            text: 'Speciality',
+                            enabled: false,
+                            multiLine: true,
+                            controller: speciality,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20.w),
+                          child: InputField(
+                            text: 'Mobile Number',
+                            enabled: false,
+                            controller: phone,
+                          ),
                         ),
                       ],
                     ),
+                  ),
+                ),
+
+
+                //log out
+                SizedBox(height: 80.h),
+                SizedBox(
+                  width: double.infinity,
+                  child: Button(
+                    text: 'Logout',
+                    color: kRed,
+                    onPressed: () async {
+                      ToastBar(text: 'Please wait...', color: Colors.orange).show();
+                      bool signedOut = await Provider.of<UserController>(context, listen: false).signOut();
+                      if (signedOut){
+                        Navigator.of(context).pushAndRemoveUntil(
+                            CupertinoPageRoute(builder: (context) => Wrapper()),
+                                (Route<dynamic> route) => false);
+                        ToastBar(text: 'Logged out!', color: Colors.green).show();
+                      }
+                    },
                   ),
                 ),
               ],

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:top/constants.dart';
 import 'package:top/views/availability.dart';
 import 'package:top/views/home.dart';
 import 'package:top/views/my_shifts.dart';
 import 'package:top/views/released_shifts.dart';
 import 'package:top/views/timesheets.dart';
+
+import '../controllers/user_controller.dart';
+import '../models/user_model.dart';
 
 class PageSelector extends StatefulWidget {
 
@@ -16,10 +20,17 @@ class PageSelector extends StatefulWidget {
 class _PageSelectorState extends State<PageSelector> {
   final PageController controller = PageController();
   int currentIndex = 0;
+  User? user;
+
+  getDetails() async {
+    user = await Provider.of<UserController>(context, listen: false).getCurrentUser();
+    setState((){});
+  }
 
   @override
   void initState(){
     super.initState();
+    getDetails();
     if(mounted){
       controller.addListener(() {
         setState(() => currentIndex = controller.page!.toInt());
@@ -34,7 +45,7 @@ class _PageSelectorState extends State<PageSelector> {
         controller: controller,
         physics: NeverScrollableScrollPhysics(),
         children: [
-          Home(),
+          Home(user: user),
           Availability(),
           MyShifts(),
           ReleasedShifts(),
