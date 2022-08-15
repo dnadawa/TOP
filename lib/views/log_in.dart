@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:top/constants.dart';
+import 'package:top/models/user_model.dart';
 import 'package:top/views/hospital/hospital_page_selector.dart';
 import 'package:top/views/page_selector.dart';
 import 'package:top/views/sign_up.dart';
@@ -11,8 +12,7 @@ import 'package:top/widgets/backdrop.dart';
 import 'package:top/widgets/input_filed.dart';
 import 'package:top/widgets/button.dart';
 import 'package:top/widgets/toast.dart';
-
-import '../controllers/user_controller.dart';
+import 'package:top/controllers/user_controller.dart';
 
 class LogIn extends StatelessWidget {
   final TextEditingController email = TextEditingController();
@@ -107,15 +107,15 @@ class LogIn extends StatelessWidget {
                         } else {
                           ToastBar(text: 'Please wait...', color: Colors.orange).show();
 
-                          // bool success =
-                          // await Provider.of<UserController>(context, listen: false)
-                              // .forgetPassword(email.text.trim());
-                          // if (success) {
-                          //   ToastBar(
-                          //       text: 'Password reset link sent to your email! Check your inbox or spam folders.',
-                          //       color: Colors.green)
-                          //       .show();
-                          // }
+                          bool success =
+                          await Provider.of<UserController>(context, listen: false)
+                              .forgetPassword(email.text.trim());
+                          if (success) {
+                            ToastBar(
+                                text: 'Password reset link sent to your email! Check your inbox or spam folders.',
+                                color: Colors.green)
+                                .show();
+                          }
                         }
                       },
                       child: Text(
@@ -140,15 +140,20 @@ class LogIn extends StatelessWidget {
                       } else {
                         ToastBar(text: 'Please wait...', color: Colors.orange).show();
 
-                        Role? role =
+                        User? user =
                         await Provider.of<UserController>(context, listen: false)
                             .signIn(email.text.trim(), password.text.trim());
 
-                        if (role != null) {
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              CupertinoPageRoute(builder: (context) => role == Role.Nurse ? PageSelector() : HospitalPageSelector()),
-                                  (Route<dynamic> route) => false);
+                        if (user != null) {
+                          if(user.isApproved!){
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                CupertinoPageRoute(builder: (context) => user.role == Role.Nurse ? PageSelector() : HospitalPageSelector()),
+                                    (Route<dynamic> route) => false);
+                          } else {
+                            ToastBar(text: 'Your account is not approved yet!', color: Colors.red).show();
+                            await Provider.of<UserController>(context, listen: false).signOut();
+                          }
                         }
                       }
                     },

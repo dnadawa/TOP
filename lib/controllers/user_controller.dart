@@ -44,19 +44,24 @@ class UserController {
     return false;
   }
 
-  Future<Role?> signIn(String email, String password) async {
+  Future<User?> signIn(String email, String password) async {
     User? user = await _authService.signIn(email, password);
 
     if (user == null){
       return null;
     }
 
-    return await _databaseService.getUserRole(user);
+    await _databaseService.getUserRole(user);
+    return user;
   }
 
   Future<bool> signOut() async => await _authService.signOut();
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getHospitals() async {
     return _databaseService.getHospitals();
+  }
+
+  Future<bool> forgetPassword(String email) async {
+    return await _authService.forgetPassword(email);
   }
 }

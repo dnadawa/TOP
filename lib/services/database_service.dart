@@ -30,6 +30,7 @@ class DatabaseService {
     user.isApproved = doc.data()!['isApproved'];
 
     Role role = Role.values.byName(doc.data()!['role']);
+    user.role = role;
 
     if (role == Role.Manager) {
       user.hospital = doc.data()!['hospitalID'];

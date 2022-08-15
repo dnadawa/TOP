@@ -6,6 +6,7 @@ import 'package:top/models/user_model.dart';
 import 'package:top/views/hospital/hospital_page_selector.dart';
 import 'package:top/views/log_in.dart';
 import 'package:top/views/page_selector.dart';
+import 'package:top/widgets/toast.dart';
 
 
 class Wrapper extends StatelessWidget {
@@ -21,7 +22,12 @@ class Wrapper extends StatelessWidget {
           return Center(child: CircularProgressIndicator());
         }
 
-        return snapshot.data == null ? LogIn() : snapshot.data!.role == Role.Nurse ? PageSelector() : HospitalPageSelector();
+        if(snapshot.data != null && !snapshot.data!.isApproved!){
+          userController.signOut();
+          ToastBar(text: 'Your account is not approved!', color: Colors.red).show();
+        }
+
+        return (snapshot.data == null || !snapshot.data!.isApproved!) ? LogIn() : snapshot.data!.role == Role.Nurse ? PageSelector() : HospitalPageSelector();
       },
     );
   }

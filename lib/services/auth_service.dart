@@ -108,26 +108,26 @@ class AuthService {
   //   }
   // }
   //
-  // Future<bool> forgetPassword(String email) async {
-  //   try{
-  //     await _auth.sendPasswordResetEmail(email: email);
-  //     return true;
-  //   }
-  //   on auth.FirebaseException catch(e){
-  //     if (e.code == 'invalid-email'){
-  //       ToastBar(text: 'Invalid Email!', color: Colors.red).show();
-  //       return false;
-  //     }
-  //     else if(e.code == 'user-not-found'){
-  //       ToastBar(text: 'User not found!', color: Colors.red).show();
-  //       return false;
-  //     }
-  //
-  //     return false;
-  //   }
-  //   catch(e){
-  //     ToastBar(text: 'Something went wrong!', color: Colors.red).show();
-  //     return false;
-  //   }
-  // }
+  Future<bool> forgetPassword(String email) async {
+    try{
+      await _auth.sendPasswordResetEmail(email: email);
+      return true;
+    }
+    on auth.FirebaseException catch(e){
+      if (e.code == 'invalid-email'){
+        ToastBar(text: 'Invalid Email!', color: Colors.red).show();
+        return false;
+      }
+      else if(e.code == 'user-not-found'){
+        ToastBar(text: 'User not found!', color: Colors.red).show();
+        return false;
+      }
+
+      return false;
+    }
+    catch(e){
+      ToastBar(text: 'Something went wrong!', color: Colors.red).show();
+      return false;
+    }
+  }
 }
