@@ -16,9 +16,9 @@ import 'package:top/models/user_model.dart';
 
 class HospitalJobs extends StatefulWidget {
   final JobStatus status;
-  final User? hospital;
+  final User? manager;
 
-  const HospitalJobs({super.key, required this.status, required this.hospital});
+  const HospitalJobs({super.key, required this.status, required this.manager});
 
   @override
   State<HospitalJobs> createState() => _HospitalJobsState();
@@ -47,23 +47,26 @@ class _HospitalJobsState extends State<HospitalJobs> {
                         //filter
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 15.w),
-                          child: ToggleSwitch(
-                            initialLabelIndex:
-                                specialities.indexOf(jobController.selectedSpeciality),
-                            activeFgColor: Colors.white,
-                            inactiveBgColor: kDisabledSecondary,
-                            inactiveFgColor: kGreyText,
-                            totalSwitches: 4,
-                            labels: specialities,
-                            fontSize: 13.sp,
-                            activeBgColor: [kOrange],
-                            cornerRadius: 5.r,
-                            animate: true,
-                            animationDuration: 200,
-                            curve: Curves.easeIn,
-                            minWidth: 80.w,
-                            onToggle: (index) =>
-                                jobController.selectedSpeciality = specialities[index!],
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: ToggleSwitch(
+                              initialLabelIndex:
+                                  widget.manager!.specialities!.indexOf(jobController.selectedSpeciality),
+                              activeFgColor: Colors.white,
+                              inactiveBgColor: kDisabledSecondary,
+                              inactiveFgColor: kGreyText,
+                              totalSwitches: widget.manager!.specialities!.length,
+                              labels: widget.manager!.specialities!.cast(),
+                              fontSize: 13.sp,
+                              activeBgColor: [kOrange],
+                              cornerRadius: 5.r,
+                              animate: true,
+                              animationDuration: 200,
+                              curve: Curves.easeIn,
+                              customWidths: widget.manager!.specialities!.map((e) => 110.w).toList(),
+                              onToggle: (index) =>
+                                  jobController.selectedSpeciality = widget.manager!.specialities![index!],
+                            ),
                           ),
                         ),
 
@@ -74,7 +77,7 @@ class _HospitalJobsState extends State<HospitalJobs> {
                             child: RefreshIndicator(
                               onRefresh: () async => setState((){}),
                               child: FutureBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
-                                future: jobController.getJobs(widget.hospital?.uid ?? '', widget.status),
+                                future: jobController.getJobs(widget.manager?.hospital ?? '', widget.status),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState == ConnectionState.waiting) {
                                     return Center(
@@ -108,7 +111,7 @@ class _HospitalJobsState extends State<HospitalJobs> {
                                           onTap: () {
                                             if (widget.status == JobStatus.Available) {
                                               Navigator.push(context,
-                                                  CupertinoPageRoute(builder: (_) => HospitalJobDetails(job: job)));
+                                                  CupertinoPageRoute(builder: (_) => HospitalJobDetails(job: job))).then((value) => setState((){}));
                                             }
                                           },
                                           child: IntrinsicHeight(
@@ -118,7 +121,6 @@ class _HospitalJobsState extends State<HospitalJobs> {
                                                 Expanded(
                                                   child: ShiftTile(
                                                     hospital: job.hospital,
-                                                    suburb: '',
                                                     shiftType: job.shiftType,
                                                     shiftTime: "${job.shiftStartTime} to ${job.shiftEndTime}",
                                                     shiftDate: DateFormat('EEEE MMMM dd').format(job.shiftDate),

@@ -7,14 +7,20 @@ final kDisabledSecondary = Color(0xffE5E5E5);
 final kGreyText = Color(0xff52575D);
 final kOrange = Color(0xffE68C36);
 
-enum JobStatus {Confirmed, Available, Completed}
-enum Role {Nurse, Manager}
+enum JobStatus { Confirmed, Available, Completed }
+
+enum Role { Nurse, Manager }
 
 final specialities = [
   'Anaesthetic',
+  'Cell Salvage',
+  'Scrub/Scout',
   'Recovery',
-  'S/S',
+  'Pre-admission',
   'Ward',
+  'CSSD',
+  'Porter',
+  'None',
 ];
 
 extension TimeOfDayConverter on TimeOfDay {

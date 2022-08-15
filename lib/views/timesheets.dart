@@ -41,7 +41,6 @@ class TimeSheets extends StatelessWidget {
                                   Expanded(
                                     child: ShiftTile(
                                       hospital: 'Akuressa Central Hospital',
-                                      suburb: 'Matara',
                                       shiftType: "PM",
                                       shiftTime: "13:00 to 23:53",
                                       shiftDate: 'Wednesday August 2',

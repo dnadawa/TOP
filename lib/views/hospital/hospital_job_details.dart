@@ -44,7 +44,6 @@ class HospitalJobDetails extends StatelessWidget {
                   child: ShiftTile(
                     hospital: job.hospital,
                     shiftType: job.shiftType,
-                    suburb: '',
                     shiftTime: "${job.shiftStartTime} to ${job.shiftEndTime}",
                     shiftDate: DateFormat('EEEE MMMM dd').format(job.shiftDate),
                     specialty: job.speciality,

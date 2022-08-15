@@ -49,7 +49,7 @@ class _HospitalPageSelectorState extends State<HospitalPageSelector> {
                 : tabIndex == 3
                 ? JobStatus.Completed
                 : JobStatus.Available,
-            hospital: user,
+            manager: user,
           ),
         ],
       ),

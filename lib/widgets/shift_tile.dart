@@ -8,7 +8,6 @@ import 'package:top/widgets/input_filed.dart';
 class ShiftTile extends StatelessWidget {
   final bool showAcceptButton;
   final String hospital;
-  final String suburb;
   final String shiftType;
   final String shiftTime;
   final String shiftDate;
@@ -22,7 +21,6 @@ class ShiftTile extends StatelessWidget {
     super.key,
     this.showAcceptButton = false,
     required this.hospital,
-    required this.suburb,
     required this.shiftType,
     required this.shiftTime,
     this.showFrontStrip = false,
@@ -76,28 +74,6 @@ class ShiftTile extends StatelessWidget {
                     ),
                     Text(
                       hospital,
-                      style: GoogleFonts.sourceSansPro(
-                          fontSize: 15.sp, fontWeight: FontWeight.w400, color: kGreyText),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8.h),
-
-                //suburb
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 80.w,
-                      child: Text(
-                        'Suburb',
-                        style: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      suburb,
                       style: GoogleFonts.sourceSansPro(
                           fontSize: 15.sp, fontWeight: FontWeight.w400, color: kGreyText),
                     ),
