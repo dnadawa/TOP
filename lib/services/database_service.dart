@@ -18,6 +18,8 @@ class DatabaseService {
 
     if (user.role! == Role.Manager) {
       data['hospitalID'] = user.hospital;
+    } else {
+      data['phone'] = user.phone;
     }
 
     await _firestore.collection('users').doc(user.uid).set(data);
@@ -34,6 +36,8 @@ class DatabaseService {
 
     if (role == Role.Manager) {
       user.hospital = doc.data()!['hospitalID'];
+    } else {
+      user.phone = doc.data()!['phone'];
     }
 
     return role;

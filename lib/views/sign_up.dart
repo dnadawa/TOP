@@ -23,6 +23,7 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final TextEditingController name = TextEditingController();
   final TextEditingController email = TextEditingController();
+  final TextEditingController phone = TextEditingController();
   final TextEditingController password = TextEditingController();
   final TextEditingController confirmPassword = TextEditingController();
 
@@ -186,6 +187,14 @@ class _SignUpState extends State<SignUp> {
                 ),
                 SizedBox(height: 10.h),
 
+                if (selectedRole == Role.Nurse)
+                  InputField(
+                    text: 'Mobile Number',
+                    controller: phone,
+                    keyboard: TextInputType.phone,
+                  ),
+                if (selectedRole == Role.Nurse) SizedBox(height: 10.h),
+
                 InputField(
                   text: 'Password',
                   controller: password,
@@ -211,7 +220,8 @@ class _SignUpState extends State<SignUp> {
                           password.text.trim().isEmpty ||
                           confirmPassword.text.trim().isEmpty ||
                           selectedSpecialities.isEmpty ||
-                          (selectedRole == Role.Manager && selectedHospital == null)) {
+                          (selectedRole == Role.Manager && selectedHospital == null) ||
+                          (selectedRole == Role.Nurse && phone.text.trim().isEmpty)) {
                         ToastBar(text: 'Please fill all the fields!', color: Colors.red).show();
                       } else if (password.text != confirmPassword.text) {
                         ToastBar(text: 'Password does not match', color: Colors.red).show();
@@ -226,6 +236,7 @@ class _SignUpState extends State<SignUp> {
                           selectedRole,
                           selectedSpecialities,
                           hospitalID: selectedHospital,
+                          phone: phone.text.trim(),
                         );
 
                         if (isUserSignedUp) {

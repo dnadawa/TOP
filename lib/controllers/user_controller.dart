@@ -24,7 +24,7 @@ class UserController {
     return user;
   }
 
-  Future<bool> signUp(String email, String password, String name, Role role, List specialties, {String? hospitalID}) async {
+  Future<bool> signUp(String email, String password, String name, Role role, List specialties, {String? hospitalID, String? phone}) async {
     User? user = await _authService.signUp(email, password);
     if (user != null){
       user.name = name;
@@ -33,6 +33,8 @@ class UserController {
 
       if (role == Role.Manager) {
         user.hospital = hospitalID;
+      } else {
+        user.phone = phone;
       }
 
       await _databaseService.createUser(user);

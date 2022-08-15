@@ -8,6 +8,7 @@ class User {
   String? hospital;
   List? specialities;
   bool? isApproved;
+  String? phone;
 
   User(this.uid, this.email);
 }
