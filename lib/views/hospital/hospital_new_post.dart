@@ -11,22 +11,24 @@ import 'package:top/widgets/button.dart';
 import 'package:top/widgets/heading_card.dart';
 import 'package:top/widgets/input_filed.dart';
 import 'package:top/models/user_model.dart';
-
-import '../../widgets/toast.dart';
-import '../../wrapper.dart';
+import 'package:top/widgets/toast.dart';
+import 'package:top/wrapper.dart';
 
 class HospitalNewPost extends StatelessWidget {
-  final User? hospital;
+  final User? user;
 
-  HospitalNewPost({super.key, required this.hospital});
+  HospitalNewPost({super.key, required this.user});
 
   final TextEditingController name = TextEditingController();
   final TextEditingController email = TextEditingController();
+  final TextEditingController hospital = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    name.text = hospital?.name ?? '';
-    email.text = hospital?.email ?? '';
+    var userController = Provider.of<UserController>(context);
+
+    name.text = user?.name ?? '';
+    email.text = user?.email ?? '';
 
     return Scaffold(
       body: Backdrop(
@@ -52,7 +54,7 @@ class HospitalNewPost extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            hospital?.name ?? '',
+                            user?.name ?? '',
                             style: TextStyle(
                                 color: kGreyText, fontSize: 28.sp, fontWeight: FontWeight.w600),
                           ),
@@ -70,7 +72,7 @@ class HospitalNewPost extends StatelessWidget {
 
                 //details
                 HeadingCard(
-                  title: 'Hospital Details',
+                  title: 'Manager Details',
                   child: Padding(
                     padding: EdgeInsets.all(20.w),
                     child: Column(
@@ -78,7 +80,7 @@ class HospitalNewPost extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 20.w),
                           child: InputField(
-                            text: 'Hospital Name',
+                            text: 'Name',
                             enabled: false,
                             controller: name,
                           ),
@@ -91,6 +93,21 @@ class HospitalNewPost extends StatelessWidget {
                             controller: email,
                           ),
                         ),
+                        FutureBuilder<String>(
+                          future: userController.getHospitalNameFromID(user == null ? '' : user!.hospital!),
+                          builder: (context, snapshot){
+                            hospital.text = snapshot.data ?? 'Loading...';
+
+                            return Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20.w),
+                              child: InputField(
+                                text: 'Hospital',
+                                enabled: false,
+                                controller: hospital,
+                              ),
+                            );
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -102,16 +119,16 @@ class HospitalNewPost extends StatelessWidget {
                   child: Button(
                     text: 'Post a New Job',
                     onPressed: () {
-                      if (hospital != null) {
+                      if (user != null && hospital.text != "Loading...") {
                         Navigator.push(
-                            context, CupertinoPageRoute(builder: (_) => HospitalCreatePost(hospital: hospital!)));
+                            context, CupertinoPageRoute(builder: (_) => HospitalCreatePost(manager: user!, hospitalName: hospital.text,)));
                       }
                     },
                   ),
                 ),
 
                 //log out
-                SizedBox(height: 140.h),
+                SizedBox(height: 20.h),
                 SizedBox(
                   width: double.infinity,
                   child: Button(

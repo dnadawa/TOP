@@ -40,7 +40,7 @@ class _HospitalPageSelectorState extends State<HospitalPageSelector> {
         controller: controller,
         physics: NeverScrollableScrollPhysics(),
         children: [
-          HospitalNewPost(hospital: user),
+          HospitalNewPost(user: user),
           HospitalJobs(
             status: tabIndex == 1
                 ? JobStatus.Available

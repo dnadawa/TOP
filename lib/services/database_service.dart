@@ -43,7 +43,8 @@ class DatabaseService {
     await _firestore.collection('jobs').add({
       'hospitalName': job.hospital,
       'hospitalID': job.hospitalID,
-      'suburb': job.suburb,
+      'managerName': job.managerName,
+      'managerID': job.managerID,
       'speciality': job.speciality,
       'shiftDate': job.shiftDate,
       'shiftStartTime': job.shiftStartTime,
@@ -70,6 +71,14 @@ class DatabaseService {
         .collection('hospitals')
         .get();
     return sub.docs;
+  }
+
+  Future<String> getHospitalNameFromID(String id) async {
+    var sub = await _firestore
+        .collection('hospitals')
+        .where('id', isEqualTo: id)
+        .get();
+    return sub.docs[0]['name'];
   }
 
   deleteJob(String id) async {

@@ -61,6 +61,10 @@ class UserController {
     return _databaseService.getHospitals();
   }
 
+  Future<String> getHospitalNameFromID(String id) async {
+    return _databaseService.getHospitalNameFromID(id);
+  }
+
   Future<bool> forgetPassword(String email) async {
     return await _authService.forgetPassword(email);
   }

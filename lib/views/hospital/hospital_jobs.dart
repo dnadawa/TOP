@@ -118,7 +118,7 @@ class _HospitalJobsState extends State<HospitalJobs> {
                                                 Expanded(
                                                   child: ShiftTile(
                                                     hospital: job.hospital,
-                                                    suburb: job.suburb,
+                                                    suburb: '',
                                                     shiftType: job.shiftType,
                                                     shiftTime: "${job.shiftStartTime} to ${job.shiftEndTime}",
                                                     shiftDate: DateFormat('EEEE MMMM dd').format(job.shiftDate),

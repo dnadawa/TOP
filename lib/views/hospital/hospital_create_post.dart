@@ -15,9 +15,10 @@ import 'package:top/widgets/toast.dart';
 import '../../models/user_model.dart';
 
 class HospitalCreatePost extends StatefulWidget {
-  final User hospital;
+  final User manager;
+  final String hospitalName;
 
-  const HospitalCreatePost({super.key, required this.hospital});
+  const HospitalCreatePost({super.key, required this.manager, required this.hospitalName});
 
   @override
   State<HospitalCreatePost> createState() => _HospitalCreatePostState();
@@ -25,7 +26,7 @@ class HospitalCreatePost extends StatefulWidget {
 
 class _HospitalCreatePostState extends State<HospitalCreatePost> {
   final TextEditingController hospitalName = TextEditingController();
-  final TextEditingController suburb = TextEditingController();
+  final TextEditingController managerName = TextEditingController();
   final TextEditingController shiftDate = TextEditingController();
   final TextEditingController shiftStartTime = TextEditingController();
   final TextEditingController shiftEndTime = TextEditingController();
@@ -37,8 +38,8 @@ class _HospitalCreatePostState extends State<HospitalCreatePost> {
 
   @override
   Widget build(BuildContext context) {
-    hospitalName.text = widget.hospital.name!;
-    // suburb.text = widget.hospital.suburb!;
+    managerName.text = widget.manager.name!;
+    hospitalName.text = widget.hospitalName;
 
     return Scaffold(
       body: Backdrop(
@@ -74,8 +75,8 @@ class _HospitalCreatePostState extends State<HospitalCreatePost> {
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 15.w),
                           child: InputField(
-                            text: 'Suburb',
-                            controller: suburb,
+                            text: 'Manager',
+                            controller: managerName,
                             enabled: false,
                           ),
                         ),
@@ -88,7 +89,7 @@ class _HospitalCreatePostState extends State<HospitalCreatePost> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(8.r),
                                 border: Border.all(color: kDisabled)),
-                            child: DropdownButton<String?>(
+                            child: DropdownButton(
                               underline: SizedBox.shrink(),
                               isExpanded: true,
                               hint: Text(
@@ -96,9 +97,9 @@ class _HospitalCreatePostState extends State<HospitalCreatePost> {
                                 style: TextStyle(color: kDisabled),
                               ),
                               value: selectedSpeciality,
-                              items: specialities.map((speciality) => DropdownMenuItem(value: speciality, child: Text(speciality))).toList(),
+                              items: widget.manager.specialities!.map((speciality) => DropdownMenuItem(value: speciality, child: Text(speciality))).toList(),
                               onChanged: (value) {
-                                setState(() => selectedSpeciality = value);
+                                setState(() => selectedSpeciality = value as String);
                               },
                             ),
                           ),
@@ -216,9 +217,10 @@ class _HospitalCreatePostState extends State<HospitalCreatePost> {
                         ToastBar(text: "Please wait...", color: Colors.orange).show();
 
                         Job job = Job(
+                          managerName: managerName.text,
+                          managerID: widget.manager.uid,
                           hospital: hospitalName.text,
-                          hospitalID: widget.hospital.uid,
-                          suburb: suburb.text,
+                          hospitalID: widget.manager.hospital!,
                           shiftDate: selectedShiftDate!,
                           shiftStartTime: shiftStartTime.text,
                           shiftEndTime: shiftEndTime.text,
