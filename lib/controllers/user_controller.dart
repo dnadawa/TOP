@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:top/models/shift_model.dart';
 import 'package:top/services/auth_service.dart';
 import 'package:top/constants.dart';
 import 'package:top/models/user_model.dart';
@@ -7,14 +9,13 @@ import 'package:top/services/database_service.dart';
 import 'package:top/widgets/toast.dart';
 
 class UserController {
-
   final AuthService _authService = AuthService();
   final DatabaseService _databaseService = DatabaseService();
 
   Future<User?> getCurrentUser() async {
     User? user = await _authService.currentUser;
 
-    if (user == null){
+    if (user == null) {
       return null;
     }
 
@@ -24,9 +25,10 @@ class UserController {
     return user;
   }
 
-  Future<bool> signUp(String email, String password, String name, Role role, List specialties, {String? hospitalID, String? phone}) async {
+  Future<bool> signUp(String email, String password, String name, Role role, List specialties,
+      {String? hospitalID, String? phone}) async {
     User? user = await _authService.signUp(email, password);
-    if (user != null){
+    if (user != null) {
       user.name = name;
       user.role = role;
       user.specialities = specialties;
@@ -39,7 +41,10 @@ class UserController {
 
       await _databaseService.createUser(user);
       await _authService.signOut();
-      ToastBar(text: '${role.name} successfully registered and waiting for admin approval!', color: Colors.green).show();
+      ToastBar(
+          text: '${role.name} successfully registered and waiting for admin approval!',
+          color: Colors.green)
+          .show();
       return true;
     }
 
@@ -49,7 +54,7 @@ class UserController {
   Future<User?> signIn(String email, String password) async {
     User? user = await _authService.signIn(email, password);
 
-    if (user == null){
+    if (user == null) {
       return null;
     }
 
@@ -72,13 +77,60 @@ class UserController {
   }
 
   Future<bool> changeAvailability(String uid, Map<String?, List<String>> dates) async {
-    try{
+    try {
       await _databaseService.updateAvailability(uid, dates);
       ToastBar(text: "Availability Updated Successfully!", color: Colors.green).show();
       return true;
-    } catch (e){
+    } catch (e) {
       ToastBar(text: e.toString(), color: Colors.red).show();
       return false;
     }
+  }
+
+  Future<List<Shift>> getAllAvailability(String uid) async {
+    try {
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> datesAndShifts =
+      await _databaseService.getAllAvailability(uid);
+
+      List<String> allDays =
+      _getDaysInBetween(DateTime.now(), DateTime.parse(datesAndShifts.last['date']));
+
+      List<Shift> shifts = allDays.map((day) {
+        int index = datesAndShifts.indexWhere((element) => element['date'] == day);
+
+        //not in db
+        if (index == -1) {
+          return Shift(
+            date: day,
+            am: AvailabilityStatus.NotAvailable,
+            pm: AvailabilityStatus.NotAvailable,
+            ns: AvailabilityStatus.NotAvailable,
+          );
+        }
+        // in db
+        else {
+          return Shift(
+            date: datesAndShifts[index]['date'],
+            am: AvailabilityStatus.values.byName(datesAndShifts[index]['AM']),
+            pm: AvailabilityStatus.values.byName(datesAndShifts[index]['PM']),
+            ns: AvailabilityStatus.values.byName(datesAndShifts[index]['NS']),
+          );
+        }
+      }).toList();
+
+      return shifts;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  List<String> _getDaysInBetween(DateTime startDate, DateTime endDate) {
+    List<String> days = [];
+    for (int i = 0; i <= endDate
+        .difference(startDate)
+        .inDays + 1; i++) {
+      days.add(startDate.add(Duration(days: i)).toYYYYMMDDFormat());
+    }
+    return days;
   }
 }

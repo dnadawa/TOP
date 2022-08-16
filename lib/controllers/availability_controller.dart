@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:top/constants.dart';
 
 class AvailabilityController extends ChangeNotifier {
 
@@ -22,7 +23,7 @@ class AvailabilityController extends ChangeNotifier {
   }
 
   onDaySelected(DateTime selectedDay, DateTime newFocusedDay) {
-    _currentDate = DateFormat('yyyy-MM-dd').format(selectedDay);
+    _currentDate = selectedDay.toYYYYMMDDFormat();
     if (!_selectedDatesAndShifts.containsKey(_currentDate)) {
       setShiftAndDate([].cast());
     } else {
@@ -46,7 +47,7 @@ class AvailabilityController extends ChangeNotifier {
   }
 
   bool selectedDayPredicate(DateTime date) {
-    String day = DateFormat('yyyy-MM-dd').format(date);
+    String day = date.toYYYYMMDDFormat();
     return _selectedDatesAndShifts.containsKey(day) && _selectedDatesAndShifts[day]!.isNotEmpty;
   }
 }

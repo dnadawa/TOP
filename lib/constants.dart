@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 final kGreen = Color(0xff0B8542);
 final kRed = Color(0xffC1272D);
@@ -30,5 +31,11 @@ extension TimeOfDayConverter on TimeOfDay {
     final hour = this.hour.toString().padLeft(2, "0");
     final min = minute.toString().padLeft(2, "0");
     return "$hour:$min";
+  }
+}
+
+extension FormatDate on DateTime {
+  String toYYYYMMDDFormat() {
+    return DateFormat('yyyy-MM-dd').format(this);
   }
 }

@@ -1,7 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:top/constants.dart';
+import 'package:top/controllers/user_controller.dart';
+import 'package:top/models/shift_model.dart';
 import 'package:top/models/user_model.dart';
 import 'package:top/views/edit_availability.dart';
 import 'package:top/widgets/availability_tile.dart';
@@ -10,13 +14,20 @@ import 'package:top/widgets/button.dart';
 import 'package:top/widgets/heading_card.dart';
 import 'package:top/widgets/badge.dart';
 
-class Availability extends StatelessWidget {
+class Availability extends StatefulWidget {
   final User? user;
 
-  const Availability({super.key,required this.user});
+  const Availability({super.key, required this.user});
 
   @override
+  State<Availability> createState() => _AvailabilityState();
+}
+
+class _AvailabilityState extends State<Availability> {
+  @override
   Widget build(BuildContext context) {
+    var userController = Provider.of<UserController>(context);
+
     return Scaffold(
       body: Backdrop(
         child: Padding(
@@ -67,14 +78,44 @@ class Availability extends StatelessWidget {
                         Expanded(
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 15.w),
-                            child: ListView.builder(
-                              physics: BouncingScrollPhysics(),
-                              itemCount: 10,
-                              itemBuilder: (context, i) => AvailabilityTile(
-                                dateString: 'Wed Aug 2',
-                                AM: true,
-                                PM: true,
-                                NS: true,
+                            child: RefreshIndicator(
+                              onRefresh: () async => setState(() {}),
+                              child: FutureBuilder<List<Shift>>(
+                                future: userController.getAllAvailability(widget.user?.uid ?? ''),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return Center(child: CircularProgressIndicator());
+                                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                    return Stack(
+                                      children: [
+                                        Center(
+                                          child: Text('No data to show!'),
+                                        ),
+                                        ListView(
+                                          physics: AlwaysScrollableScrollPhysics(),
+                                        ),
+                                      ],
+                                    );
+                                  }
+
+                                  return ListView.builder(
+                                    physics: BouncingScrollPhysics(
+                                      parent: AlwaysScrollableScrollPhysics(),
+                                    ),
+                                    itemCount: snapshot.data!.length,
+                                    itemBuilder: (context, i) {
+
+                                      Shift shift = snapshot.data![i];
+
+                                      return AvailabilityTile(
+                                        dateString: DateFormat('EEE MMM dd').format(shift.dateAsDateTime),
+                                        am: shift.am,
+                                        pm: shift.pm,
+                                        ns: shift.ns,
+                                      );
+                                    },
+                                  );
+                                },
                               ),
                             ),
                           ),
@@ -93,15 +134,15 @@ class Availability extends StatelessWidget {
                   text: 'Edit Availability',
                   color: kRed,
                   onPressed: () {
-                    if (user != null) {
+                    if (widget.user != null) {
                       Navigator.push(
                         context,
                         CupertinoPageRoute(
                           builder: (context) => EditAvailability(
-                            user: user!,
+                            user: widget.user!,
                           ),
                         ),
-                      );
+                      ).then((value) => setState((){}));
                     }
                   },
                 ),

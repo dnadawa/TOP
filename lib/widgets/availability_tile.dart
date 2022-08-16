@@ -6,11 +6,12 @@ import 'package:top/widgets/badge.dart';
 
 class AvailabilityTile extends StatelessWidget {
   final String dateString;
-  final bool AM;
-  final bool PM;
-  final bool NS;
+  final AvailabilityStatus am;
+  final AvailabilityStatus pm;
+  final AvailabilityStatus ns;
 
-  const AvailabilityTile({super.key, required this.dateString, required this.AM, required this.PM, required this.NS});
+  const AvailabilityTile(
+      {super.key, required this.dateString, required this.am, required this.pm, required this.ns});
 
   @override
   Widget build(BuildContext context) {
@@ -34,12 +35,24 @@ class AvailabilityTile extends StatelessWidget {
               ),
             ),
             Expanded(child: SizedBox.shrink()),
-            Badge(text: 'AM', color: Colors.red, enabled: AM),
+            Badge(
+              text: 'AM',
+              color: am == AvailabilityStatus.Available ? Colors.green : Colors.red,
+              enabled: am != AvailabilityStatus.NotAvailable,
+            ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.w),
-              child: Badge(text: 'PM', color: Colors.amber, enabled: PM),
+              child: Badge(
+                text: 'PM',
+                color: pm == AvailabilityStatus.Available ? Colors.green : Colors.red,
+                enabled: pm != AvailabilityStatus.NotAvailable,
+              ),
             ),
-            Badge(text: 'NS', color: Colors.green, enabled: NS),
+            Badge(
+              text: 'NS',
+              color: ns == AvailabilityStatus.Available ? Colors.green : Colors.red,
+              enabled: ns != AvailabilityStatus.NotAvailable,
+            ),
           ],
         ),
       ),
