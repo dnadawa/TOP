@@ -46,10 +46,10 @@ class _PageSelectorState extends State<PageSelector> {
         physics: NeverScrollableScrollPhysics(),
         children: [
           Home(user: user),
-          Availability(),
+          Availability(user: user),
           MyShifts(),
           ReleasedShifts(),
-          TimeSheets()
+          TimeSheets(),
         ],
       ),
 

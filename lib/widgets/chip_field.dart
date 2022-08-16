@@ -8,6 +8,7 @@ class ChipField extends StatefulWidget {
   final List<String> initialItems;
 
   const ChipField({
+    super.key,
     required this.text,
     required this.items,
     required this.onChanged,

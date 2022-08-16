@@ -9,6 +9,8 @@ final kOrange = Color(0xffE68C36);
 
 enum JobStatus { Confirmed, Available, Completed }
 
+enum AvailabilityStatus{ Available, Booked, NotAvailable }
+
 enum Role { Nurse, Manager }
 
 final specialities = [

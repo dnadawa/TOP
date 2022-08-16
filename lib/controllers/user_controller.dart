@@ -70,4 +70,15 @@ class UserController {
   Future<bool> forgetPassword(String email) async {
     return await _authService.forgetPassword(email);
   }
+
+  Future<bool> changeAvailability(String uid, Map<String?, List<String>> dates) async {
+    try{
+      await _databaseService.updateAvailability(uid, dates);
+      ToastBar(text: "Availability Updated Successfully!", color: Colors.green).show();
+      return true;
+    } catch (e){
+      ToastBar(text: e.toString(), color: Colors.red).show();
+      return false;
+    }
+  }
 }

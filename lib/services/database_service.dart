@@ -88,4 +88,15 @@ class DatabaseService {
   deleteJob(String id) async {
     await _firestore.collection('jobs').doc(id).delete();
   }
+
+  updateAvailability(String uid, Map<String?, List<String>> dates){
+    dates.forEach((key, value) async {
+      await _firestore.collection('users').doc(uid).collection('shifts').doc(key).set({
+        'date': key,
+        'AM' : value.contains('AM') ? AvailabilityStatus.Available.name : AvailabilityStatus.NotAvailable.name,
+        'PM' : value.contains('PM') ? AvailabilityStatus.Available.name : AvailabilityStatus.NotAvailable.name,
+        'NS' : value.contains('NS') ? AvailabilityStatus.Available.name : AvailabilityStatus.NotAvailable.name,
+      });
+    });
+  }
 }
