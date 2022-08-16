@@ -5,6 +5,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:top/constants.dart';
 import 'package:top/controllers/availability_controller.dart';
 import 'package:top/controllers/user_controller.dart';
+import 'package:top/models/shift_model.dart';
 import 'package:top/models/user_model.dart';
 import 'package:top/widgets/backdrop.dart';
 import 'package:top/widgets/button.dart';
@@ -14,15 +15,46 @@ import 'package:top/widgets/toast.dart';
 
 class EditAvailability extends StatelessWidget {
   final User user;
+  final List<Shift> previousShifts;
 
-  const EditAvailability({super.key, required this.user});
+  const EditAvailability({super.key, required this.user, required this.previousShifts});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<AvailabilityController>(
-      create: (_) => AvailabilityController({
-        '2022-08-18': ['AM']
-      }),
+      create: (_) {
+        Map<String, List<String>> shifts = {};
+        Map<String, List<String>> bookedShifts = {};
+
+        for (Shift shift in previousShifts) {
+          List<String> availableDates = [];
+          List<String> bookedDates = [];
+          if(shift.am == AvailabilityStatus.Available){
+            availableDates.add('AM');
+          } else if (shift.am == AvailabilityStatus.Booked) {
+            bookedDates.add('AM');
+          }
+
+          if(shift.pm == AvailabilityStatus.Available){
+            availableDates.add('PM');
+          } else if (shift.pm == AvailabilityStatus.Booked) {
+            bookedDates.add('PM');
+          }
+
+          if(shift.ns == AvailabilityStatus.Available){
+            availableDates.add('NS');
+          } else if (shift.ns == AvailabilityStatus.Booked) {
+            bookedDates.add('NS');
+          }
+
+          shifts[shift.date] = availableDates;
+          if(bookedDates.isNotEmpty){
+            bookedShifts[shift.date] = bookedDates;
+          }
+        }
+
+        return AvailabilityController(shifts, bookedShifts);
+      },
       builder: (context, child) {
         var availabilityController = context.watch<AvailabilityController>();
 
@@ -75,11 +107,7 @@ class EditAvailability extends StatelessWidget {
                                       return ChipField(
                                         key: UniqueKey(),
                                         text: 'Shifts on ${availabilityController.currentDate!}',
-                                        items: [
-                                          'AM',
-                                          'PM',
-                                          'NS',
-                                        ],
+                                        items: availabilityController.getItemsForCurrentDate(previousShifts),
                                         initialItems:
                                             availabilityController.getShiftsForCurrentDate(),
                                         onChanged: availabilityController.setShiftAndDate,

@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:top/constants.dart';
+import 'package:top/models/shift_model.dart';
 
 class AvailabilityController extends ChangeNotifier {
-
   Map<String?, List<String>> _selectedDatesAndShifts = {};
+  Map<String?, List<String>> _bookedShifts = {};
   DateTime _focusedDay = DateTime.now();
   String? _currentDate;
 
-  AvailabilityController(Map<String?, List<String>> datesAndShifts) {
+  AvailabilityController(
+      Map<String?, List<String>> datesAndShifts, Map<String?, List<String>> bookedShifts) {
     _selectedDatesAndShifts = datesAndShifts;
+    _bookedShifts = bookedShifts;
   }
 
   DateTime get focusedDay => _focusedDay;
@@ -18,7 +20,19 @@ class AvailabilityController extends ChangeNotifier {
 
   Map<String?, List<String>> get selectedDatesAndShifts {
     Map<String?, List<String>> newDates = {..._selectedDatesAndShifts};
+
+    //append 'Booked' to the shift if it is booked
+    // if AM is booked new element added to the list as AMBooked
+    _bookedShifts.forEach((key, value) {
+      if (newDates.containsKey(key)) {
+        newDates[key] = (newDates[key]! + value.map((e) => '${e}Booked').toList());
+      } else {
+        newDates[key] = value.map((e) => '${e}Booked').toList();
+      }
+    });
+
     newDates.removeWhere((key, value) => value.isEmpty);
+
     return newDates;
   }
 
@@ -49,5 +63,26 @@ class AvailabilityController extends ChangeNotifier {
   bool selectedDayPredicate(DateTime date) {
     String day = date.toYYYYMMDDFormat();
     return _selectedDatesAndShifts.containsKey(day) && _selectedDatesAndShifts[day]!.isNotEmpty;
+  }
+
+  List<String> getItemsForCurrentDate(List<Shift> shifts) {
+    try {
+      Shift shift = shifts.firstWhere((element) => element.date == _currentDate);
+
+      List<String> returnItems = [];
+      if (shift.am != AvailabilityStatus.Booked) {
+        returnItems.add('AM');
+      }
+      if (shift.pm != AvailabilityStatus.Booked) {
+        returnItems.add('PM');
+      }
+      if (shift.ns != AvailabilityStatus.Booked) {
+        returnItems.add('NS');
+      }
+
+      return returnItems;
+    } catch (e) {
+      return ['AM', 'PM', 'NS'];
+    }
   }
 }

@@ -93,9 +93,9 @@ class DatabaseService {
     dates.forEach((key, value) async {
       await _firestore.collection('users').doc(uid).collection('shifts').doc(key).set({
         'date': key,
-        'AM' : value.contains('AM') ? AvailabilityStatus.Available.name : AvailabilityStatus.NotAvailable.name,
-        'PM' : value.contains('PM') ? AvailabilityStatus.Available.name : AvailabilityStatus.NotAvailable.name,
-        'NS' : value.contains('NS') ? AvailabilityStatus.Available.name : AvailabilityStatus.NotAvailable.name,
+        'AM' : value.contains('AMBooked') ? AvailabilityStatus.Booked.name : value.contains('AM') ? AvailabilityStatus.Available.name : AvailabilityStatus.NotAvailable.name,
+        'PM' : value.contains('PMBooked') ? AvailabilityStatus.Booked.name : value.contains('PM') ? AvailabilityStatus.Available.name : AvailabilityStatus.NotAvailable.name,
+        'NS' : value.contains('NSBooked') ? AvailabilityStatus.Booked.name : value.contains('NS') ? AvailabilityStatus.Available.name : AvailabilityStatus.NotAvailable.name,
       });
     });
   }

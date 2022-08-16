@@ -133,13 +133,15 @@ class _AvailabilityState extends State<Availability> {
                 child: Button(
                   text: 'Edit Availability',
                   color: kRed,
-                  onPressed: () {
+                  onPressed: () async {
                     if (widget.user != null) {
+                      List<Shift> shifts = await userController.getAllAvailability(widget.user?.uid ?? '');
                       Navigator.push(
                         context,
                         CupertinoPageRoute(
                           builder: (context) => EditAvailability(
                             user: widget.user!,
+                            previousShifts: shifts,
                           ),
                         ),
                       ).then((value) => setState((){}));
