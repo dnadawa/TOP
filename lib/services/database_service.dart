@@ -70,6 +70,16 @@ class DatabaseService {
     return sub.docs;
   }
 
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAcceptedJobs(String nurseID) async {
+    var sub = await _firestore
+        .collection('jobs')
+        .where('nurse', isEqualTo: nurseID)
+        .where('status', isEqualTo: JobStatus.Confirmed.name)
+        .orderBy('shiftDate')
+        .get();
+    return sub.docs;
+  }
+
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getHospitals() async {
     var sub = await _firestore
         .collection('hospitals')

@@ -47,7 +47,7 @@ class _PageSelectorState extends State<PageSelector> {
         children: [
           Home(user: user),
           Availability(user: user),
-          MyShifts(),
+          MyShifts(user: user),
           ReleasedShifts(),
           TimeSheets(),
         ],
