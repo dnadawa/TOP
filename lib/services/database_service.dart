@@ -80,6 +80,27 @@ class DatabaseService {
     return sub.docs;
   }
 
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getReleasedJobsCountByDate(List specialities) async {
+    var sub = await _firestore
+        .collection('jobs')
+        .where('speciality',whereIn: specialities)
+        .where('status', isEqualTo: JobStatus.Available.name)
+        .orderBy('shiftDate')
+        .get();
+    return sub.docs;
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getReleasedJobs(List specialities, DateTime date) async {
+      var sub = await _firestore
+          .collection('jobs')
+          .where('speciality',whereIn: specialities)
+          .where('status', isEqualTo: JobStatus.Available.name)
+          .where('shiftDate', isGreaterThan: date)
+          .where('shiftDate', isLessThan: date.add(Duration(days: 1)))
+          .get();
+      return sub.docs;
+  }
+
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getHospitals() async {
     var sub = await _firestore
         .collection('hospitals')

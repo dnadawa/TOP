@@ -3,19 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:top/constants.dart';
+import 'package:top/models/user_model.dart';
 import 'package:top/views/my_shifts.dart';
 import 'package:top/widgets/badge.dart';
 
 class ReleasedShiftTile extends StatelessWidget {
   final String dateString;
   final String count;
+  final User? user;
 
-  const ReleasedShiftTile({super.key, required this.dateString, required this.count});
+  const ReleasedShiftTile(
+      {super.key, required this.dateString, required this.count, required this.user});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (_) => MyShifts(released: true))),
+      onTap: () => Navigator.push(
+        context,
+        CupertinoPageRoute(
+          builder: (_) => MyShifts(
+            released: true,
+            user: user,
+            date: dateString,
+          ),
+        ),
+      ),
       child: Card(
         color: Colors.white,
         shape: RoundedRectangleBorder(
@@ -33,7 +45,7 @@ class ReleasedShiftTile extends StatelessWidget {
                   child: Row(
                     children: [
                       Text(
-                        dateString,
+                        DateTime.parse(dateString).toEEEMMMddFormat(),
                         style: GoogleFonts.sourceSansPro(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.w600,

@@ -14,8 +14,9 @@ import 'package:top/models/job_model.dart';
 class MyShifts extends StatefulWidget {
   final bool released;
   final User? user;
+  final String? date;
 
-  const MyShifts({super.key, this.released = false, this.user});
+  const MyShifts({super.key, this.released = false, this.user, this.date});
 
   @override
   State<MyShifts> createState() => _MyShiftsState();
@@ -50,9 +51,14 @@ class _MyShiftsState extends State<MyShifts> {
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 15.w),
                       child: RefreshIndicator(
-                        onRefresh: () async => setState((){}),
+                        onRefresh: () async => setState(() {}),
                         child: FutureBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
-                          future: jobController.getAcceptedJobs(widget.user?.uid ?? ''),
+                          future: widget.released
+                              ? jobController.getReleasedJobs(
+                                  widget.user?.specialities ?? [],
+                                  widget.date!,
+                                )
+                              : jobController.getAcceptedJobs(widget.user?.uid ?? ''),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState == ConnectionState.waiting) {
                               return Center(
@@ -77,7 +83,6 @@ class _MyShiftsState extends State<MyShifts> {
                               ),
                               itemCount: snapshot.data!.length,
                               itemBuilder: (context, i) {
-
                                 Job job = Job.createJobFromDocument(snapshot.data![i]);
 
                                 return Padding(

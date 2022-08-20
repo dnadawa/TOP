@@ -38,4 +38,8 @@ extension FormatDate on DateTime {
   String toYYYYMMDDFormat() {
     return DateFormat('yyyy-MM-dd').format(this);
   }
+
+  String toEEEMMMddFormat() {
+    return DateFormat('EEE MMM dd').format(this);
+  }
 }

@@ -108,7 +108,7 @@ class _AvailabilityState extends State<Availability> {
                                       Shift shift = snapshot.data![i];
 
                                       return AvailabilityTile(
-                                        dateString: DateFormat('EEE MMM dd').format(shift.dateAsDateTime),
+                                        dateString: shift.dateAsDateTime.toEEEMMMddFormat(),
                                         am: shift.am,
                                         pm: shift.pm,
                                         ns: shift.ns,
