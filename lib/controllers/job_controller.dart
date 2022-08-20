@@ -63,4 +63,15 @@ class JobController extends ChangeNotifier {
       return false;
     }
   }
+
+  Future<bool> acceptJob(Job job, String nurseID) async {
+    try {
+      await _databaseService.acceptJob(job.id, nurseID, job.shiftDate.toYYYYMMDDFormat(), job.shiftType);
+      ToastBar(text: "Job Accepted!", color: Colors.green).show();
+      return true;
+    } catch (e) {
+      ToastBar(text: e.toString(), color: Colors.red).show();
+      return false;
+    }
+  }
 }

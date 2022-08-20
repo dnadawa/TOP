@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:top/constants.dart';
 import 'package:top/widgets/button.dart';
 import 'package:top/widgets/input_filed.dart';
+import 'package:top/widgets/toast.dart';
 
 class ShiftTile extends StatelessWidget {
   final bool showAcceptButton;
@@ -184,7 +185,7 @@ class ShiftTile extends StatelessWidget {
                     width: 150.w,
                     child: Button(
                       text: 'Accept',
-                      onPressed: () {},
+                      onPressed: () => onAcceptButtonPressed!(),
                       color: Colors.green,
                       padding: 5.h,
                       fontSize: 18.sp,

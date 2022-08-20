@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:top/models/shift_model.dart';
 import 'package:top/services/auth_service.dart';
@@ -121,6 +122,15 @@ class UserController {
       return shifts;
     } catch (e) {
       return [];
+    }
+  }
+
+  Future<bool> isNurseAvailable(String uid, String date, String shiftType) async {
+    List shift = await _databaseService.getSingleAvailability(uid, date);
+    if(shift.isEmpty){
+      return false;
+    } else {
+      return shift[0][shiftType] == AvailabilityStatus.Available.name;
     }
   }
 

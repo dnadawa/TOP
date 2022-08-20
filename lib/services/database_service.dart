@@ -60,7 +60,8 @@ class DatabaseService {
     });
   }
 
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getJobs(String hospitalID, String speciality, JobStatus status) async {
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getJobs(
+      String hospitalID, String speciality, JobStatus status) async {
     var sub = await _firestore
         .collection('jobs')
         .where('hospitalID', isEqualTo: hospitalID)
@@ -80,59 +81,90 @@ class DatabaseService {
     return sub.docs;
   }
 
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getReleasedJobsCountByDate(List specialities) async {
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getReleasedJobsCountByDate(
+      List specialities) async {
     var sub = await _firestore
         .collection('jobs')
-        .where('speciality',whereIn: specialities)
+        .where('speciality', whereIn: specialities)
         .where('status', isEqualTo: JobStatus.Available.name)
         .orderBy('shiftDate')
         .get();
     return sub.docs;
   }
 
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getReleasedJobs(List specialities, DateTime date) async {
-      var sub = await _firestore
-          .collection('jobs')
-          .where('speciality',whereIn: specialities)
-          .where('status', isEqualTo: JobStatus.Available.name)
-          .where('shiftDate', isGreaterThan: date)
-          .where('shiftDate', isLessThan: date.add(Duration(days: 1)))
-          .get();
-      return sub.docs;
-  }
-
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getHospitals() async {
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getReleasedJobs(
+      List specialities, DateTime date) async {
     var sub = await _firestore
-        .collection('hospitals')
+        .collection('jobs')
+        .where('speciality', whereIn: specialities)
+        .where('status', isEqualTo: JobStatus.Available.name)
+        .where('shiftDate', isGreaterThan: date)
+        .where('shiftDate', isLessThan: date.add(Duration(days: 1)))
         .get();
     return sub.docs;
   }
 
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getHospitals() async {
+    var sub = await _firestore.collection('hospitals').get();
+    return sub.docs;
+  }
+
   Future<String> getHospitalNameFromID(String id) async {
-    var sub = await _firestore
-        .collection('hospitals')
-        .where('id', isEqualTo: id)
-        .get();
+    var sub = await _firestore.collection('hospitals').where('id', isEqualTo: id).get();
     return sub.docs[0]['name'];
+  }
+
+  acceptJob(String jobID, String nurseID, String shiftID, String shiftType) async {
+    await _firestore.collection('jobs').doc(jobID).update({
+      'nurse': nurseID,
+      'status': JobStatus.Confirmed.name,
+    });
+
+    await _firestore.collection('users').doc(nurseID).collection('shifts').doc(shiftID).update({
+      shiftType: AvailabilityStatus.Booked.name,
+    });
   }
 
   deleteJob(String id) async {
     await _firestore.collection('jobs').doc(id).delete();
   }
 
-  updateAvailability(String uid, Map<String?, List<String>> dates){
+  updateAvailability(String uid, Map<String?, List<String>> dates) {
     dates.forEach((key, value) async {
       await _firestore.collection('users').doc(uid).collection('shifts').doc(key).set({
         'date': key,
-        'AM' : value.contains('AMBooked') ? AvailabilityStatus.Booked.name : value.contains('AM') ? AvailabilityStatus.Available.name : AvailabilityStatus.NotAvailable.name,
-        'PM' : value.contains('PMBooked') ? AvailabilityStatus.Booked.name : value.contains('PM') ? AvailabilityStatus.Available.name : AvailabilityStatus.NotAvailable.name,
-        'NS' : value.contains('NSBooked') ? AvailabilityStatus.Booked.name : value.contains('NS') ? AvailabilityStatus.Available.name : AvailabilityStatus.NotAvailable.name,
+        'AM': value.contains('AMBooked')
+            ? AvailabilityStatus.Booked.name
+            : value.contains('AM')
+                ? AvailabilityStatus.Available.name
+                : AvailabilityStatus.NotAvailable.name,
+        'PM': value.contains('PMBooked')
+            ? AvailabilityStatus.Booked.name
+            : value.contains('PM')
+                ? AvailabilityStatus.Available.name
+                : AvailabilityStatus.NotAvailable.name,
+        'NS': value.contains('NSBooked')
+            ? AvailabilityStatus.Booked.name
+            : value.contains('NS')
+                ? AvailabilityStatus.Available.name
+                : AvailabilityStatus.NotAvailable.name,
       });
     });
   }
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAllAvailability(String uid) async {
     var sub = await _firestore.collection('users').doc(uid).collection('shifts').get();
+    return sub.docs;
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getSingleAvailability(
+      String uid, String date) async {
+    var sub = await _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('shifts')
+        .where('date', isEqualTo: date)
+        .get();
     return sub.docs;
   }
 }

@@ -5,11 +5,13 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:top/constants.dart';
 import 'package:top/controllers/job_controller.dart';
+import 'package:top/controllers/user_controller.dart';
 import 'package:top/widgets/backdrop.dart';
 import 'package:top/widgets/heading_card.dart';
 import 'package:top/widgets/shift_tile.dart';
 import 'package:top/models/user_model.dart';
 import 'package:top/models/job_model.dart';
+import 'package:top/widgets/toast.dart';
 
 class MyShifts extends StatefulWidget {
   final bool released;
@@ -26,6 +28,7 @@ class _MyShiftsState extends State<MyShifts> {
   @override
   Widget build(BuildContext context) {
     var jobController = Provider.of<JobController>(context);
+    var userController = Provider.of<UserController>(context);
 
     return Scaffold(
       body: Backdrop(
@@ -94,6 +97,52 @@ class _MyShiftsState extends State<MyShifts> {
                                     shiftDate: DateFormat('EEEE MMMM dd').format(job.shiftDate),
                                     specialty: job.speciality,
                                     showAcceptButton: widget.released,
+                                    onAcceptButtonPressed: () async {
+                                      ToastBar(text: "Please wait...", color: Colors.orange).show();
+                                      bool isAvailable = await userController.isNurseAvailable(
+                                          widget.user!.uid,
+                                          job.shiftDate.toYYYYMMDDFormat(),
+                                          job.shiftType);
+
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) => AlertDialog(
+                                          content: Text(
+                                            isAvailable
+                                                ? 'Are you sure you want to accept this job?'
+                                                : 'You are not available on this shift.',
+                                          ),
+                                          actions: [
+                                            if(isAvailable)
+                                            TextButton(
+                                              child: Text(
+                                                'Yes',
+                                                style: TextStyle(
+                                                  color: kGreen,
+                                                ),
+                                              ),
+                                              onPressed: () async {
+                                                bool success =
+                                                await jobController.acceptJob(job, widget.user!.uid);
+                                                if (success) {
+                                                  Navigator.pop(context);
+                                                  setState(() {});
+                                                }
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: Text(
+                                                isAvailable ? 'No' : 'OK',
+                                                style: TextStyle(
+                                                  color: kGreen,
+                                                ),
+                                              ),
+                                              onPressed: () => Navigator.pop(context),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
                                     showFrontStrip: true,
                                     additionalDetails: job.additionalDetails,
                                   ),
