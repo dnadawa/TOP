@@ -49,7 +49,7 @@ class _PageSelectorState extends State<PageSelector> {
           Availability(user: user),
           MyShifts(user: user),
           ReleasedShifts(user: user),
-          TimeSheets(),
+          TimeSheets(user: user,),
         ],
       ),
 

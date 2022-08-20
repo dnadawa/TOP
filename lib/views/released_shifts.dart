@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +7,8 @@ import 'package:top/widgets/backdrop.dart';
 import 'package:top/widgets/heading_card.dart';
 import 'package:top/widgets/released_shift_tile.dart';
 import 'package:top/controllers/job_controller.dart';
+
+import 'my_shifts.dart';
 
 class ReleasedShifts extends StatefulWidget {
   final User? user;
@@ -66,10 +69,21 @@ class _ReleasedShiftsState extends State<ReleasedShifts> {
                                 String key = snapshot.data!.keys.toList()[i];
                                 int value = snapshot.data![key] ?? 0;
 
-                                return ReleasedShiftTile(
-                                  dateString: key,
-                                  count: value.toString(),
-                                  user: widget.user,
+                                return GestureDetector(
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (_) => MyShifts(
+                                        released: true,
+                                        user: widget.user,
+                                        date: key,
+                                      ),
+                                    ),
+                                  ).then((value) => setState((){})),
+                                  child: ReleasedShiftTile(
+                                    dateString: key,
+                                    count: value.toString(),
+                                  ),
                                 );
                               },
                             );

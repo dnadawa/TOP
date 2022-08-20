@@ -97,6 +97,8 @@ class _MyShiftsState extends State<MyShifts> {
                                     shiftDate: DateFormat('EEEE MMMM dd').format(job.shiftDate),
                                     specialty: job.speciality,
                                     showAcceptButton: widget.released,
+                                    showFrontStrip: true,
+                                    additionalDetails: job.additionalDetails,
                                     onAcceptButtonPressed: () async {
                                       ToastBar(text: "Please wait...", color: Colors.orange).show();
                                       bool isAvailable = await userController.isNurseAvailable(
@@ -143,8 +145,6 @@ class _MyShiftsState extends State<MyShifts> {
                                         ),
                                       );
                                     },
-                                    showFrontStrip: true,
-                                    additionalDetails: job.additionalDetails,
                                   ),
                                 );
                               },

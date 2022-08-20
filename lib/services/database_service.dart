@@ -167,4 +167,17 @@ class DatabaseService {
         .get();
     return sub.docs;
   }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getTodayTimeSheets(String uid) async {
+    DateTime todayDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+    var sub = await _firestore
+        .collection('jobs')
+        .where('status', isEqualTo: JobStatus.Confirmed.name)
+        .where('nurse', isEqualTo: uid)
+        .where('shiftDate', isGreaterThan: todayDate)
+        .where('shiftDate', isLessThan: todayDate.add(Duration(days: 1)))
+        .get();
+    return sub.docs;
+  }
 }
