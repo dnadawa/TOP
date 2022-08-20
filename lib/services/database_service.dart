@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:top/constants.dart';
 import 'package:top/models/job_model.dart';
+import 'package:top/models/timesheet_model.dart';
 import 'package:top/models/user_model.dart';
 
 class DatabaseService {
@@ -179,5 +180,24 @@ class DatabaseService {
         .where('shiftDate', isLessThan: todayDate.add(Duration(days: 1)))
         .get();
     return sub.docs;
+  }
+
+  submitTimesheet(TimeSheet timeSheet) async {
+    await _firestore.collection('timesheets').add({
+      'jobID': timeSheet.job.id,
+      'shiftStartTime': timeSheet.startTime,
+      'shiftEndTime': timeSheet.endTime,
+      'date': timeSheet.job.shiftDate.toYYYYMMDDFormat(),
+      'mealBreakIncluded': timeSheet.mealBreakIncluded,
+      'mealBreakTime': timeSheet.mealBreakTime,
+      'nurseSignature': timeSheet.nurseSignatureURL,
+      'hospitalSignature': timeSheet.hospitalSignatureURL,
+      'hospitalName': timeSheet.hospitalSignatureName,
+      'additionalDetails': timeSheet.additionalDetails,
+    });
+
+    await _firestore.collection('jobs').doc(timeSheet.job.id).update({
+      'status': JobStatus.Completed.name,
+    });
   }
 }

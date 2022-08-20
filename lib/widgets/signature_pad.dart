@@ -10,8 +10,9 @@ import 'package:top/widgets/input_filed.dart';
 class SignaturePad extends StatelessWidget {
   final Function onComplete;
   final bool needSignName;
+  final TextEditingController? name;
 
-  const SignaturePad({super.key, required this.onComplete, this.needSignName = false});
+  const SignaturePad({super.key, required this.onComplete, this.needSignName = false, this.name});
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +65,7 @@ class SignaturePad extends StatelessWidget {
                   ),
                   child: InputField(
                     text: "Signature's Name",
+                    controller: name,
                   ),
                 ),
               Padding(

@@ -1,12 +1,19 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import 'package:top/constants.dart';
-import 'package:top/services/database_service.dart';
+import 'package:top/models/timesheet_model.dart';
 import 'package:top/models/job_model.dart';
+import 'package:top/services/storage_service.dart';
 import 'package:top/widgets/toast.dart';
+import 'package:top/services/database_service.dart';
 
 class JobController extends ChangeNotifier {
   final DatabaseService _databaseService = DatabaseService();
+  final StorageService _storageService = StorageService();
 
   String _selectedSpeciality = specialities[0];
 
@@ -37,11 +44,13 @@ class JobController extends ChangeNotifier {
     return await _databaseService.getAcceptedJobs(nurseID);
   }
 
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getReleasedJobs(List specialities, String date) async {
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getReleasedJobs(
+      List specialities, String date) async {
     return await _databaseService.getReleasedJobs(specialities, DateTime.parse(date));
   }
 
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getTodayTimeSheets(String nurseID) async {
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getTodayTimeSheets(
+      String nurseID) async {
     return await _databaseService.getTodayTimeSheets(nurseID);
   }
 
@@ -51,7 +60,8 @@ class JobController extends ChangeNotifier {
     for (var data in fetchedData) {
       DateTime date = data['shiftDate'].toDate();
       String dateString = date.toYYYYMMDDFormat();
-      datesAndCount[dateString] = datesAndCount.containsKey(dateString) ? (datesAndCount[dateString]! + 1) : 1;
+      datesAndCount[dateString] =
+          datesAndCount.containsKey(dateString) ? (datesAndCount[dateString]! + 1) : 1;
     }
 
     return datesAndCount;
@@ -70,10 +80,39 @@ class JobController extends ChangeNotifier {
 
   Future<bool> acceptJob(Job job, String nurseID) async {
     try {
-      await _databaseService.acceptJob(job.id, nurseID, job.shiftDate.toYYYYMMDDFormat(), job.shiftType);
+      await _databaseService.acceptJob(
+          job.id, nurseID, job.shiftDate.toYYYYMMDDFormat(), job.shiftType);
       ToastBar(text: "Job Accepted!", color: Colors.green).show();
       return true;
     } catch (e) {
+      ToastBar(text: e.toString(), color: Colors.red).show();
+      return false;
+    }
+  }
+
+  Future<bool> submitTimeSheet(TimeSheet timeSheet, Uint8List nurseSignature, Uint8List hospitalSignature,
+      BuildContext context) async {
+    SimpleFontelicoProgressDialog pd =
+        SimpleFontelicoProgressDialog(context: context, barrierDimisable: false);
+    pd.show(
+      message: "Data uploading...",
+      indicatorColor: kGreen,
+      width: 0.6.sw,
+      height: 130.h,
+      textAlign: TextAlign.center,
+      separation: 30.h,
+    );
+    try {
+      timeSheet.nurseSignatureURL =
+          await _storageService.uploadBytes("${timeSheet.job.id}_nurse", nurseSignature);
+      timeSheet.hospitalSignatureURL =
+          await _storageService.uploadBytes("${timeSheet.job.id}_hospital", hospitalSignature);
+      await _databaseService.submitTimesheet(timeSheet);
+      pd.hide();
+      ToastBar(text: "Timesheet Submitted!", color: Colors.green).show();
+      return true;
+    } catch (e) {
+      pd.hide();
       ToastBar(text: e.toString(), color: Colors.red).show();
       return false;
     }

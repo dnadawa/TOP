@@ -20,13 +20,13 @@ import 'package:top/controllers/job_controller.dart';
 class TimeSheets extends StatefulWidget {
   final User? user;
 
-  const TimeSheets({super.key,required this.user});
+  const TimeSheets({super.key, required this.user});
+
   @override
   State<TimeSheets> createState() => _TimeSheetsState();
 }
 
 class _TimeSheetsState extends State<TimeSheets> {
-
   @override
   Widget build(BuildContext context) {
     var jobController = Provider.of<JobController>(context);
@@ -75,42 +75,52 @@ class _TimeSheetsState extends State<TimeSheets> {
                                 Job job = Job.createJobFromDocument(snapshot.data![i]);
 
                                 return Padding(
-                                padding: EdgeInsets.only(bottom: 20.h),
-                                child: GestureDetector(
-                                  onTap: () => Navigator.push(context, CupertinoPageRoute(builder: (context) => SingleTimesheet())),
-                                  child: IntrinsicHeight(
-                                    child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                                      children: [
-                                        Expanded(
-                                          child: ShiftTile(
-                                            hospital: job.hospital,
-                                            shiftType: job.shiftType,
-                                            shiftTime: "${job.shiftStartTime} to ${job.shiftEndTime}",
-                                            shiftDate: DateFormat('EEEE MMMM dd').format(job.shiftDate),
-                                            specialty: job.speciality,
-                                            additionalDetails: job.additionalDetails,
-                                            showBackStrip: true,
-                                          ),
+                                  padding: EdgeInsets.only(bottom: 20.h),
+                                  child: GestureDetector(
+                                    onTap: () => Navigator.push(
+                                      context,
+                                      CupertinoPageRoute(
+                                        builder: (context) => SingleTimesheet(
+                                          job: job,
                                         ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            color: kRed,
-                                            borderRadius: BorderRadius.horizontal(right: Radius.circular(10.r)),
-                                          ),
-                                          child: SizedBox(
-                                            child: Icon(
-                                              Icons.arrow_forward_ios,
-                                              color: Colors.white,
-                                              size: 20,
+                                      ),
+                                    ).then((value) => setState((){})),
+                                    child: IntrinsicHeight(
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                                        children: [
+                                          Expanded(
+                                            child: ShiftTile(
+                                              hospital: job.hospital,
+                                              shiftType: job.shiftType,
+                                              shiftTime:
+                                                  "${job.shiftStartTime} to ${job.shiftEndTime}",
+                                              shiftDate:
+                                                  DateFormat('EEEE MMMM dd').format(job.shiftDate),
+                                              specialty: job.speciality,
+                                              additionalDetails: job.additionalDetails,
+                                              showBackStrip: true,
                                             ),
                                           ),
-                                        )
-                                      ],
+                                          Container(
+                                            decoration: BoxDecoration(
+                                              color: kRed,
+                                              borderRadius: BorderRadius.horizontal(
+                                                  right: Radius.circular(10.r)),
+                                            ),
+                                            child: SizedBox(
+                                              child: Icon(
+                                                Icons.arrow_forward_ios,
+                                                color: Colors.white,
+                                                size: 20,
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
+                                );
                               },
                             );
                           },

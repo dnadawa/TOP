@@ -1,136 +1,262 @@
 import 'dart:typed_data';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:top/constants.dart';
-import 'package:top/views/edit_availability.dart';
-import 'package:top/widgets/availability_tile.dart';
+import 'package:top/controllers/job_controller.dart';
+import 'package:top/models/job_model.dart';
+import 'package:top/models/timesheet_model.dart';
 import 'package:top/widgets/backdrop.dart';
 import 'package:top/widgets/button.dart';
 import 'package:top/widgets/heading_card.dart';
 import 'package:top/widgets/input_filed.dart';
 import 'package:top/widgets/signature_pad.dart';
+import 'package:top/widgets/shift_tile.dart';
+import 'package:top/widgets/toast.dart';
 
-import '../widgets/shift_tile.dart';
+class SingleTimesheet extends StatefulWidget {
+  final Job job;
 
-class SingleTimesheet extends StatelessWidget {
+  const SingleTimesheet({super.key, required this.job});
+
+  @override
+  State<SingleTimesheet> createState() => _SingleTimesheetState();
+}
+
+class _SingleTimesheetState extends State<SingleTimesheet> {
+  final TextEditingController shiftStartTime = TextEditingController();
+  final TextEditingController shiftEndTime = TextEditingController();
+  final TextEditingController additionalDetails = TextEditingController();
+  final TextEditingController hospitalSignatureName = TextEditingController();
+  bool mealBreak = false;
+  int? mealBreakTime;
+  Uint8List? nurseSign, hospitalSign;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Backdrop(
-        child: Padding(
-          padding: EdgeInsets.all(30.w),
-          child: Column(
-            children: [
-              SizedBox(height: ScreenUtil().statusBarHeight - 30.w),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+        child: Backdrop(
+          child: Padding(
+            padding: EdgeInsets.all(30.w),
+            child: Column(
+              children: [
+                SizedBox(height: ScreenUtil().statusBarHeight - 30.w),
 
-              Align(
-                alignment: Alignment.topLeft,
-                child: BackButton(
-                  color: kGreyText,
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: BackButton(
+                    color: kGreyText,
+                  ),
                 ),
-              ),
 
-              Expanded(
-                child: HeadingCard(
-                  title: 'Time Sheet',
-                  child: Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15.w),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            SizedBox(height: 30.h),
+                Expanded(
+                  child: HeadingCard(
+                    title: 'Time Sheet',
+                    child: Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 15.w),
+                        child: SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
+                          child: Column(
+                            children: [
+                              SizedBox(height: 30.h),
 
-                            //shift details
-                            ShiftTile(
-                              hospital: 'Akuressa Central Hospital',
-                              shiftType: "PM",
-                              shiftTime: "13:00 to 23:53",
-                              shiftDate: 'Wednesday August 2',
-                              specialty: 'Speciality 1',
-                              showFrontStrip: true,
-                              additionalDetails: '',
-                            ),
-                            SizedBox(height: 50.h),
+                              //shift details
+                              ShiftTile(
+                                hospital: widget.job.hospital,
+                                shiftType: widget.job.shiftType,
+                                shiftTime:
+                                    "${widget.job.shiftStartTime} to ${widget.job.shiftEndTime}",
+                                shiftDate: DateFormat('EEEE MMMM dd').format(widget.job.shiftDate),
+                                specialty: widget.job.speciality,
+                                additionalDetails: widget.job.additionalDetails,
+                                showFrontStrip: true,
+                              ),
+                              SizedBox(height: 50.h),
 
-                            //text fields
-                            InputField(text: 'Shift Start Time'),
-                            SizedBox(height: 25.h),
-                            InputField(text: 'Shift End Time'),
-                            SizedBox(height: 20.h),
+                              //text fields
+                              GestureDetector(
+                                onTap: () async {
+                                  TimeOfDay? pickedTime = await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.now(),
+                                  );
 
-                            //checkbox
-                            CheckboxListTile(
-                              value: true,
-                              onChanged: (value) {},
-                              controlAffinity: ListTileControlAffinity.leading,
-                              activeColor: kGreen,
-                              contentPadding: EdgeInsets.zero,
-                              title: Text(
-                                'Meal break included in the shift',
-                                style: GoogleFonts.sourceSansPro(
+                                  shiftStartTime.text = pickedTime!.to24hours();
+                                },
+                                child: InputField(
+                                  text: 'Shift Start Time',
+                                  controller: shiftStartTime,
+                                  enabled: false,
+                                ),
+                              ),
+                              SizedBox(height: 25.h),
+                              GestureDetector(
+                                onTap: () async {
+                                  TimeOfDay? pickedTime = await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.now(),
+                                  );
+
+                                  shiftEndTime.text = pickedTime!.to24hours();
+                                },
+                                child: InputField(
+                                  text: 'Shift End Time',
+                                  controller: shiftEndTime,
+                                  enabled: false,
+                                ),
+                              ),
+                              SizedBox(height: 15.h),
+
+                              //checkbox
+                              CheckboxListTile(
+                                value: mealBreak,
+                                onChanged: (value) => setState(() => mealBreak = value!),
+                                controlAffinity: ListTileControlAffinity.leading,
+                                activeColor: kGreen,
+                                contentPadding: EdgeInsets.zero,
+                                title: Text(
+                                  'Meal break included in the shift',
+                                  style: GoogleFonts.sourceSansPro(
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 15.h),
+
+                              //meal break minutes
+                              if (mealBreak)
+                                Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.symmetric(horizontal: 15.w),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(8.r),
+                                      border: Border.all(color: kDisabled)),
+                                  child: DropdownButton(
+                                      underline: SizedBox.shrink(),
+                                      isExpanded: true,
+                                      hint: Text(
+                                        "Select Meal Break Time",
+                                        style: TextStyle(color: kDisabled),
+                                      ),
+                                      value: mealBreakTime,
+                                      items: List.generate(60, (index) => index + 1)
+                                          .map(
+                                            (min) => DropdownMenuItem(
+                                              value: min,
+                                              child: Text("$min minute${min > 1 ? 's' : ''}"),
+                                            ),
+                                          )
+                                          .toList(),
+                                      onChanged: (value) {
+                                        setState(() => mealBreakTime = value as int);
+                                      }),
+                                ),
+                              if (mealBreak) SizedBox(height: 25.h),
+
+                              //additional details
+                              InputField(
+                                text: 'Additional Details (Optional)',
+                                multiLine: true,
+                                controller: additionalDetails,
+                              ),
+                              SizedBox(height: 40.h),
+
+                              //signatures
+                              SizedBox(
+                                width: double.infinity,
+                                child: Button(
+                                  text: 'Nurse Signature',
+                                  onPressed: () => showDialog(
+                                    context: context,
+                                    builder: (context) => SignaturePad(
+                                      onComplete: (Uint8List? sign) {
+                                        nurseSign = sign;
+                                      },
+                                    ),
+                                  ),
+                                  color: Colors.green,
                                   fontSize: 18.sp,
-                                  fontWeight: FontWeight.w400,
+                                  padding: 10.h,
                                 ),
                               ),
-                            ),
-                            SizedBox(height: 40.h),
-
-                            //signatures
-                            SizedBox(
-                              width: double.infinity,
-                              child: Button(
-                                text: 'Nurse Signature',
-                                onPressed: () => showDialog(
-                                  context: context,
-                                  builder: (context) => SignaturePad(
-                                    onComplete: (Uint8List? sign) {},
+                              SizedBox(height: 10.h),
+                              SizedBox(
+                                width: double.infinity,
+                                child: Button(
+                                  text: 'Hospital Signature',
+                                  onPressed: () => showDialog(
+                                    context: context,
+                                    builder: (context) => SignaturePad(
+                                      onComplete: (Uint8List? sign) {
+                                        hospitalSign = sign;
+                                      },
+                                      needSignName: true,
+                                      name: hospitalSignatureName,
+                                    ),
                                   ),
+                                  color: Colors.green,
+                                  fontSize: 18.sp,
+                                  padding: 10.h,
                                 ),
-                                color: Colors.green,
-                                fontSize: 18.sp,
-                                padding: 10.h,
                               ),
-                            ),
-                            SizedBox(height: 10.h),
-                            SizedBox(
-                              width: double.infinity,
-                              child: Button(
-                                text: 'Hospital Signature',
-                                onPressed: () => showDialog(
-                                  context: context,
-                                  builder: (context) => SignaturePad(
-                                    onComplete: (Uint8List? sign) {},
-                                    needSignName: true,
-                                  ),
-                                ),
-                                color: Colors.green,
-                                fontSize: 18.sp,
-                                padding: 10.h,
-                              ),
-                            ),
-                          ],
+                              SizedBox(height: 30.h),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(height: 50.h),
+                SizedBox(height: 50.h),
 
-              //button
-              SizedBox(
-                width: double.infinity,
-                child: Button(
-                  text: 'Submit',
-                  color: kRed,
-                  onPressed: () {},
+                //button
+                SizedBox(
+                  width: double.infinity,
+                  child: Button(
+                    text: 'Submit',
+                    color: kRed,
+                    onPressed: () async {
+                      if (shiftStartTime.text.isEmpty ||
+                          shiftEndTime.text.isEmpty ||
+                          hospitalSignatureName.text.trim().isEmpty ||
+                          (mealBreak && mealBreakTime == null) ||
+                          nurseSign == null ||
+                          hospitalSign == null) {
+                        ToastBar(text: 'Please fill relevant fields!', color: Colors.red).show();
+                      } else {
+                        TimeSheet timeSheet = TimeSheet(
+                          job: widget.job,
+                          startTime: shiftStartTime.text,
+                          endTime: shiftEndTime.text,
+                          mealBreakIncluded: mealBreak,
+                          mealBreakTime: mealBreakTime,
+                          additionalDetails: additionalDetails.text.trim(),
+                          hospitalSignatureName: hospitalSignatureName.text.trim(),
+                        );
+
+                        bool success =
+                            await Provider.of<JobController>(context, listen: false).submitTimeSheet(
+                          timeSheet,
+                          nurseSign!,
+                          hospitalSign!,
+                          context,
+                        );
+                        if (success) {
+                          Navigator.pop(context);
+                        }
+                      }
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
