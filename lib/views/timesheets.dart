@@ -82,6 +82,7 @@ class _TimeSheetsState extends State<TimeSheets> {
                                       CupertinoPageRoute(
                                         builder: (context) => SingleTimesheet(
                                           job: job,
+                                          user: widget.user!,
                                         ),
                                       ),
                                     ).then((value) => setState((){})),

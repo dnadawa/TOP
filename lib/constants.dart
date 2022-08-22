@@ -8,6 +8,8 @@ final kDisabledSecondary = Color(0xffE5E5E5);
 final kGreyText = Color(0xff52575D);
 final kOrange = Color(0xffE68C36);
 
+const adminEmail = "nkenwey@gmail.com";
+
 enum JobStatus { Confirmed, Available, Completed }
 
 enum AvailabilityStatus{ Available, Booked, NotAvailable }

@@ -7,11 +7,13 @@ import 'package:top/services/auth_service.dart';
 import 'package:top/constants.dart';
 import 'package:top/models/user_model.dart';
 import 'package:top/services/database_service.dart';
+import 'package:top/services/email_service.dart';
 import 'package:top/widgets/toast.dart';
 
 class UserController {
   final AuthService _authService = AuthService();
   final DatabaseService _databaseService = DatabaseService();
+  final EmailService _emailService = EmailService();
 
   Future<User?> getCurrentUser() async {
     User? user = await _authService.currentUser;
@@ -42,9 +44,12 @@ class UserController {
 
       await _databaseService.createUser(user);
       await _authService.signOut();
+      await _emailService.sendEmail(
+          subject: "A new ${role.name.toLowerCase()} registered",
+          templateID: 'templateID'); //todo: complete email sending
       ToastBar(
-          text: '${role.name} successfully registered and waiting for admin approval!',
-          color: Colors.green)
+              text: '${role.name} successfully registered and waiting for admin approval!',
+              color: Colors.green)
           .show();
       return true;
     }
@@ -91,10 +96,10 @@ class UserController {
   Future<List<Shift>> getAllAvailability(String uid) async {
     try {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> datesAndShifts =
-      await _databaseService.getAllAvailability(uid);
+          await _databaseService.getAllAvailability(uid);
 
       List<String> allDays =
-      _getDaysInBetween(DateTime.now(), DateTime.parse(datesAndShifts.last['date']));
+          _getDaysInBetween(DateTime.now(), DateTime.parse(datesAndShifts.last['date']));
 
       List<Shift> shifts = allDays.map((day) {
         int index = datesAndShifts.indexWhere((element) => element['date'] == day);
@@ -127,7 +132,7 @@ class UserController {
 
   Future<bool> isNurseAvailable(String uid, String date, String shiftType) async {
     List shift = await _databaseService.getSingleAvailability(uid, date);
-    if(shift.isEmpty){
+    if (shift.isEmpty) {
       return false;
     } else {
       return shift[0][shiftType] == AvailabilityStatus.Available.name;
@@ -136,9 +141,7 @@ class UserController {
 
   List<String> _getDaysInBetween(DateTime startDate, DateTime endDate) {
     List<String> days = [];
-    for (int i = 0; i <= endDate
-        .difference(startDate)
-        .inDays + 1; i++) {
+    for (int i = 0; i <= endDate.difference(startDate).inDays + 1; i++) {
       days.add(startDate.add(Duration(days: i)).toYYYYMMDDFormat());
     }
     return days;

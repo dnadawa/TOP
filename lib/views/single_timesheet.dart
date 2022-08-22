@@ -8,6 +8,7 @@ import 'package:top/constants.dart';
 import 'package:top/controllers/job_controller.dart';
 import 'package:top/models/job_model.dart';
 import 'package:top/models/timesheet_model.dart';
+import 'package:top/models/user_model.dart';
 import 'package:top/widgets/backdrop.dart';
 import 'package:top/widgets/button.dart';
 import 'package:top/widgets/heading_card.dart';
@@ -18,8 +19,9 @@ import 'package:top/widgets/toast.dart';
 
 class SingleTimesheet extends StatefulWidget {
   final Job job;
+  final User user;
 
-  const SingleTimesheet({super.key, required this.job});
+  const SingleTimesheet({super.key, required this.job, required this.user});
 
   @override
   State<SingleTimesheet> createState() => _SingleTimesheetState();
@@ -241,12 +243,13 @@ class _SingleTimesheetState extends State<SingleTimesheet> {
                           hospitalSignatureName: hospitalSignatureName.text.trim(),
                         );
 
-                        bool success =
-                            await Provider.of<JobController>(context, listen: false).submitTimeSheet(
+                        bool success = await Provider.of<JobController>(context, listen: false)
+                            .submitTimeSheet(
                           timeSheet,
                           nurseSign!,
                           hospitalSign!,
                           context,
+                          widget.user,
                         );
                         if (success) {
                           Navigator.pop(context);

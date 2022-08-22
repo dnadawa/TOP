@@ -7,13 +7,16 @@ import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import 'package:top/constants.dart';
 import 'package:top/models/timesheet_model.dart';
 import 'package:top/models/job_model.dart';
+import 'package:top/services/email_service.dart';
 import 'package:top/services/storage_service.dart';
 import 'package:top/widgets/toast.dart';
 import 'package:top/services/database_service.dart';
+import 'package:top/models/user_model.dart';
 
 class JobController extends ChangeNotifier {
   final DatabaseService _databaseService = DatabaseService();
   final StorageService _storageService = StorageService();
+  final EmailService _emailService = EmailService();
 
   String _selectedSpeciality = specialities[0];
 
@@ -27,6 +30,9 @@ class JobController extends ChangeNotifier {
   Future<bool> createJob(Job job) async {
     try {
       await _databaseService.createJob(job);
+      await _emailService.sendEmail(
+          subject: "A new job posted",
+          templateID: 'templateID'); //todo: complete email sending
       ToastBar(text: "Job Posted Successfully!", color: Colors.green).show();
       return true;
     } catch (e) {
@@ -82,6 +88,9 @@ class JobController extends ChangeNotifier {
     try {
       await _databaseService.acceptJob(
           job.id, nurseID, job.shiftDate.toYYYYMMDDFormat(), job.shiftType);
+      await _emailService.sendEmail(
+          subject: "A nurse accepted a job",
+          templateID: 'templateID'); //todo: complete email sending
       ToastBar(text: "Job Accepted!", color: Colors.green).show();
       return true;
     } catch (e) {
@@ -90,8 +99,8 @@ class JobController extends ChangeNotifier {
     }
   }
 
-  Future<bool> submitTimeSheet(TimeSheet timeSheet, Uint8List nurseSignature, Uint8List hospitalSignature,
-      BuildContext context) async {
+  Future<bool> submitTimeSheet(TimeSheet timeSheet, Uint8List nurseSignature,
+      Uint8List hospitalSignature, BuildContext context, User nurse) async {
     SimpleFontelicoProgressDialog pd =
         SimpleFontelicoProgressDialog(context: context, barrierDimisable: false);
     pd.show(
@@ -103,11 +112,37 @@ class JobController extends ChangeNotifier {
       separation: 30.h,
     );
     try {
+
+      //upload signatures
       timeSheet.nurseSignatureURL =
           await _storageService.uploadBytes("${timeSheet.job.id}_nurse", nurseSignature);
       timeSheet.hospitalSignatureURL =
           await _storageService.uploadBytes("${timeSheet.job.id}_hospital", hospitalSignature);
+
+      //send to database
       await _databaseService.submitTimesheet(timeSheet);
+
+      String managerEmail = await _databaseService.getUserEmailFromUID(timeSheet.job.managerID);
+
+      //send email
+      await _emailService.sendEmail(
+        to: [adminEmail, managerEmail, nurse.email!],
+        subject: "A nurse submitted a timesheet",
+        templateID: 'templateID',
+        templateData: {
+          'hospital': timeSheet.job.hospital,
+          'speciality': timeSheet.job.speciality,
+          'date': timeSheet.job.shiftDate,
+          'startTime': timeSheet.startTime,
+          'endTime': timeSheet.endTime,
+          'mealBreakTime': timeSheet.mealBreakTime ?? 0,
+          'additionalDetails': timeSheet.additionalDetails ?? "",
+          'nurseSign': timeSheet.nurseSignatureURL,
+          'hospitalSign': timeSheet.hospitalSignatureURL,
+          'hospitalSignName': timeSheet.hospitalSignatureName,
+        },
+      ); //todo: complete email sending
+
       pd.hide();
       ToastBar(text: "Timesheet Submitted!", color: Colors.green).show();
       return true;

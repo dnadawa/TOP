@@ -1,13 +1,14 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sendgrid_mailer/sendgrid_mailer.dart';
+import 'package:top/constants.dart';
 
 class EmailService {
-  sendEmail({String to = 'nkenwey@gmail.com', required String subject, Map<String, dynamic>? templateData, required String templateID}) async {
+  sendEmail({List<String>? to, required String subject, Map<String, dynamic>? templateData, required String templateID}) async {
     try{
       final mailer = Mailer(dotenv.env['SENDGRID']!);
-      final toAddress = Address(to);
+      List<Address> toAddresses = to == null ? [Address(adminEmail)] : to.map((e) => Address(e)).toList();
       final fromAddress = Address('damienkenway61@gmail.com', "TOP Nurse Agency");
-      final personalization = Personalization([toAddress], dynamicTemplateData: templateData);
+      final personalization = Personalization(toAddresses, dynamicTemplateData: templateData);
 
       final email = Email([personalization], fromAddress, subject, templateId: templateID);
       await mailer.send(email);

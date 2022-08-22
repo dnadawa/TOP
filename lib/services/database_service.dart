@@ -44,6 +44,11 @@ class DatabaseService {
     return role;
   }
 
+  Future<String> getUserEmailFromUID(String uid) async {
+    var doc = await _firestore.collection('users').doc(uid).get();
+    return doc.data()!['email'];
+  }
+
   createJob(Job job) async {
     await _firestore.collection('jobs').add({
       'hospitalName': job.hospital,
