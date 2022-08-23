@@ -100,7 +100,6 @@ class DatabaseService {
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getReleasedJobs(
       List specialities, DateTime date) async {
-    print(date);
     var sub = await _firestore
         .collection('jobs')
         .where('speciality', whereIn: specialities)
