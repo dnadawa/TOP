@@ -15,6 +15,7 @@ class DatabaseService {
       'role': user.role?.name,
       'specialities': user.specialities,
       'isApproved': false,
+      'isDeclined': false,
     };
 
     if (user.role! == Role.Manager) {
