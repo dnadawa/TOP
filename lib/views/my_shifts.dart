@@ -33,13 +33,10 @@ class _MyShiftsState extends State<MyShifts> {
     return Scaffold(
       body: Backdrop(
         child: Padding(
-          padding: EdgeInsets.all(30.w),
+          padding: EdgeInsets.fromLTRB(30.w, widget.released ? 10.h : 30.h, 30.w, 30.h),
           child: Column(
             children: [
-              SizedBox(
-                  height: widget.released
-                      ? ScreenUtil().statusBarHeight - 30.w
-                      : ScreenUtil().statusBarHeight),
+              SizedBox(height: ScreenUtil().statusBarHeight),
               if (widget.released)
                 Align(
                   alignment: Alignment.topLeft,
@@ -115,23 +112,23 @@ class _MyShiftsState extends State<MyShifts> {
                                                 : 'You are not available on this shift.',
                                           ),
                                           actions: [
-                                            if(isAvailable)
-                                            TextButton(
-                                              child: Text(
-                                                'Yes',
-                                                style: TextStyle(
-                                                  color: kGreen,
+                                            if (isAvailable)
+                                              TextButton(
+                                                child: Text(
+                                                  'Yes',
+                                                  style: TextStyle(
+                                                    color: kGreen,
+                                                  ),
                                                 ),
+                                                onPressed: () async {
+                                                  bool success = await jobController.acceptJob(
+                                                      job, widget.user!.uid);
+                                                  if (success) {
+                                                    Navigator.pop(context);
+                                                    setState(() {});
+                                                  }
+                                                },
                                               ),
-                                              onPressed: () async {
-                                                bool success =
-                                                await jobController.acceptJob(job, widget.user!.uid);
-                                                if (success) {
-                                                  Navigator.pop(context);
-                                                  setState(() {});
-                                                }
-                                              },
-                                            ),
                                             TextButton(
                                               child: Text(
                                                 isAvailable ? 'No' : 'OK',

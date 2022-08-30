@@ -24,10 +24,10 @@ class HospitalJobDetails extends StatelessWidget {
     return Scaffold(
       body: Backdrop(
         child: Padding(
-          padding: EdgeInsets.all(30.h),
+          padding: EdgeInsets.fromLTRB(30.w, 10.h, 30.w, 30.h),
           child: Column(
             children: [
-              SizedBox(height: ScreenUtil().statusBarHeight - 30.h),
+              SizedBox(height: ScreenUtil().statusBarHeight),
 
               Align(
                 alignment: Alignment.topLeft,

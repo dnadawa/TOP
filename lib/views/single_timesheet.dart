@@ -43,10 +43,10 @@ class _SingleTimesheetState extends State<SingleTimesheet> {
         onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
         child: Backdrop(
           child: Padding(
-            padding: EdgeInsets.all(30.w),
+            padding: EdgeInsets.fromLTRB(30.w, 10.h, 30.w, 30.h),
             child: Column(
               children: [
-                SizedBox(height: ScreenUtil().statusBarHeight - 30.w),
+                SizedBox(height: ScreenUtil().statusBarHeight),
 
                 Align(
                   alignment: Alignment.topLeft,

@@ -61,11 +61,11 @@ class EditAvailability extends StatelessWidget {
         return Scaffold(
           body: Backdrop(
             child: Padding(
-              padding: EdgeInsets.all(30.w),
+              padding: EdgeInsets.fromLTRB(30.w, 10.h, 30.w, 30.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: ScreenUtil().statusBarHeight - 20.w),
+                  SizedBox(height: ScreenUtil().statusBarHeight),
                   BackButton(
                     color: kGreyText,
                   ),
