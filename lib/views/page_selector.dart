@@ -7,9 +7,8 @@ import 'package:top/views/home.dart';
 import 'package:top/views/my_shifts.dart';
 import 'package:top/views/released_shifts.dart';
 import 'package:top/views/timesheets.dart';
-
-import '../controllers/user_controller.dart';
-import '../models/user_model.dart';
+import 'package:top/controllers/user_controller.dart';
+import 'package:top/models/user_model.dart';
 
 class PageSelector extends StatefulWidget {
 

@@ -7,8 +7,7 @@ import 'package:top/widgets/backdrop.dart';
 import 'package:top/widgets/heading_card.dart';
 import 'package:top/widgets/released_shift_tile.dart';
 import 'package:top/controllers/job_controller.dart';
-
-import 'my_shifts.dart';
+import 'package:top/views/my_shifts.dart';
 
 class ReleasedShifts extends StatefulWidget {
   final User? user;

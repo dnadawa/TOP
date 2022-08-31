@@ -4,13 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:top/constants.dart';
 import 'package:top/controllers/user_controller.dart';
 import 'package:top/models/user_model.dart';
-import 'package:top/views/availability.dart';
-import 'package:top/views/home.dart';
 import 'package:top/views/hospital/hospital_jobs.dart';
 import 'package:top/views/hospital/hospital_new_post.dart';
-import 'package:top/views/my_shifts.dart';
-import 'package:top/views/released_shifts.dart';
-import 'package:top/views/timesheets.dart';
 
 class HospitalPageSelector extends StatefulWidget {
   @override

@@ -1,19 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:top/constants.dart';
-import 'package:top/views/hospital/hospital_page_selector.dart';
-import 'package:top/views/page_selector.dart';
 import 'package:top/widgets/backdrop.dart';
 import 'package:top/widgets/input_filed.dart';
 import 'package:top/widgets/button.dart';
 import 'package:top/widgets/toast.dart';
 import 'package:top/controllers/user_controller.dart';
-
-import '../widgets/chip_field.dart';
+import 'package:top/widgets/chip_field.dart';
 
 class SignUp extends StatefulWidget {
   @override

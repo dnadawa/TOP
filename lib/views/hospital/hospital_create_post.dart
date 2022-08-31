@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:top/controllers/job_controller.dart';
@@ -11,8 +10,7 @@ import 'package:top/widgets/button.dart';
 import 'package:top/widgets/heading_card.dart';
 import 'package:top/widgets/input_filed.dart';
 import 'package:top/widgets/toast.dart';
-
-import '../../models/user_model.dart';
+import 'package:top/models/user_model.dart';
 
 class HospitalCreatePost extends StatefulWidget {
   final User manager;

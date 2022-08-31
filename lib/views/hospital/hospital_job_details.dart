@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:top/controllers/job_controller.dart';
@@ -8,11 +7,9 @@ import 'package:top/widgets/backdrop.dart';
 import 'package:top/constants.dart';
 import 'package:top/widgets/button.dart';
 import 'package:top/widgets/heading_card.dart';
-import 'package:top/widgets/input_filed.dart';
-
-import '../../models/job_model.dart';
-import '../../widgets/shift_tile.dart';
-import '../../widgets/toast.dart';
+import 'package:top/models/job_model.dart';
+import 'package:top/widgets/shift_tile.dart';
+import 'package:top/widgets/toast.dart';
 
 class HospitalJobDetails extends StatelessWidget {
   final Job job;

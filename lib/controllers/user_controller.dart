@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 import 'package:top/models/shift_model.dart';
 import 'package:top/services/auth_service.dart';
 import 'package:top/constants.dart';

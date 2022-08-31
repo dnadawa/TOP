@@ -16,7 +16,7 @@ class ChipField extends StatefulWidget {
   });
 
   @override
-  _ChipFieldState createState() => _ChipFieldState();
+  State<ChipField> createState() => _ChipFieldState();
 }
 
 class _ChipFieldState extends State<ChipField> {
