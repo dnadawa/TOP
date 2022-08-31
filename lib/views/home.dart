@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:top/controllers/job_controller.dart';
 import 'package:top/widgets/backdrop.dart';
 import 'package:top/constants.dart';
 import 'package:top/widgets/heading_card.dart';
 import 'package:top/widgets/input_filed.dart';
 import 'package:top/models/user_model.dart';
-
-import '../controllers/user_controller.dart';
-import '../widgets/button.dart';
-import '../widgets/toast.dart';
-import '../wrapper.dart';
+import 'package:top/controllers/user_controller.dart';
+import 'package:top/widgets/button.dart';
+import 'package:top/widgets/toast.dart';
+import 'package:top/wrapper.dart';
 
 class Home extends StatelessWidget {
   final User? user;
@@ -38,15 +38,47 @@ class Home extends StatelessWidget {
               children: [
                 SizedBox(height: ScreenUtil().statusBarHeight),
 
-                Align(
-                  alignment: Alignment.topRight,
-                  child: GestureDetector(
-                    child: Icon(Icons.exit_to_app),
-                    onTap: (){},
-                  ),
-                ),
-                SizedBox(height: 10.h),
+                //notice
+                if (user != null)
+                  FutureBuilder<List>(
+                    future: Provider.of<JobController>(context).getAllNotifications(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting ||
+                          !snapshot.hasData ||
+                          snapshot.data!.isEmpty) {
+                        return SizedBox(height: 10.h);
+                      }
 
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 25.h),
+                        child: Card(
+                          color: Colors.white,
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                            child: Row(
+                              children: [
+                                Icon(Icons.info, color: Colors.orange),
+                                SizedBox(width: 15.w),
+                                Expanded(
+                                  child: Text(
+                                    snapshot.data![0]['text'],
+                                    style: TextStyle(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
 
                 //name
                 Row(
@@ -77,7 +109,7 @@ class Home extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 50.h),
 
                 //details
                 HeadingCard(
@@ -115,24 +147,9 @@ class Home extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 20.h),
-
-                //notifications
-                HeadingCard(
-                  title: 'Notifications',
-                  child: Padding(
-                    padding: EdgeInsets.all(20.w),
-                    child: ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: 5,
-                      itemBuilder: (context, i) => Text(i.toString()),
-                    ),
-                  ),
-                ),
+                SizedBox(height: 80.h),
 
                 //log out
-                SizedBox(height: 30.h),
                 SizedBox(
                   width: double.infinity,
                   child: Button(
@@ -140,11 +157,12 @@ class Home extends StatelessWidget {
                     color: kRed,
                     onPressed: () async {
                       ToastBar(text: 'Please wait...', color: Colors.orange).show();
-                      bool signedOut = await Provider.of<UserController>(context, listen: false).signOut();
-                      if (signedOut){
+                      bool signedOut =
+                          await Provider.of<UserController>(context, listen: false).signOut();
+                      if (signedOut) {
                         Navigator.of(context).pushAndRemoveUntil(
                             CupertinoPageRoute(builder: (context) => Wrapper()),
-                                (Route<dynamic> route) => false);
+                            (Route<dynamic> route) => false);
                         ToastBar(text: 'Logged out!', color: Colors.green).show();
                       }
                     },
