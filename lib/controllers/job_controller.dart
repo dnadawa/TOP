@@ -31,8 +31,13 @@ class JobController extends ChangeNotifier {
     try {
       await _databaseService.createJob(job);
       await _emailService.sendEmail(
-          subject: "A new job posted",
-          templateID: 'templateID'); //todo: complete email sending
+        subject: "A New Job Posted",
+        templateID: jobPostedTemplateID,
+        templateData: {
+          'manager': job.managerName,
+          'hospital': job.hospital,
+        },
+      );
       ToastBar(text: "Job Posted Successfully!", color: Colors.green).show();
       return true;
     } catch (e) {
@@ -84,13 +89,23 @@ class JobController extends ChangeNotifier {
     }
   }
 
-  Future<bool> acceptJob(Job job, String nurseID) async {
+  Future<bool> acceptJob(Job job, User nurse) async {
     try {
       await _databaseService.acceptJob(
-          job.id, nurseID, job.shiftDate.toYYYYMMDDFormat(), job.shiftType);
+        job.id,
+        nurse.uid,
+        job.shiftDate.toYYYYMMDDFormat(),
+        job.shiftType,
+      );
+
       await _emailService.sendEmail(
-          subject: "A nurse accepted a job",
-          templateID: 'templateID'); //todo: complete email sending
+        subject: "A Nurse Accepted a Job",
+        templateID: jobAcceptedTemplateID,
+        templateData: {
+          'nurse': nurse.name,
+          'hospital': job.hospital,
+        },
+      );
       ToastBar(text: "Job Accepted!", color: Colors.green).show();
       return true;
     } catch (e) {
@@ -112,7 +127,6 @@ class JobController extends ChangeNotifier {
       separation: 30.h,
     );
     try {
-
       //upload signatures
       timeSheet.nurseSignatureURL =
           await _storageService.uploadBytes("${timeSheet.job.id}_nurse", nurseSignature);
@@ -127,12 +141,12 @@ class JobController extends ChangeNotifier {
       //send email
       await _emailService.sendEmail(
         to: [adminEmail, managerEmail, nurse.email!],
-        subject: "A nurse submitted a timesheet",
-        templateID: 'templateID',
+        subject: "Timesheet Received",
+        templateID: timeSheetTemplateID,
         templateData: {
           'hospital': timeSheet.job.hospital,
           'speciality': timeSheet.job.speciality,
-          'date': timeSheet.job.shiftDate,
+          'date': timeSheet.job.shiftDate.toEEEMMMddFormat(),
           'startTime': timeSheet.startTime,
           'endTime': timeSheet.endTime,
           'mealBreakTime': timeSheet.mealBreakTime ?? 0,
@@ -140,8 +154,9 @@ class JobController extends ChangeNotifier {
           'nurseSign': timeSheet.nurseSignatureURL,
           'hospitalSign': timeSheet.hospitalSignatureURL,
           'hospitalSignName': timeSheet.hospitalSignatureName,
+          'nurse': nurse.name,
         },
-      ); //todo: complete email sending
+      );
 
       pd.hide();
       ToastBar(text: "Timesheet Submitted!", color: Colors.green).show();
@@ -151,5 +166,9 @@ class JobController extends ChangeNotifier {
       ToastBar(text: e.toString(), color: Colors.red).show();
       return false;
     }
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAllNotifications() async {
+    return _databaseService.getAllNotifications();
   }
 }

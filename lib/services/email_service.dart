@@ -7,8 +7,8 @@ class EmailService {
     try{
       final mailer = Mailer(dotenv.env['SENDGRID']!);
       List<Address> toAddresses = to == null ? [Address(adminEmail)] : to.map((e) => Address(e)).toList();
-      final fromAddress = Address('damienkenway61@gmail.com', "TOP Nurse Agency");
-      final personalization = Personalization(toAddresses, dynamicTemplateData: templateData);
+      final fromAddress = Address('topnurseagency@gmail.com', "TOP Nurse Agency");
+      final personalization = Personalization(toAddresses, dynamicTemplateData: templateData, subject: subject);
 
       final email = Email([personalization], fromAddress, subject, templateId: templateID);
       await mailer.send(email);

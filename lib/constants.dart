@@ -8,8 +8,6 @@ final kDisabledSecondary = Color(0xffE5E5E5);
 final kGreyText = Color(0xff52575D);
 final kOrange = Color(0xffE68C36);
 
-const adminEmail = "nkenwey@gmail.com";
-
 enum JobStatus { Confirmed, Available, Completed }
 
 enum AvailabilityStatus{ Available, Booked, NotAvailable }
@@ -27,6 +25,12 @@ final specialities = [
   'Porter',
   'None',
 ];
+
+const adminEmail = "nkenwey@gmail.com";
+const approvalTemplateID = "d-0402a018c31f4a3580d3832dfb09b7ea";
+const jobPostedTemplateID = "d-75db89af5bda42e8b3d6cbbd94a20b57";
+const jobAcceptedTemplateID = "d-af1f64ff2d5146d49be239c498458fdd";
+const timeSheetTemplateID = "d-c35555a2c0e04cbb92dd6f744d2ae43f";
 
 extension TimeOfDayConverter on TimeOfDay {
   String to24hours() {

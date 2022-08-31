@@ -121,8 +121,9 @@ class _MyShiftsState extends State<MyShifts> {
                                                   ),
                                                 ),
                                                 onPressed: () async {
+                                                  ToastBar(text: 'Please wait...', color: Colors.orange).show();
                                                   bool success = await jobController.acceptJob(
-                                                      job, widget.user!.uid);
+                                                      job, widget.user!);
                                                   if (success) {
                                                     Navigator.pop(context);
                                                     setState(() {});

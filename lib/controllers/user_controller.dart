@@ -46,7 +46,12 @@ class UserController {
       await _authService.signOut();
       await _emailService.sendEmail(
           subject: "A new ${role.name.toLowerCase()} registered",
-          templateID: 'templateID'); //todo: complete email sending
+          templateID: approvalTemplateID,
+          templateData: {
+            'role': role.name,
+            'name': user.name,
+          },
+      );
       ToastBar(
               text: '${role.name} successfully registered and waiting for admin approval!',
               color: Colors.green)

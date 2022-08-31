@@ -125,6 +125,7 @@ class DatabaseService {
     await _firestore.collection('jobs').doc(jobID).update({
       'nurse': nurseID,
       'status': JobStatus.Confirmed.name,
+      'timeSheetDay': shiftID,
     });
 
     await _firestore.collection('users').doc(nurseID).collection('shifts').doc(shiftID).update({
@@ -176,14 +177,11 @@ class DatabaseService {
   }
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getTodayTimeSheets(String uid) async {
-    DateTime todayDate = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-
     var sub = await _firestore
         .collection('jobs')
         .where('status', isEqualTo: JobStatus.Confirmed.name)
         .where('nurse', isEqualTo: uid)
-        .where('shiftDate', isGreaterThan: todayDate)
-        .where('shiftDate', isLessThan: todayDate.add(Duration(days: 1)))
+        .where('timeSheetDay', isEqualTo: DateTime.now().toYYYYMMDDFormat())
         .get();
     return sub.docs;
   }
@@ -205,5 +203,10 @@ class DatabaseService {
     await _firestore.collection('jobs').doc(timeSheet.job.id).update({
       'status': JobStatus.Completed.name,
     });
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAllNotifications() async {
+    var sub = await _firestore.collection('notifications').orderBy('date', descending: true).get();
+    return sub.docs;
   }
 }

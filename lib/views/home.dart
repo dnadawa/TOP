@@ -33,10 +33,20 @@ class Home extends StatelessWidget {
       body: Backdrop(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.all(30.h),
+            padding: EdgeInsets.fromLTRB(30.h, 10.h, 30.h, 30.h),
             child: Column(
               children: [
                 SizedBox(height: ScreenUtil().statusBarHeight),
+
+                Align(
+                  alignment: Alignment.topRight,
+                  child: GestureDetector(
+                    child: Icon(Icons.exit_to_app),
+                    onTap: (){},
+                  ),
+                ),
+                SizedBox(height: 10.h),
+
 
                 //name
                 Row(
@@ -67,7 +77,7 @@ class Home extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 75.h),
+                SizedBox(height: 20.h),
 
                 //details
                 HeadingCard(
@@ -77,7 +87,7 @@ class Home extends StatelessWidget {
                     child: Column(
                       children: [
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20.w),
+                          padding: EdgeInsets.symmetric(vertical: 10.w),
                           child: InputField(
                             text: 'Email',
                             enabled: false,
@@ -85,7 +95,7 @@ class Home extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20.w),
+                          padding: EdgeInsets.symmetric(vertical: 10.w),
                           child: InputField(
                             text: 'Speciality',
                             enabled: false,
@@ -94,7 +104,7 @@ class Home extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.symmetric(vertical: 20.w),
+                          padding: EdgeInsets.symmetric(vertical: 10.w),
                           child: InputField(
                             text: 'Mobile Number',
                             enabled: false,
@@ -105,10 +115,24 @@ class Home extends StatelessWidget {
                     ),
                   ),
                 ),
+                SizedBox(height: 20.h),
 
+                //notifications
+                HeadingCard(
+                  title: 'Notifications',
+                  child: Padding(
+                    padding: EdgeInsets.all(20.w),
+                    child: ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: 5,
+                      itemBuilder: (context, i) => Text(i.toString()),
+                    ),
+                  ),
+                ),
 
                 //log out
-                SizedBox(height: 80.h),
+                SizedBox(height: 30.h),
                 SizedBox(
                   width: double.infinity,
                   child: Button(
