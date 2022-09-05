@@ -26,7 +26,7 @@ final specialities = [
   'None',
 ];
 
-const adminEmail = "nkenwey@gmail.com";
+const adminEmail = "joyceplus.adm@gmail.com";
 const approvalTemplateID = "d-0402a018c31f4a3580d3832dfb09b7ea";
 const jobPostedTemplateID = "d-75db89af5bda42e8b3d6cbbd94a20b57";
 const jobAcceptedTemplateID = "d-af1f64ff2d5146d49be239c498458fdd";

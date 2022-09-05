@@ -140,7 +140,25 @@ class JobController extends ChangeNotifier {
 
       //send email
       await _emailService.sendEmail(
-        to: [adminEmail, managerEmail, nurse.email!],
+        subject: "Timesheet Received",
+        templateID: timeSheetTemplateID,
+        templateData: {
+          'hospital': timeSheet.job.hospital,
+          'speciality': timeSheet.job.speciality,
+          'date': timeSheet.job.shiftDate.toEEEMMMddFormat(),
+          'startTime': timeSheet.startTime,
+          'endTime': timeSheet.endTime,
+          'mealBreakTime': timeSheet.mealBreakTime ?? 0,
+          'additionalDetails': timeSheet.additionalDetails ?? "",
+          'nurseSign': timeSheet.nurseSignatureURL,
+          'hospitalSign': timeSheet.hospitalSignatureURL,
+          'hospitalSignName': timeSheet.hospitalSignatureName,
+          'nurse': nurse.name,
+        },
+      );
+      await _emailService.sendEmail(
+        from: 'joyceplus.adm@gmail.com',
+        to: [managerEmail, nurse.email!],
         subject: "Timesheet Received",
         templateID: timeSheetTemplateID,
         templateData: {
