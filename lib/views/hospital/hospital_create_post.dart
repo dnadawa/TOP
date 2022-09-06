@@ -16,7 +16,8 @@ class HospitalCreatePost extends StatefulWidget {
   final User manager;
   final String hospitalName;
 
-  const HospitalCreatePost({super.key, required this.manager, required this.hospitalName});
+  const HospitalCreatePost(
+      {super.key, required this.manager, required this.hospitalName});
 
   @override
   State<HospitalCreatePost> createState() => _HospitalCreatePostState();
@@ -95,9 +96,14 @@ class _HospitalCreatePostState extends State<HospitalCreatePost> {
                                 style: TextStyle(color: kDisabled),
                               ),
                               value: selectedSpeciality,
-                              items: widget.manager.specialities!.map((speciality) => DropdownMenuItem(value: speciality, child: Text(speciality))).toList(),
+                              items: widget.manager.specialities!
+                                  .map((speciality) => DropdownMenuItem(
+                                      value: speciality,
+                                      child: Text(speciality)))
+                                  .toList(),
                               onChanged: (value) {
-                                setState(() => selectedSpeciality = value as String);
+                                setState(
+                                    () => selectedSpeciality = value as String);
                               },
                             ),
                           ),
@@ -114,7 +120,8 @@ class _HospitalCreatePostState extends State<HospitalCreatePost> {
                               );
 
                               selectedShiftDate = pickedDate;
-                              shiftDate.text = DateFormat('EEEE MMMM dd').format(pickedDate!);
+                              shiftDate.text = DateFormat('EEEE MMMM dd')
+                                  .format(pickedDate!);
                             },
                             child: InputField(
                               text: 'Shift Date',
@@ -177,9 +184,12 @@ class _HospitalCreatePostState extends State<HospitalCreatePost> {
                               ),
                               value: selectedShiftType,
                               items: [
-                                DropdownMenuItem(value: 'AM', child: Text('AM')),
-                                DropdownMenuItem(value: 'PM', child: Text('PM')),
-                                DropdownMenuItem(value: 'NS', child: Text('NS')),
+                                DropdownMenuItem(
+                                    value: 'AM', child: Text('AM')),
+                                DropdownMenuItem(
+                                    value: 'PM', child: Text('PM')),
+                                DropdownMenuItem(
+                                    value: 'NS', child: Text('NS')),
                               ],
                               onChanged: (value) {
                                 setState(() => selectedShiftType = value);
@@ -206,29 +216,37 @@ class _HospitalCreatePostState extends State<HospitalCreatePost> {
                   child: Button(
                     text: 'Submit',
                     onPressed: () async {
+                      FocusManager.instance.primaryFocus?.unfocus();
                       if (shiftDate.text.isEmpty ||
                           shiftStartTime.text.isEmpty ||
                           shiftEndTime.text.isEmpty ||
-                          selectedShiftType == null || selectedSpeciality == null) {
-                        ToastBar(text: 'Please fill relevant fields!', color: Colors.red).show();
+                          selectedShiftType == null ||
+                          selectedSpeciality == null) {
+                        ToastBar(
+                                text: 'Please fill relevant fields!',
+                                color: Colors.red)
+                            .show();
                       } else {
-                        ToastBar(text: "Please wait...", color: Colors.orange).show();
+                        ToastBar(text: "Please wait...", color: Colors.orange)
+                            .show();
 
                         Job job = Job(
-                          managerName: managerName.text,
-                          managerID: widget.manager.uid,
-                          hospital: hospitalName.text,
-                          hospitalID: widget.manager.hospital!,
-                          shiftDate: selectedShiftDate!,
-                          shiftStartTime: shiftStartTime.text,
-                          shiftEndTime: shiftEndTime.text,
-                          shiftType: selectedShiftType!,
-                          additionalDetails: additionalDetails.text,
-                          speciality: selectedSpeciality!,
-                          id: ''
-                        );
+                            managerName: managerName.text,
+                            managerID: widget.manager.uid,
+                            hospital: hospitalName.text,
+                            hospitalID: widget.manager.hospital!,
+                            shiftDate: selectedShiftDate!,
+                            shiftStartTime: shiftStartTime.text,
+                            shiftEndTime: shiftEndTime.text,
+                            shiftType: selectedShiftType!,
+                            additionalDetails: additionalDetails.text,
+                            speciality: selectedSpeciality!,
+                            id: '');
 
-                        bool isSuccess = await Provider.of<JobController>(context, listen: false).createJob(job);
+                        bool isSuccess = await Provider.of<JobController>(
+                                context,
+                                listen: false)
+                            .createJob(job);
                         if (isSuccess) {
                           Navigator.pop(context);
                         }

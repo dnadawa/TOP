@@ -73,7 +73,8 @@ class _SingleTimesheetState extends State<SingleTimesheet> {
                                 shiftType: widget.job.shiftType,
                                 shiftTime:
                                     "${widget.job.shiftStartTime} to ${widget.job.shiftEndTime}",
-                                shiftDate: DateFormat('EEEE MMMM dd').format(widget.job.shiftDate),
+                                shiftDate: DateFormat('EEEE MMMM dd')
+                                    .format(widget.job.shiftDate),
                                 specialty: widget.job.speciality,
                                 additionalDetails: widget.job.additionalDetails,
                                 showFrontStrip: true,
@@ -117,8 +118,10 @@ class _SingleTimesheetState extends State<SingleTimesheet> {
                               //checkbox
                               CheckboxListTile(
                                 value: mealBreak,
-                                onChanged: (value) => setState(() => mealBreak = value!),
-                                controlAffinity: ListTileControlAffinity.leading,
+                                onChanged: (value) =>
+                                    setState(() => mealBreak = value!),
+                                controlAffinity:
+                                    ListTileControlAffinity.leading,
                                 activeColor: kGreen,
                                 contentPadding: EdgeInsets.zero,
                                 title: Text(
@@ -135,7 +138,8 @@ class _SingleTimesheetState extends State<SingleTimesheet> {
                               if (mealBreak)
                                 Container(
                                   width: double.infinity,
-                                  padding: EdgeInsets.symmetric(horizontal: 15.w),
+                                  padding:
+                                      EdgeInsets.symmetric(horizontal: 15.w),
                                   decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(8.r),
@@ -148,16 +152,19 @@ class _SingleTimesheetState extends State<SingleTimesheet> {
                                         style: TextStyle(color: kDisabled),
                                       ),
                                       value: mealBreakTime,
-                                      items: List.generate(60, (index) => index + 1)
+                                      items: List.generate(
+                                              60, (index) => index + 1)
                                           .map(
                                             (min) => DropdownMenuItem(
                                               value: min,
-                                              child: Text("$min minute${min > 1 ? 's' : ''}"),
+                                              child: Text(
+                                                  "$min minute${min > 1 ? 's' : ''}"),
                                             ),
                                           )
                                           .toList(),
                                       onChanged: (value) {
-                                        setState(() => mealBreakTime = value as int);
+                                        setState(
+                                            () => mealBreakTime = value as int);
                                       }),
                                 ),
                               if (mealBreak) SizedBox(height: 25.h),
@@ -179,6 +186,8 @@ class _SingleTimesheetState extends State<SingleTimesheet> {
                                     context: context,
                                     builder: (context) => SignaturePad(
                                       onComplete: (Uint8List? sign) {
+                                        FocusManager.instance.primaryFocus
+                                            ?.unfocus();
                                         nurseSign = sign;
                                       },
                                     ),
@@ -197,6 +206,8 @@ class _SingleTimesheetState extends State<SingleTimesheet> {
                                     context: context,
                                     builder: (context) => SignaturePad(
                                       onComplete: (Uint8List? sign) {
+                                        FocusManager.instance.primaryFocus
+                                            ?.unfocus();
                                         hospitalSign = sign;
                                       },
                                       needSignName: true,
@@ -225,13 +236,17 @@ class _SingleTimesheetState extends State<SingleTimesheet> {
                     text: 'Submit',
                     color: kRed,
                     onPressed: () async {
+                      FocusManager.instance.primaryFocus?.unfocus();
                       if (shiftStartTime.text.isEmpty ||
                           shiftEndTime.text.isEmpty ||
                           hospitalSignatureName.text.trim().isEmpty ||
                           (mealBreak && mealBreakTime == null) ||
                           nurseSign == null ||
                           hospitalSign == null) {
-                        ToastBar(text: 'Please fill relevant fields!', color: Colors.red).show();
+                        ToastBar(
+                                text: 'Please fill relevant fields!',
+                                color: Colors.red)
+                            .show();
                       } else {
                         TimeSheet timeSheet = TimeSheet(
                           job: widget.job,
@@ -240,10 +255,12 @@ class _SingleTimesheetState extends State<SingleTimesheet> {
                           mealBreakIncluded: mealBreak,
                           mealBreakTime: mealBreakTime,
                           additionalDetails: additionalDetails.text.trim(),
-                          hospitalSignatureName: hospitalSignatureName.text.trim(),
+                          hospitalSignatureName:
+                              hospitalSignatureName.text.trim(),
                         );
 
-                        bool success = await Provider.of<JobController>(context, listen: false)
+                        bool success = await Provider.of<JobController>(context,
+                                listen: false)
                             .submitTimeSheet(
                           timeSheet,
                           nurseSign!,
