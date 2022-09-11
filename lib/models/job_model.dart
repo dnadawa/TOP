@@ -26,6 +26,7 @@ class Job {
     required this.additionalDetails,
     required this.managerName,
     required this.managerID,
+    this.nurseID,
   });
 
   static Job createJobFromDocument(QueryDocumentSnapshot doc) {
@@ -41,8 +42,8 @@ class Job {
       shiftEndTime: doc['shiftEndTime'],
       shiftType: doc['shiftType'],
       additionalDetails: doc['additionalDetails'],
+      nurseID: doc['nurse'],
     );
-    job.nurseID = doc['nurse'];
     return job;
   }
 }
