@@ -78,9 +78,12 @@ class JobController extends ChangeNotifier {
     return datesAndCount;
   }
 
-  Future<bool> deleteJob(String id) async {
+  Future<bool> deleteJob(Job job, JobStatus status) async {
     try {
-      await _databaseService.deleteJob(id);
+      await _databaseService.deleteJob(job.id);
+      if (status != JobStatus.Available) {
+        await _databaseService.unBookNurse(job.nurseID!, job.shiftDate.toYYYYMMDDFormat(), job.shiftType);
+      }
       ToastBar(text: "Job Deleted Successfully!", color: Colors.green).show();
       return true;
     } catch (e) {

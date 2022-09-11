@@ -12,6 +12,7 @@ class Job {
   final String hospitalID;
   final String managerName;
   final String managerID;
+  String? nurseID;
 
   Job({
     required this.id,
@@ -28,7 +29,7 @@ class Job {
   });
 
   static Job createJobFromDocument(QueryDocumentSnapshot doc) {
-    return Job(
+    Job job = Job(
       id: doc.id,
       hospital: doc['hospitalName'],
       hospitalID: doc['hospitalID'],
@@ -41,5 +42,7 @@ class Job {
       shiftType: doc['shiftType'],
       additionalDetails: doc['additionalDetails'],
     );
+    job.nurseID = doc['nurse'];
+    return job;
   }
 }

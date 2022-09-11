@@ -50,8 +50,8 @@ class _HospitalJobsState extends State<HospitalJobs> {
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: ToggleSwitch(
-                              initialLabelIndex:
-                                  widget.manager!.specialities!.indexOf(jobController.selectedSpeciality),
+                              initialLabelIndex: widget.manager!.specialities!
+                                  .indexOf(jobController.selectedSpeciality),
                               activeFgColor: Colors.white,
                               inactiveBgColor: kDisabledSecondary,
                               inactiveFgColor: kGreyText,
@@ -63,9 +63,10 @@ class _HospitalJobsState extends State<HospitalJobs> {
                               animate: true,
                               animationDuration: 200,
                               curve: Curves.easeIn,
-                              customWidths: widget.manager!.specialities!.map((e) => 110.w).toList(),
-                              onToggle: (index) =>
-                                  jobController.selectedSpeciality = widget.manager!.specialities![index!],
+                              customWidths:
+                                  widget.manager!.specialities!.map((e) => 110.w).toList(),
+                              onToggle: (index) => jobController.selectedSpeciality =
+                                  widget.manager!.specialities![index!],
                             ),
                           ),
                         ),
@@ -75,9 +76,11 @@ class _HospitalJobsState extends State<HospitalJobs> {
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 15.w),
                             child: RefreshIndicator(
-                              onRefresh: () async => setState((){}),
-                              child: FutureBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
-                                future: jobController.getJobs(widget.manager?.hospital ?? '', widget.status),
+                              onRefresh: () async => setState(() {}),
+                              child:
+                                  FutureBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
+                                future: jobController.getJobs(
+                                    widget.manager?.hospital ?? '', widget.status),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState == ConnectionState.waiting) {
                                     return Center(
@@ -102,16 +105,19 @@ class _HospitalJobsState extends State<HospitalJobs> {
                                     ),
                                     itemCount: snapshot.data!.length,
                                     itemBuilder: (context, i) {
-
                                       Job job = Job.createJobFromDocument(snapshot.data![i]);
 
                                       return Padding(
                                         padding: EdgeInsets.only(bottom: 20.h),
                                         child: GestureDetector(
                                           onTap: () {
-                                            if (widget.status == JobStatus.Available) {
-                                              Navigator.push(context,
-                                                  CupertinoPageRoute(builder: (_) => HospitalJobDetails(job: job))).then((value) => setState((){}));
+                                            if (widget.status != JobStatus.Completed) {
+                                              Navigator.push(
+                                                      context,
+                                                      CupertinoPageRoute(
+                                                          builder: (_) =>
+                                                              HospitalJobDetails(job: job, status: widget.status)))
+                                                  .then((value) => setState(() {}));
                                             }
                                           },
                                           child: IntrinsicHeight(
@@ -122,8 +128,10 @@ class _HospitalJobsState extends State<HospitalJobs> {
                                                   child: ShiftTile(
                                                     hospital: job.hospital,
                                                     shiftType: job.shiftType,
-                                                    shiftTime: "${job.shiftStartTime} to ${job.shiftEndTime}",
-                                                    shiftDate: DateFormat('EEEE MMMM dd').format(job.shiftDate),
+                                                    shiftTime:
+                                                        "${job.shiftStartTime} to ${job.shiftEndTime}",
+                                                    shiftDate: DateFormat('EEEE MMMM dd')
+                                                        .format(job.shiftDate),
                                                     specialty: job.speciality,
                                                     additionalDetails: job.additionalDetails,
                                                     showBackStrip: true,

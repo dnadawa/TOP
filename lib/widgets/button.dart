@@ -17,7 +17,7 @@ class Button extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-          primary: enabled ? color ?? kGreen : kDisabledSecondary,
+          backgroundColor: enabled ? color ?? kGreen : kDisabledSecondary,
           padding: EdgeInsets.all(padding ?? 14.h),
       ),
       child: Text(

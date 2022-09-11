@@ -137,6 +137,12 @@ class DatabaseService {
     await _firestore.collection('jobs').doc(id).delete();
   }
 
+  unBookNurse(String nurseID, String shiftID, String shiftType) async {
+    await _firestore.collection('users').doc(nurseID).collection('shifts').doc(shiftID).update({
+      shiftType: AvailabilityStatus.Available.name,
+    });
+  }
+
   updateAvailability(String uid, Map<String?, List<String>> dates) {
     dates.forEach((key, value) async {
       await _firestore.collection('users').doc(uid).collection('shifts').doc(key).set({

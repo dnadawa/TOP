@@ -13,8 +13,9 @@ import 'package:top/widgets/toast.dart';
 
 class HospitalJobDetails extends StatelessWidget {
   final Job job;
+  final JobStatus status;
 
-  const HospitalJobDetails({super.key, required this.job});
+  const HospitalJobDetails({super.key, required this.job, required this.status});
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +71,7 @@ class HospitalJobDetails extends StatelessWidget {
                           ),
                           onPressed: () async {
                             ToastBar(text: "Please wait...", color: Colors.orange).show();
-                            bool isDeleted = await Provider.of<JobController>(context, listen: false).deleteJob(job.id);
+                            bool isDeleted = await Provider.of<JobController>(context, listen: false).deleteJob(job, status);
                             if (isDeleted) {
                               Navigator.pop(context);
                               Navigator.pop(context);
