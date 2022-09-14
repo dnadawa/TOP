@@ -52,7 +52,7 @@ class Home extends StatelessWidget {
                       return Padding(
                         padding: EdgeInsets.only(bottom: 25.h),
                         child: Card(
-                          color: Colors.white,
+                          color: Color(0xffFFF9C4),
                           elevation: 5,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.r),
@@ -61,13 +61,13 @@ class Home extends StatelessWidget {
                             padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
                             child: Row(
                               children: [
-                                Icon(Icons.info, color: Colors.orange),
+                                Icon(Icons.info, color: Colors.black, size: 25.sp),
                                 SizedBox(width: 15.w),
                                 Expanded(
                                   child: Text(
                                     snapshot.data![0]['text'],
                                     style: TextStyle(
-                                      fontSize: 14.sp,
+                                      fontSize: 17.sp,
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
