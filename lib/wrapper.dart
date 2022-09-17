@@ -24,7 +24,7 @@ class Wrapper extends StatelessWidget {
 
         if(snapshot.data != null && !snapshot.data!.isApproved!){
           userController.signOut();
-          ToastBar(text: 'Your account is not approved!', color: Colors.red).show();
+          ToastBar(text: 'Your account is deleted or not approved!', color: Colors.red).show();
         }
 
         return (snapshot.data == null || !snapshot.data!.isApproved!) ? LogIn() : snapshot.data!.role == Role.Nurse ? PageSelector() : HospitalPageSelector();

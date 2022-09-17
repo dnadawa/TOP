@@ -151,7 +151,7 @@ class LogIn extends StatelessWidget {
                                 CupertinoPageRoute(builder: (context) => user.role == Role.Nurse ? PageSelector() : HospitalPageSelector()),
                                     (Route<dynamic> route) => false);
                           } else {
-                            ToastBar(text: 'Your account is not approved yet!', color: Colors.red).show();
+                            ToastBar(text: 'Your account is deleted or not approved!', color: Colors.red).show();
                             await Provider.of<UserController>(context, listen: false).signOut();
                           }
                         }
