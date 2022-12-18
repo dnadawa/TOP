@@ -107,6 +107,7 @@ class _AvailabilityState extends State<Availability> {
                                       Shift shift = snapshot.data![i];
 
                                       return AvailabilityTile(
+                                        nurseID: widget.user!.uid,
                                         dateString: shift.dateAsDateTime.toEEEMMMddFormat(),
                                         am: shift.am,
                                         pm: shift.pm,
