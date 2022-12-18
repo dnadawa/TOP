@@ -90,10 +90,12 @@ class DatabaseService {
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getReleasedJobsCountByDate(
       List specialities) async {
+    DateTime now = DateTime.now();
     var sub = await _firestore
         .collection('jobs')
         .where('speciality', whereIn: specialities)
         .where('status', isEqualTo: JobStatus.Available.name)
+        .where('shiftDate', isGreaterThanOrEqualTo : DateTime(now.year, now.month, now.day))
         .orderBy('shiftDate')
         .get();
     return sub.docs;
