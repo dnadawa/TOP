@@ -112,6 +112,7 @@ class _AvailabilityState extends State<Availability> {
                                         am: shift.am,
                                         pm: shift.pm,
                                         ns: shift.ns,
+                                        date: shift.dateAsDateTime
                                       );
                                     },
                                   );

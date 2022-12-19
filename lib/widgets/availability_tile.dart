@@ -15,12 +15,13 @@ import '../models/job_model.dart';
 class AvailabilityTile extends StatelessWidget {
   final String nurseID;
   final String dateString;
+  final DateTime date;
   final AvailabilityStatus am;
   final AvailabilityStatus pm;
   final AvailabilityStatus ns;
 
   const AvailabilityTile(
-      {super.key, required this.dateString, required this.am, required this.pm, required this.ns, required this.nurseID,});
+      {super.key, required this.dateString, required this.am, required this.pm, required this.ns, required this.nurseID, required this.date,});
 
   void onBadgeTapped(String shift, AvailabilityStatus availabilityStatus, BuildContext context){
     var jobController = Provider.of<JobController>(context, listen: false);
@@ -35,7 +36,7 @@ class AvailabilityTile extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(30.w),
           child: FutureBuilder<List<QueryDocumentSnapshot<Map<String, dynamic>>>>(
-            future: jobController.getAcceptedJobs(nurseID),
+            future: jobController.getAcceptedJobsForaDateAndShift(nurseID, date, shift),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(

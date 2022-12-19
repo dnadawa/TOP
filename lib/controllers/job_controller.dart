@@ -55,6 +55,10 @@ class JobController extends ChangeNotifier {
     return await _databaseService.getAcceptedJobs(nurseID);
   }
 
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAcceptedJobsForaDateAndShift(String nurseID, DateTime date, String shift) async {
+    return await _databaseService.getAcceptedJobsForaDateAndShift(nurseID, date, shift);
+  }
+
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getReleasedJobs(
       List specialities, String date) async {
     return await _databaseService.getReleasedJobs(specialities, DateTime.parse(date));

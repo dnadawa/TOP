@@ -88,6 +88,17 @@ class DatabaseService {
     return sub.docs;
   }
 
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAcceptedJobsForaDateAndShift(String nurseID, DateTime date, String shift) async {
+    var sub = await _firestore
+        .collection('jobs')
+        .where('nurse', isEqualTo: nurseID)
+        .where('status', isEqualTo: JobStatus.Confirmed.name)
+        .where('shiftType', isEqualTo: shift)
+        .where('shiftDate', isEqualTo: date)
+        .get();
+    return sub.docs;
+  }
+
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getReleasedJobsCountByDate(
       List specialities) async {
     DateTime now = DateTime.now();
