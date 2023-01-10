@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:top/constants.dart';
+import 'package:top/models/image_timesheet_model.dart';
 import 'package:top/models/job_model.dart';
 import 'package:top/models/timesheet_model.dart';
 import 'package:top/models/user_model.dart';
@@ -217,6 +218,20 @@ class DatabaseService {
       'hospitalSignature': timeSheet.hospitalSignatureURL,
       'hospitalName': timeSheet.hospitalSignatureName,
       'additionalDetails': timeSheet.additionalDetails,
+      'type': TimeSheetType.Form.name,
+    });
+
+    await _firestore.collection('jobs').doc(timeSheet.job.id).update({
+      'status': JobStatus.Completed.name,
+    });
+  }
+
+  submitImageTimesheet(ImageTimeSheet timeSheet) async {
+    await _firestore.collection('timesheets').add({
+      'jobID': timeSheet.job.id,
+      'date': timeSheet.job.shiftDate.toYYYYMMDDFormat(),
+      'type': TimeSheetType.Image.name,
+      "url": timeSheet.url,
     });
 
     await _firestore.collection('jobs').doc(timeSheet.job.id).update({

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import 'package:top/constants.dart';
+import 'package:top/models/image_timesheet_model.dart';
 import 'package:top/models/timesheet_model.dart';
 import 'package:top/models/job_model.dart';
 import 'package:top/services/email_service.dart';
@@ -55,7 +56,8 @@ class JobController extends ChangeNotifier {
     return await _databaseService.getAcceptedJobs(nurseID);
   }
 
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAcceptedJobsForaDateAndShift(String nurseID, DateTime date, String shift) async {
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAcceptedJobsForaDateAndShift(
+      String nurseID, DateTime date, String shift) async {
     return await _databaseService.getAcceptedJobsForaDateAndShift(nurseID, date, shift);
   }
 
@@ -86,7 +88,8 @@ class JobController extends ChangeNotifier {
     try {
       await _databaseService.deleteJob(job.id);
       if (status != JobStatus.Available) {
-        await _databaseService.unBookNurse(job.nurseID!, job.shiftDate.toYYYYMMDDFormat(), job.shiftType);
+        await _databaseService.unBookNurse(
+            job.nurseID!, job.shiftDate.toYYYYMMDDFormat(), job.shiftType);
       }
       ToastBar(text: "Job Deleted Successfully!", color: Colors.green).show();
       return true;
@@ -180,6 +183,62 @@ class JobController extends ChangeNotifier {
           'hospitalSign': timeSheet.hospitalSignatureURL,
           'hospitalSignName': timeSheet.hospitalSignatureName,
           'nurse': nurse.name,
+        },
+      );
+
+      pd.hide();
+      ToastBar(text: "Timesheet Submitted!", color: Colors.green).show();
+      return true;
+    } catch (e) {
+      pd.hide();
+      ToastBar(text: e.toString(), color: Colors.red).show();
+      return false;
+    }
+  }
+
+  Future<bool> submitImageTimesheet(ImageTimeSheet timeSheet, BuildContext context, Uint8List image, User nurse) async {
+    SimpleFontelicoProgressDialog pd =
+        SimpleFontelicoProgressDialog(context: context, barrierDimisable: false);
+    pd.show(
+      message: "Data uploading...",
+      indicatorColor: kGreen,
+      width: 0.6.sw,
+      height: 130.h,
+      textAlign: TextAlign.center,
+      separation: 30.h,
+    );
+    try {
+      //upload signatures
+      timeSheet.url =
+          await _storageService.uploadBytes(timeSheet.job.id, image, location: "timesheets");
+
+      //send to database
+      await _databaseService.submitImageTimesheet(timeSheet);
+
+      String managerEmail = await _databaseService.getUserEmailFromUID(timeSheet.job.managerID);
+
+      //send email
+      await _emailService.sendEmail(
+        subject: "Timesheet Received",
+        templateID: imageTimesheetTemplateID,
+        templateData: {
+          'hospital': timeSheet.job.hospital,
+          'speciality': timeSheet.job.speciality,
+          'date': timeSheet.job.shiftDate.toEEEMMMddFormat(),
+          'image': timeSheet.url,
+        },
+      );
+      await _emailService.sendEmail(
+        from: 'joyceplus.adm@gmail.com',
+        to: [managerEmail, nurse.email!],
+        subject: "Timesheet Received",
+        templateID: imageTimesheetTemplateID,
+        templateData: {
+          'hospital': timeSheet.job.hospital,
+          'speciality': timeSheet.job.speciality,
+          'date': timeSheet.job.shiftDate.toEEEMMMddFormat(),
+          'nurse': nurse.name,
+          'image': timeSheet.url,
         },
       );
 
