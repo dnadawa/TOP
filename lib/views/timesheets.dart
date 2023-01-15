@@ -149,7 +149,7 @@ class _TimeSheetsState extends State<TimeSheets> {
                                           Expanded(
                                             child: ShiftTile(
                                               hospital: job.hospital,
-                                              shiftType: job.shiftType,
+                                              shiftType: job.shiftType.join(","),
                                               shiftTime:
                                                   "${job.shiftStartTime} to ${job.shiftEndTime}",
                                               shiftDate:

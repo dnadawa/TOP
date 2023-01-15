@@ -70,7 +70,7 @@ class _SingleTimesheetState extends State<SingleTimesheet> {
                               //shift details
                               ShiftTile(
                                 hospital: widget.job.hospital,
-                                shiftType: widget.job.shiftType,
+                                shiftType: widget.job.shiftType.join(","),
                                 shiftTime:
                                     "${widget.job.shiftStartTime} to ${widget.job.shiftEndTime}",
                                 shiftDate: DateFormat('EEEE MMMM dd')

@@ -7,7 +7,7 @@ class Job {
   final DateTime shiftDate;
   final String shiftStartTime;
   final String shiftEndTime;
-  final String shiftType;
+  final List shiftType;
   final String additionalDetails;
   final String hospitalID;
   final String managerName;
@@ -40,7 +40,7 @@ class Job {
       shiftDate: doc['shiftDate'].toDate(),
       shiftStartTime: doc['shiftStartTime'],
       shiftEndTime: doc['shiftEndTime'],
-      shiftType: doc['shiftType'],
+      shiftType: doc['shiftTypes'],
       additionalDetails: doc['additionalDetails'],
       nurseID: doc['nurse'],
     );

@@ -71,7 +71,7 @@ class AvailabilityTile extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10.r)),
                       child: ShiftTile(
                         hospital: job.hospital,
-                        shiftType: job.shiftType,
+                        shiftType: job.shiftType.join(","),
                         shiftTime: "${job.shiftStartTime} to ${job.shiftEndTime}",
                         shiftDate: DateFormat('EEEE MMMM dd').format(job.shiftDate),
                         specialty: job.speciality,

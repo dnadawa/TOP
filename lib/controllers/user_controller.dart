@@ -43,12 +43,12 @@ class UserController {
       await _databaseService.createUser(user);
       await _authService.signOut();
       await _emailService.sendEmail(
-          subject: "A new ${role.name.toLowerCase()} registered",
-          templateID: approvalTemplateID,
-          templateData: {
-            'role': role.name,
-            'name': user.name,
-          },
+        subject: "A new ${role.name.toLowerCase()} registered",
+        templateID: approvalTemplateID,
+        templateData: {
+          'role': role.name,
+          'name': user.name,
+        },
       );
       ToastBar(
               text: '${role.name} successfully registered and waiting for admin approval!',
@@ -133,12 +133,18 @@ class UserController {
     }
   }
 
-  Future<bool> isNurseAvailable(String uid, String date, String shiftType) async {
+  Future<bool> isNurseAvailable(String uid, String date, List shiftTypes) async {
     List shift = await _databaseService.getSingleAvailability(uid, date);
     if (shift.isEmpty) {
       return false;
     } else {
-      return shift[0][shiftType] == AvailabilityStatus.Available.name;
+      for (var shiftType in shiftTypes) {
+        if (shift[0][shiftType] != AvailabilityStatus.Available.name) {
+          return false;
+        }
+      }
+
+      return true;
     }
   }
 

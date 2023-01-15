@@ -41,7 +41,7 @@ class HospitalJobDetails extends StatelessWidget {
                   padding: EdgeInsets.all(20.w),
                   child: ShiftTile(
                     hospital: job.hospital,
-                    shiftType: job.shiftType,
+                    shiftType: job.shiftType.join(","),
                     shiftTime: "${job.shiftStartTime} to ${job.shiftEndTime}",
                     shiftDate: DateFormat('EEEE MMMM dd').format(job.shiftDate),
                     specialty: job.speciality,

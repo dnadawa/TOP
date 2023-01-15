@@ -61,7 +61,7 @@ class DatabaseService {
       'shiftDate': job.shiftDate,
       'shiftStartTime': job.shiftStartTime,
       'shiftEndTime': job.shiftEndTime,
-      'shiftType': job.shiftType,
+      'shiftTypes': job.shiftType,
       'additionalDetails': job.additionalDetails,
       'status': JobStatus.Available.name,
       'nurse': null,
@@ -94,7 +94,7 @@ class DatabaseService {
         .collection('jobs')
         .where('nurse', isEqualTo: nurseID)
         .where('status', isEqualTo: JobStatus.Confirmed.name)
-        .where('shiftType', isEqualTo: shift)
+        .where('shiftTypes', arrayContains: shift)
         .where('shiftDate', isEqualTo: date)
         .get();
     return sub.docs;
@@ -135,26 +135,30 @@ class DatabaseService {
     return sub.docs[0]['name'];
   }
 
-  acceptJob(String jobID, String nurseID, String shiftID, String shiftType) async {
+  acceptJob(String jobID, String nurseID, String shiftID, List shiftTypes) async {
     await _firestore.collection('jobs').doc(jobID).update({
       'nurse': nurseID,
       'status': JobStatus.Confirmed.name,
       'timeSheetDay': shiftID,
     });
 
-    await _firestore.collection('users').doc(nurseID).collection('shifts').doc(shiftID).update({
-      shiftType: AvailabilityStatus.Booked.name,
-    });
+    Map<String, String> toUpdate = {};
+    for (var shift in shiftTypes) {
+      toUpdate[shift] = AvailabilityStatus.Booked.name;
+    }
+    await _firestore.collection('users').doc(nurseID).collection('shifts').doc(shiftID).update(toUpdate);
   }
 
   deleteJob(String id) async {
     await _firestore.collection('jobs').doc(id).delete();
   }
 
-  unBookNurse(String nurseID, String shiftID, String shiftType) async {
-    await _firestore.collection('users').doc(nurseID).collection('shifts').doc(shiftID).update({
-      shiftType: AvailabilityStatus.Available.name,
-    });
+  unBookNurse(String nurseID, String shiftID, List shiftTypes) async {
+    Map<String, String> toUpdate = {};
+    for (var shift in shiftTypes) {
+      toUpdate[shift] = AvailabilityStatus.Available.name;
+    }
+    await _firestore.collection('users').doc(nurseID).collection('shifts').doc(shiftID).update(toUpdate);
   }
 
   updateAvailability(String uid, Map<String?, List<String>> dates) {
