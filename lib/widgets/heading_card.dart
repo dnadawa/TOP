@@ -5,8 +5,9 @@ import 'package:top/constants.dart';
 class HeadingCard extends StatelessWidget {
   final String title;
   final Widget child;
+  final MainAxisSize mainAxisSize;
 
-  const HeadingCard({required this.title, required this.child});
+  const HeadingCard({required this.title, required this.child, this.mainAxisSize = MainAxisSize.max});
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +20,7 @@ class HeadingCard extends StatelessWidget {
         elevation: 7,
         color: Colors.white,
         child: Column(
+          mainAxisSize: mainAxisSize,
           children: [
             //title
             Container(

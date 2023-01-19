@@ -5,8 +5,8 @@ class Job {
   final String hospital;
   final String speciality;
   final DateTime shiftDate;
-  final String shiftStartTime;
-  final String shiftEndTime;
+  String shiftStartTime;
+  String shiftEndTime;
   final List shiftType;
   final String additionalDetails;
   final String hospitalID;

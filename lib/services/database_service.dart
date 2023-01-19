@@ -149,6 +149,13 @@ class DatabaseService {
     await _firestore.collection('users').doc(nurseID).collection('shifts').doc(shiftID).update(toUpdate);
   }
 
+  editTimes(Job job) async {
+    await _firestore.collection('jobs').doc(job.id).update({
+      'shiftStartTime': job.shiftStartTime,
+      'shiftEndTime': job.shiftEndTime,
+    });
+  }
+
   deleteJob(String id) async {
     await _firestore.collection('jobs').doc(id).delete();
   }

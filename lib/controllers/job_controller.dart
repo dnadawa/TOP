@@ -99,6 +99,31 @@ class JobController extends ChangeNotifier {
     }
   }
 
+  Future<bool> editTimes(Job job) async {
+    try {
+      await _databaseService.editTimes(job);
+
+      if(job.nurseID != null){
+        await _emailService.sendEmail(
+          subject: "Job Time Changed!",
+          templateID: jobTimeChangeTemplateID,
+          templateData: {
+            'start': job.shiftStartTime,
+            'end': job.shiftEndTime,
+            'date': job.shiftDate,
+            'hospital': job.hospital,
+          },
+        );
+      }
+
+      ToastBar(text: "Shift Time Changed!", color: Colors.green).show();
+      return true;
+    } catch (e) {
+      ToastBar(text: e.toString(), color: Colors.red).show();
+      return false;
+    }
+  }
+
   Future<bool> acceptJob(Job job, User nurse) async {
     try {
       await _databaseService.acceptJob(
