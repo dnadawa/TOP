@@ -52,6 +52,7 @@ class DatabaseService {
   }
 
   createJob(Job job) async {
+    bool isWeekend = (job.shiftDate.weekday == DateTime.saturday) || (job.shiftDate.weekday == DateTime.sunday);
     await _firestore.collection('jobs').add({
       'hospitalName': job.hospital,
       'hospitalID': job.hospitalID,
@@ -65,6 +66,7 @@ class DatabaseService {
       'additionalDetails': job.additionalDetails,
       'status': JobStatus.Available.name,
       'nurse': null,
+      'isWeekend': isWeekend,
     });
   }
 
@@ -108,6 +110,7 @@ class DatabaseService {
         .where('speciality', whereIn: specialities)
         .where('status', isEqualTo: JobStatus.Available.name)
         .where('shiftDate', isGreaterThanOrEqualTo : DateTime(now.year, now.month, now.day))
+        .where('isWeekend', isEqualTo: false)
         .orderBy('shiftDate')
         .get();
     return sub.docs;
