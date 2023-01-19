@@ -104,8 +104,10 @@ class JobController extends ChangeNotifier {
       await _databaseService.editTimes(job);
 
       if(job.nurseID != null){
+        String nurseEmail = await _databaseService.getUserEmailFromUID(job.nurseID!);
         await _emailService.sendEmail(
           subject: "Job Time Changed!",
+          to: [nurseEmail],
           templateID: jobTimeChangeTemplateID,
           templateData: {
             'start': job.shiftStartTime,
