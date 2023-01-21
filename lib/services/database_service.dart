@@ -113,6 +113,46 @@ class DatabaseService {
     return sub.docs;
   }
 
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAllJobsForNurse(String nurseID, DateTime? date, List specialities) async {
+    if(date == null){
+      var query1 = await _firestore
+          .collection('jobs')
+          .where('nurse', isNull: true)
+          .where('speciality', whereIn: specialities)
+          .where('isWeekend', isEqualTo: false)
+          .orderBy('shiftDate', descending: true)
+          .get();
+
+      var query2 = await _firestore
+          .collection('jobs')
+          .where('nurse', isEqualTo: nurseID)
+          .orderBy('shiftDate', descending: true)
+          .get();
+
+      return [...query1.docs, ...query2.docs];
+    }
+
+    var query1 = await _firestore
+        .collection('jobs')
+        .where('nurse', isEqualTo: nurseID)
+        .where('shiftDate', isGreaterThanOrEqualTo: date)
+        .where('shiftDate', isLessThan: date.add(Duration(days: 1)))
+        .orderBy('shiftDate', descending: true)
+        .get();
+
+    var query2 = await _firestore
+        .collection('jobs')
+        .where('nurse', isNull: true)
+        .where('speciality', whereIn: specialities)
+        .where('isWeekend', isEqualTo: false)
+        .where('shiftDate', isGreaterThanOrEqualTo: date)
+        .where('shiftDate', isLessThan: date.add(Duration(days: 1)))
+        .orderBy('shiftDate', descending: true)
+        .get();
+
+    return [...query1.docs, ...query2.docs];
+  }
+
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAcceptedJobsForaDateAndShift(
       String nurseID, DateTime date, String shift) async {
     var sub = await _firestore

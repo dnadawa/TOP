@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:top/controllers/job_controller.dart';
+import 'package:top/views/all_jobs.dart';
 import 'package:top/widgets/backdrop.dart';
 import 'package:top/constants.dart';
 import 'package:top/widgets/heading_card.dart';
@@ -156,7 +157,7 @@ class Home extends StatelessWidget {
                     text: 'View All Jobs',
                     color: kGreen,
                     onPressed: () async {
-
+                        Navigator.push(context, CupertinoPageRoute(builder: (_)=>AllJobs(user: user)));
                     },
                   ),
                 ),
