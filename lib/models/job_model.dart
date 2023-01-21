@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:top/constants.dart';
 
 class Job {
   final String id;
@@ -13,6 +14,7 @@ class Job {
   final String managerName;
   final String managerID;
   String? nurseID;
+  JobStatus? status;
 
   Job({
     required this.id,
@@ -27,6 +29,7 @@ class Job {
     required this.managerName,
     required this.managerID,
     this.nurseID,
+    this.status,
   });
 
   static Job createJobFromDocument(QueryDocumentSnapshot doc) {
@@ -43,6 +46,7 @@ class Job {
       shiftType: doc['shiftTypes'],
       additionalDetails: doc['additionalDetails'],
       nurseID: doc['nurse'],
+      status: JobStatus.values.byName(doc['status'])
     );
     return job;
   }

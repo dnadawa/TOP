@@ -109,7 +109,7 @@ class Home extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 50.h),
+                SizedBox(height: 30.h),
 
                 //details
                 HeadingCard(
@@ -147,7 +147,20 @@ class Home extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 80.h),
+                SizedBox(height: 30.h),
+
+                //universal calendar
+                SizedBox(
+                  width: double.infinity,
+                  child: Button(
+                    text: 'View All Jobs',
+                    color: kGreen,
+                    onPressed: () async {
+
+                    },
+                  ),
+                ),
+                SizedBox(height: 20.h),
 
                 //log out
                 SizedBox(

@@ -20,8 +20,16 @@ class JobController extends ChangeNotifier {
   final EmailService _emailService = EmailService();
 
   String _selectedSpeciality = specialities[0];
+  DateTime? _selectedDate;
 
   String get selectedSpeciality => _selectedSpeciality;
+
+  DateTime? get selectedDate => _selectedDate;
+
+  set selectedDate(DateTime? value) {
+    _selectedDate = value;
+    notifyListeners();
+  }
 
   set selectedSpeciality(String speciality) {
     _selectedSpeciality = speciality;
@@ -50,6 +58,10 @@ class JobController extends ChangeNotifier {
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getJobs(
       String hospitalID, JobStatus status) async {
     return await _databaseService.getJobs(hospitalID, _selectedSpeciality, status);
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getJobsByDate(String hospitalID) async {
+    return await _databaseService.getJobsByDate(hospitalID, _selectedDate);
   }
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAcceptedJobs(String nurseID) async {
@@ -103,7 +115,7 @@ class JobController extends ChangeNotifier {
     try {
       await _databaseService.editTimes(job);
 
-      if(job.nurseID != null){
+      if (job.nurseID != null) {
         String nurseEmail = await _databaseService.getUserEmailFromUID(job.nurseID!);
         await _emailService.sendEmail(
           subject: "Job Time Changed!",
@@ -223,7 +235,8 @@ class JobController extends ChangeNotifier {
     }
   }
 
-  Future<bool> submitImageTimesheet(ImageTimeSheet timeSheet, BuildContext context, Uint8List image, User nurse) async {
+  Future<bool> submitImageTimesheet(
+      ImageTimeSheet timeSheet, BuildContext context, Uint8List image, User nurse) async {
     SimpleFontelicoProgressDialog pd =
         SimpleFontelicoProgressDialog(context: context, barrierDimisable: false);
     pd.show(

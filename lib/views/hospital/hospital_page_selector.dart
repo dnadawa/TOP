@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:top/constants.dart';
 import 'package:top/controllers/user_controller.dart';
 import 'package:top/models/user_model.dart';
+import 'package:top/views/hospital/hospital_all_jobs.dart';
 import 'package:top/views/hospital/hospital_jobs.dart';
 import 'package:top/views/hospital/hospital_new_post.dart';
 
@@ -36,6 +37,7 @@ class _HospitalPageSelectorState extends State<HospitalPageSelector> {
         physics: NeverScrollableScrollPhysics(),
         children: [
           HospitalNewPost(user: user),
+          HospitalAllJobs(user: user),
           HospitalJobs(
             status: tabIndex == 1
                 ? JobStatus.Available
@@ -60,15 +62,15 @@ class _HospitalPageSelectorState extends State<HospitalPageSelector> {
           setState(() {
             tabIndex = index;
           });
-          if (tabIndex == 0) {
+          if(tabIndex == 0 || tabIndex == 1){
             controller.animateToPage(
-              0,
+              tabIndex,
               duration: Duration(milliseconds: 100),
               curve: Curves.easeInOut,
             );
           } else {
             controller.animateToPage(
-              1,
+              2,
               duration: Duration(milliseconds: 100),
               curve: Curves.easeInOut,
             );
@@ -76,6 +78,7 @@ class _HospitalPageSelectorState extends State<HospitalPageSelector> {
         },
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.add_box), label: 'New Post'),
+          BottomNavigationBarItem(icon: Icon(Icons.work), label: 'All Jobs'),
           BottomNavigationBarItem(icon: Icon(Icons.assignment), label: 'Available'),
           BottomNavigationBarItem(icon: Icon(Icons.alarm), label: 'Confirmed'),
           BottomNavigationBarItem(icon: Icon(Icons.assignment_turned_in), label: 'Completed'),

@@ -52,7 +52,8 @@ class DatabaseService {
   }
 
   createJob(Job job) async {
-    bool isWeekend = (job.shiftDate.weekday == DateTime.saturday) || (job.shiftDate.weekday == DateTime.sunday);
+    bool isWeekend =
+        (job.shiftDate.weekday == DateTime.saturday) || (job.shiftDate.weekday == DateTime.sunday);
     await _firestore.collection('jobs').add({
       'hospitalName': job.hospital,
       'hospitalID': job.hospitalID,
@@ -81,6 +82,27 @@ class DatabaseService {
     return sub.docs;
   }
 
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getJobsByDate(
+      String hospitalID, DateTime? date) async {
+    if(date == null){
+      var sub = await _firestore
+          .collection('jobs')
+          .where('hospitalID', isEqualTo: hospitalID)
+          .orderBy('shiftDate', descending: true)
+          .get();
+      return sub.docs;
+    }
+
+    var sub = await _firestore
+        .collection('jobs')
+        .where('hospitalID', isEqualTo: hospitalID)
+        .where('shiftDate', isGreaterThanOrEqualTo: date)
+        .where('shiftDate', isLessThan: date.add(Duration(days: 1)))
+        .orderBy('shiftDate', descending: true)
+        .get();
+    return sub.docs;
+  }
+
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAcceptedJobs(String nurseID) async {
     var sub = await _firestore
         .collection('jobs')
@@ -91,7 +113,8 @@ class DatabaseService {
     return sub.docs;
   }
 
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAcceptedJobsForaDateAndShift(String nurseID, DateTime date, String shift) async {
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAcceptedJobsForaDateAndShift(
+      String nurseID, DateTime date, String shift) async {
     var sub = await _firestore
         .collection('jobs')
         .where('nurse', isEqualTo: nurseID)
@@ -109,7 +132,7 @@ class DatabaseService {
         .collection('jobs')
         .where('speciality', whereIn: specialities)
         .where('status', isEqualTo: JobStatus.Available.name)
-        .where('shiftDate', isGreaterThanOrEqualTo : DateTime(now.year, now.month, now.day))
+        .where('shiftDate', isGreaterThanOrEqualTo: DateTime(now.year, now.month, now.day))
         .where('isWeekend', isEqualTo: false)
         .orderBy('shiftDate')
         .get();
@@ -122,7 +145,7 @@ class DatabaseService {
         .collection('jobs')
         .where('speciality', whereIn: specialities)
         .where('status', isEqualTo: JobStatus.Available.name)
-        .where('shiftDate', isGreaterThanOrEqualTo : date)
+        .where('shiftDate', isGreaterThanOrEqualTo: date)
         .where('shiftDate', isLessThan: date.add(Duration(days: 1)))
         .get();
     return sub.docs;
@@ -149,7 +172,12 @@ class DatabaseService {
     for (var shift in shiftTypes) {
       toUpdate[shift] = AvailabilityStatus.Booked.name;
     }
-    await _firestore.collection('users').doc(nurseID).collection('shifts').doc(shiftID).update(toUpdate);
+    await _firestore
+        .collection('users')
+        .doc(nurseID)
+        .collection('shifts')
+        .doc(shiftID)
+        .update(toUpdate);
   }
 
   editTimes(Job job) async {
@@ -168,7 +196,12 @@ class DatabaseService {
     for (var shift in shiftTypes) {
       toUpdate[shift] = AvailabilityStatus.Available.name;
     }
-    await _firestore.collection('users').doc(nurseID).collection('shifts').doc(shiftID).update(toUpdate);
+    await _firestore
+        .collection('users')
+        .doc(nurseID)
+        .collection('shifts')
+        .doc(shiftID)
+        .update(toUpdate);
   }
 
   updateAvailability(String uid, Map<String?, List<String>> dates) {
