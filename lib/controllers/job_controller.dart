@@ -41,8 +41,10 @@ class JobController extends ChangeNotifier {
       await _databaseService.createJob(job);
 
       List<String> playerIDs = [];
+      List<String> nursesEmails = [];
       List<QueryDocumentSnapshot<Map<String, dynamic>>> nurses = await _databaseService.getNurses();
       for (QueryDocumentSnapshot<Map<String, dynamic>> nurse in nurses) {
+        nursesEmails.add(nurse.data()["email"].toString());
         if(nurse.data().containsKey("notification")){
           playerIDs.add(nurse.data()['notification'].toString());
         }
@@ -56,6 +58,7 @@ class JobController extends ChangeNotifier {
       }
       await _emailService.sendEmail(
         subject: "A New Job Posted",
+        to: [adminEmail, ...nursesEmails],
         templateID: jobPostedTemplateID,
         templateData: {
           'manager': job.managerName,

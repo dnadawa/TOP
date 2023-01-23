@@ -19,10 +19,10 @@ class EmailService {
           Personalization(toAddresses, dynamicTemplateData: templateData, subject: subject);
 
       final email = Email([personalization], fromAddress, subject, templateId: templateID);
-      await mailer.send(email);
+      await mailer.send(email).then((result) => print(result));
       return true;
     } catch (e) {
-      print(e);
+      print("mail error : $e");
       return false;
     }
   }
