@@ -39,11 +39,11 @@ class _HospitalPageSelectorState extends State<HospitalPageSelector> {
           HospitalNewPost(user: user),
           HospitalAllJobs(user: user),
           HospitalJobs(
-            status: tabIndex == 1
+            status: tabIndex == 2
                 ? JobStatus.Available
-                : tabIndex == 2
-                ? JobStatus.Confirmed
                 : tabIndex == 3
+                ? JobStatus.Confirmed
+                : tabIndex == 4
                 ? JobStatus.Completed
                 : JobStatus.Available,
             manager: user,

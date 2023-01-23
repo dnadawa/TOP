@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:top/constants.dart';
 import 'package:top/models/image_timesheet_model.dart';
 import 'package:top/models/job_model.dart';
@@ -46,9 +47,25 @@ class DatabaseService {
     return role;
   }
 
+  setNotificationID(String uid) async {
+    var status = await OneSignal.shared.getDeviceState();
+    var playerId = status?.userId;
+
+    await _firestore.collection("users").doc(uid).update({"notification" : playerId});
+  }
+
   Future<String> getUserEmailFromUID(String uid) async {
     var doc = await _firestore.collection('users').doc(uid).get();
     return doc.data()!['email'];
+  }
+
+  Future<String?> getUserNotificationIDFromUID(String uid) async {
+    try{
+      var doc = await _firestore.collection('users').doc(uid).get();
+      return doc.data()!['notification'];
+    } catch (e) {
+      return null;
+    }
   }
 
   createJob(Job job) async {
@@ -328,6 +345,11 @@ class DatabaseService {
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAllNotifications() async {
     var sub = await _firestore.collection('notifications').orderBy('date', descending: true).get();
+    return sub.docs;
+  }
+  
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getNurses() async {
+    var sub = await _firestore.collection("users").where("role", isEqualTo: Role.Nurse.name).get();
     return sub.docs;
   }
 }

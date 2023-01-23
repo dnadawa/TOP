@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:top/models/shift_model.dart';
 import 'package:top/services/auth_service.dart';
 import 'package:top/constants.dart';
@@ -21,7 +22,10 @@ class UserController {
     }
 
     Role role = await _databaseService.getUserRole(user);
+
     user.role = role;
+    OneSignal.shared.setExternalUserId(user.uid);
+    _databaseService.setNotificationID(user.uid);
 
     return user;
   }
@@ -68,10 +72,14 @@ class UserController {
     }
 
     await _databaseService.getUserRole(user);
+    OneSignal.shared.setExternalUserId(user.uid);
     return user;
   }
 
-  Future<bool> signOut() async => await _authService.signOut();
+  Future<bool> signOut() async {
+    OneSignal.shared.removeExternalUserId();
+    return await _authService.signOut();
+  }
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getHospitals() async {
     return _databaseService.getHospitals();

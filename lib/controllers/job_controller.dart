@@ -39,6 +39,21 @@ class JobController extends ChangeNotifier {
   Future<bool> createJob(Job job) async {
     try {
       await _databaseService.createJob(job);
+
+      List<String> playerIDs = [];
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> nurses = await _databaseService.getNurses();
+      for (QueryDocumentSnapshot<Map<String, dynamic>> nurse in nurses) {
+        if(nurse.data().containsKey("notification")){
+          playerIDs.add(nurse.data()['notification'].toString());
+        }
+      }
+
+      if(playerIDs.isNotEmpty) {
+        await _emailService.sendNotification(
+            heading: "A New Job Posted",
+            playerIDs: playerIDs
+        );
+      }
       await _emailService.sendEmail(
         subject: "A New Job Posted",
         templateID: jobPostedTemplateID,
@@ -121,6 +136,14 @@ class JobController extends ChangeNotifier {
 
       if (job.nurseID != null) {
         String nurseEmail = await _databaseService.getUserEmailFromUID(job.nurseID!);
+        String? playerID = await _databaseService.getUserNotificationIDFromUID(job.nurseID!);
+        if(playerID != null) {
+          await _emailService.sendNotification(
+            heading: "Job Time Changed!",
+            playerIDs: [playerID]
+          );
+        }
+
         await _emailService.sendEmail(
           subject: "Job Time Changed!",
           to: [nurseEmail],
@@ -150,6 +173,15 @@ class JobController extends ChangeNotifier {
         job.shiftDate.toYYYYMMDDFormat(),
         job.shiftType,
       );
+
+      String? playerID = await _databaseService.getUserNotificationIDFromUID(job.managerID);
+      if(playerID != null) {
+        await _emailService.sendNotification(
+            heading: "A Nurse Accepted a Job!",
+            content: "${nurse.name} accepted a job.",
+            playerIDs: [playerID]
+        );
+      }
 
       await _emailService.sendEmail(
         subject: "A Nurse Accepted a Job",
