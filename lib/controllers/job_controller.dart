@@ -156,7 +156,7 @@ class JobController extends ChangeNotifier {
             'oldStart': oldStartTime,
             'end': job.shiftEndTime,
             'oldEnd': oldEndTime,
-            'date': job.shiftDate,
+            'date': job.shiftDate.toYYYYMMDDFormat(),
             'hospital': job.hospital,
           },
         );
