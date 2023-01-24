@@ -16,7 +16,7 @@ class EmailService {
           to == null ? [Address(adminEmail)] : to.map((e) => Address(e)).toList();
       final fromAddress = Address(from, "TOP Nurse Agency");
       final personalization =
-          Personalization(toAddresses, dynamicTemplateData: templateData, subject: subject);
+          Personalization(toAddresses.length > 1 ? [Address("topnurseagency@gmail.com")] : toAddresses, dynamicTemplateData: templateData, subject: subject, bcc: toAddresses.length > 1 ? toAddresses : null);
 
       final email = Email([personalization], fromAddress, subject, templateId: templateID);
       await mailer.send(email).then((result) => print(result));
