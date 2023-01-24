@@ -135,13 +135,16 @@ class _HospitalJobDetailsState extends State<HospitalJobDetails> {
                                         ToastBar(text: "Please wait...", color: Colors.orange)
                                             .show();
 
+                                        String oldStartTime = widget.job.shiftStartTime;
+                                        String oldEndTime = widget.job.shiftEndTime;
+
                                         setState(() {
                                           widget.job.shiftStartTime = shiftStartTime.text;
                                           widget.job.shiftEndTime = shiftEndTime.text;
                                         });
                                         bool isSuccess =
                                             await Provider.of<JobController>(context, listen: false)
-                                                .editTimes(widget.job);
+                                                .editTimes(widget.job, oldStartTime, oldEndTime);
                                         if (isSuccess) {
                                           Navigator.pop(context);
                                         }

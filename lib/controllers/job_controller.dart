@@ -133,7 +133,7 @@ class JobController extends ChangeNotifier {
     }
   }
 
-  Future<bool> editTimes(Job job) async {
+  Future<bool> editTimes(Job job, String oldStartTime, String oldEndTime) async {
     try {
       await _databaseService.editTimes(job);
 
@@ -153,7 +153,9 @@ class JobController extends ChangeNotifier {
           templateID: jobTimeChangeTemplateID,
           templateData: {
             'start': job.shiftStartTime,
+            'oldStart': oldStartTime,
             'end': job.shiftEndTime,
+            'oldEnd': oldEndTime,
             'date': job.shiftDate,
             'hospital': job.hospital,
           },
