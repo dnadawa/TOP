@@ -1,13 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import 'package:top/models/shift_model.dart';
 import 'package:top/services/auth_service.dart';
 import 'package:top/constants.dart';
 import 'package:top/models/user_model.dart';
 import 'package:top/services/database_service.dart';
 import 'package:top/services/email_service.dart';
+import 'package:top/views/log_in.dart';
 import 'package:top/widgets/toast.dart';
+
+import '../wrapper.dart';
 
 class UserController {
   final AuthService _authService = AuthService();
@@ -162,5 +168,38 @@ class UserController {
       days.add(startDate.add(Duration(days: i)).toYYYYMMDDFormat());
     }
     return days;
+  }
+
+  deleteUser(BuildContext context, String email, String password, String uid, {bool isManager=false}) async {
+    SimpleFontelicoProgressDialog pd =
+        SimpleFontelicoProgressDialog(context: context, barrierDimisable: false);
+    try {
+      bool isReAuthenticated = await _authService.reAuthenticate(email, password);
+      if (isReAuthenticated) {
+        pd.show(
+          message: "Deleting user",
+          indicatorColor: kGreen,
+          width: 0.6.sw,
+          height: 130.h,
+          textAlign: TextAlign.center,
+          separation: 30.h,
+        );
+        await _databaseService.deleteJobs(uid, isManager);
+        await _databaseService.deleteUser(uid);
+        bool isDeleted = await _authService.deleteUser(context);
+        if (isDeleted) {
+          pd.hide();
+          ToastBar(text: "User deleted!", color: Colors.green).show();
+          Navigator.of(context).pushAndRemoveUntil(
+              CupertinoPageRoute(builder: (context) => LogIn()), (Route<dynamic> route) => false);
+        } else {
+          pd.hide();
+          ToastBar(text: "Something went wrong!", color: Colors.red).show();
+        }
+      }
+    } catch (e) {
+      pd.hide();
+      ToastBar(text: e.toString(), color: Colors.red).show();
+    }
   }
 }

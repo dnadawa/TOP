@@ -51,7 +51,7 @@ class DatabaseService {
     var status = await OneSignal.shared.getDeviceState();
     var playerId = status?.userId;
 
-    await _firestore.collection("users").doc(uid).update({"notification" : playerId});
+    await _firestore.collection("users").doc(uid).update({"notification": playerId});
   }
 
   Future<String> getUserEmailFromUID(String uid) async {
@@ -60,7 +60,7 @@ class DatabaseService {
   }
 
   Future<String?> getUserNotificationIDFromUID(String uid) async {
-    try{
+    try {
       var doc = await _firestore.collection('users').doc(uid).get();
       return doc.data()!['notification'];
     } catch (e) {
@@ -101,7 +101,7 @@ class DatabaseService {
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getJobsByDate(
       String hospitalID, DateTime? date) async {
-    if(date == null){
+    if (date == null) {
       var sub = await _firestore
           .collection('jobs')
           .where('hospitalID', isEqualTo: hospitalID)
@@ -130,8 +130,9 @@ class DatabaseService {
     return sub.docs;
   }
 
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAllJobsForNurse(String nurseID, DateTime? date, List specialities) async {
-    if(date == null){
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAllJobsForNurse(
+      String nurseID, DateTime? date, List specialities) async {
+    if (date == null) {
       var query1 = await _firestore
           .collection('jobs')
           .where('nurse', isNull: true)
@@ -347,9 +348,37 @@ class DatabaseService {
     var sub = await _firestore.collection('notifications').orderBy('date', descending: true).get();
     return sub.docs;
   }
-  
+
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getNurses() async {
     var sub = await _firestore.collection("users").where("role", isEqualTo: Role.Nurse.name).get();
     return sub.docs;
+  }
+
+  deleteUser(String uid) async {
+    await _firestore.collection('users').doc(uid).delete();
+  }
+
+  deleteJobs(String uid, bool isManager) async {
+    var sub;
+    if (isManager) {
+      sub = await _firestore.collection("jobs").where("managerID", isEqualTo: uid).get();
+    } else {
+      sub = await _firestore.collection("jobs").where("nurse", isEqualTo: uid).get();
+    }
+    var jobList = sub.docs;
+    for (var job in jobList) {
+      String jobId = job.id;
+      await _firestore.collection("jobs").doc(jobId).delete();
+      await _deleteTimeSheets(jobId);
+    }
+  }
+
+  _deleteTimeSheets(String jobID) async {
+    var sub = await _firestore.collection("timesheets").where("jobID", isEqualTo: jobID).get();
+    var jobList = sub.docs;
+    for (var job in jobList) {
+      String jobId = job.id;
+      await _firestore.collection("timesheets").doc(jobId).delete();
+    }
   }
 }
