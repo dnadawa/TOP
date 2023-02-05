@@ -45,16 +45,13 @@ class JobController extends ChangeNotifier {
       List<QueryDocumentSnapshot<Map<String, dynamic>>> nurses = await _databaseService.getNurses();
       for (QueryDocumentSnapshot<Map<String, dynamic>> nurse in nurses) {
         nursesEmails.add(nurse.data()["email"].toString());
-        if(nurse.data().containsKey("notification")){
+        if (nurse.data().containsKey("notification")) {
           playerIDs.add(nurse.data()['notification'].toString());
         }
       }
 
-      if(playerIDs.isNotEmpty) {
-        await _emailService.sendNotification(
-            heading: "A New Job Posted",
-            playerIDs: playerIDs
-        );
+      if (playerIDs.isNotEmpty) {
+        await _emailService.sendNotification(heading: "A New Job Posted", playerIDs: playerIDs);
       }
       await _emailService.sendEmail(
         subject: "A New Job Posted",
@@ -86,7 +83,8 @@ class JobController extends ChangeNotifier {
     return await _databaseService.getAcceptedJobs(nurseID);
   }
 
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAllJobsForNurse(String nurseID, List specialities) async {
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAllJobsForNurse(
+      String nurseID, List specialities) async {
     return await _databaseService.getAllJobsForNurse(nurseID, _selectedDate, specialities);
   }
 
@@ -140,11 +138,8 @@ class JobController extends ChangeNotifier {
       if (job.nurseID != null) {
         String nurseEmail = await _databaseService.getUserEmailFromUID(job.nurseID!);
         String? playerID = await _databaseService.getUserNotificationIDFromUID(job.nurseID!);
-        if(playerID != null) {
-          await _emailService.sendNotification(
-            heading: "Job Time Changed!",
-            playerIDs: [playerID]
-          );
+        if (playerID != null) {
+          await _emailService.sendNotification(heading: "Job Time Changed!", playerIDs: [playerID]);
         }
 
         await _emailService.sendEmail(
@@ -180,17 +175,27 @@ class JobController extends ChangeNotifier {
       );
 
       String? playerID = await _databaseService.getUserNotificationIDFromUID(job.managerID);
-      if(playerID != null) {
+      if (playerID != null) {
         await _emailService.sendNotification(
             heading: "A Nurse Accepted a Job!",
             content: "${nurse.name} accepted a job.",
-            playerIDs: [playerID]
-        );
+            playerIDs: [playerID]);
       }
+
+
+      List<String> emails = [];
+      if(job.managerName != "Admin"){
+        List managers = await _databaseService.getManagerBySpeciality(job.hospitalID, job.speciality);
+        for (var manager in managers) {
+          emails.add(manager['email']);
+        }
+      }
+
 
       await _emailService.sendEmail(
         subject: "A Nurse Accepted a Job",
         templateID: jobAcceptedTemplateID,
+        to: [...emails, adminEmail],
         templateData: {
           'nurse': nurse.name,
           'hospital': job.hospital,

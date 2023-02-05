@@ -150,20 +150,6 @@ class Home extends StatelessWidget {
                 ),
                 SizedBox(height: 30.h),
 
-                //universal calendar
-                SizedBox(
-                  width: double.infinity,
-                  child: Button(
-                    text: 'View All Jobs',
-                    color: kGreen,
-                    onPressed: () async {
-                      Navigator.push(
-                          context, CupertinoPageRoute(builder: (_) => AllJobs(user: user)));
-                    },
-                  ),
-                ),
-                SizedBox(height: 20.h),
-
                 SizedBox(
                   width: double.infinity,
                   child: Button(

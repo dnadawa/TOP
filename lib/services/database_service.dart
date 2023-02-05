@@ -68,6 +68,19 @@ class DatabaseService {
     }
   }
 
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getManagerBySpeciality(
+      String hospitalID, String speciality) async {
+    var sub = await _firestore
+        .collection("users")
+        .where("role", isEqualTo: Role.Manager.name)
+        .where('hospitalID', isEqualTo: hospitalID)
+        .where('isApproved', isEqualTo: true)
+        .where('specialities', arrayContains: speciality)
+        .get();
+
+    return sub.docs;
+  }
+
   createJob(Job job) async {
     bool isWeekend =
         (job.shiftDate.weekday == DateTime.saturday) || (job.shiftDate.weekday == DateTime.sunday);
