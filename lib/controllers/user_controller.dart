@@ -1,12 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import 'package:top/models/shift_model.dart';
 import 'package:top/services/auth_service.dart';
 import 'package:top/constants.dart';
 import 'package:top/models/user_model.dart';
 import 'package:top/services/database_service.dart';
 import 'package:top/services/email_service.dart';
+import 'package:top/views/log_in.dart';
 import 'package:top/widgets/toast.dart';
+
+import '../wrapper.dart';
 
 class UserController {
   final AuthService _authService = AuthService();
@@ -21,7 +28,10 @@ class UserController {
     }
 
     Role role = await _databaseService.getUserRole(user);
+
     user.role = role;
+    OneSignal.shared.setExternalUserId(user.uid);
+    _databaseService.setNotificationID(user.uid);
 
     return user;
   }
@@ -43,12 +53,12 @@ class UserController {
       await _databaseService.createUser(user);
       await _authService.signOut();
       await _emailService.sendEmail(
-          subject: "A new ${role.name.toLowerCase()} registered",
-          templateID: approvalTemplateID,
-          templateData: {
-            'role': role.name,
-            'name': user.name,
-          },
+        subject: "A new ${role.name.toLowerCase()} registered",
+        templateID: approvalTemplateID,
+        templateData: {
+          'role': role.name,
+          'name': user.name,
+        },
       );
       ToastBar(
               text: '${role.name} successfully registered and waiting for admin approval!',
@@ -68,10 +78,14 @@ class UserController {
     }
 
     await _databaseService.getUserRole(user);
+    OneSignal.shared.setExternalUserId(user.uid);
     return user;
   }
 
-  Future<bool> signOut() async => await _authService.signOut();
+  Future<bool> signOut() async {
+    OneSignal.shared.removeExternalUserId();
+    return await _authService.signOut();
+  }
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getHospitals() async {
     return _databaseService.getHospitals();
@@ -133,12 +147,18 @@ class UserController {
     }
   }
 
-  Future<bool> isNurseAvailable(String uid, String date, String shiftType) async {
+  Future<bool> isNurseAvailable(String uid, String date, List shiftTypes) async {
     List shift = await _databaseService.getSingleAvailability(uid, date);
     if (shift.isEmpty) {
       return false;
     } else {
-      return shift[0][shiftType] == AvailabilityStatus.Available.name;
+      for (var shiftType in shiftTypes) {
+        if (shift[0][shiftType] != AvailabilityStatus.Available.name) {
+          return false;
+        }
+      }
+
+      return true;
     }
   }
 
@@ -148,5 +168,38 @@ class UserController {
       days.add(startDate.add(Duration(days: i)).toYYYYMMDDFormat());
     }
     return days;
+  }
+
+  deleteUser(BuildContext context, String email, String password, String uid, {bool isManager=false}) async {
+    SimpleFontelicoProgressDialog pd =
+        SimpleFontelicoProgressDialog(context: context, barrierDimisable: false);
+    try {
+      bool isReAuthenticated = await _authService.reAuthenticate(email, password);
+      if (isReAuthenticated) {
+        pd.show(
+          message: "Deleting user",
+          indicatorColor: kGreen,
+          width: 0.6.sw,
+          height: 130.h,
+          textAlign: TextAlign.center,
+          separation: 30.h,
+        );
+        await _databaseService.deleteJobs(uid, isManager);
+        await _databaseService.deleteUser(uid);
+        bool isDeleted = await _authService.deleteUser(context);
+        if (isDeleted) {
+          pd.hide();
+          ToastBar(text: "User deleted!", color: Colors.green).show();
+          Navigator.of(context).pushAndRemoveUntil(
+              CupertinoPageRoute(builder: (context) => LogIn()), (Route<dynamic> route) => false);
+        } else {
+          pd.hide();
+          ToastBar(text: "Something went wrong!", color: Colors.red).show();
+        }
+      }
+    } catch (e) {
+      pd.hide();
+      ToastBar(text: e.toString(), color: Colors.red).show();
+    }
   }
 }

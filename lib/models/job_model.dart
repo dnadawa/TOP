@@ -1,18 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:top/constants.dart';
 
 class Job {
   final String id;
   final String hospital;
   final String speciality;
   final DateTime shiftDate;
-  final String shiftStartTime;
-  final String shiftEndTime;
-  final String shiftType;
+  String shiftStartTime;
+  String shiftEndTime;
+  final List shiftType;
   final String additionalDetails;
   final String hospitalID;
   final String managerName;
   final String managerID;
   String? nurseID;
+  JobStatus? status;
 
   Job({
     required this.id,
@@ -27,6 +29,7 @@ class Job {
     required this.managerName,
     required this.managerID,
     this.nurseID,
+    this.status,
   });
 
   static Job createJobFromDocument(QueryDocumentSnapshot doc) {
@@ -40,9 +43,10 @@ class Job {
       shiftDate: doc['shiftDate'].toDate(),
       shiftStartTime: doc['shiftStartTime'],
       shiftEndTime: doc['shiftEndTime'],
-      shiftType: doc['shiftType'],
+      shiftType: doc['shiftTypes'],
       additionalDetails: doc['additionalDetails'],
       nurseID: doc['nurse'],
+      status: JobStatus.values.byName(doc['status'])
     );
     return job;
   }

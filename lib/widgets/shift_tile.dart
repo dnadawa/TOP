@@ -16,6 +16,7 @@ class ShiftTile extends StatelessWidget {
   final bool showBackStrip;
   final String additionalDetails;
   final Function? onAcceptButtonPressed;
+  final Color? frontStripColor;
 
   ShiftTile({
     super.key,
@@ -28,7 +29,7 @@ class ShiftTile extends StatelessWidget {
     this.onAcceptButtonPressed,
     required this.specialty,
     required this.shiftDate,
-    required this.additionalDetails,
+    required this.additionalDetails, this.frontStripColor,
   });
 
   final TextEditingController additionalDetailsController = TextEditingController();
@@ -43,7 +44,7 @@ class ShiftTile extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.r),
-          color: showFrontStrip ? kRed : Colors.transparent,
+          color: showFrontStrip ? (frontStripColor ?? kRed) : Colors.transparent,
         ),
         child: Container(
           margin: showFrontStrip ? EdgeInsets.only(left: 12.w) : EdgeInsets.zero,

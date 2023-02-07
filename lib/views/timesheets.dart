@@ -1,10 +1,14 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:top/constants.dart';
+import 'package:top/models/image_timesheet_model.dart';
 import 'package:top/models/job_model.dart';
 import 'package:top/models/user_model.dart';
 import 'package:top/views/single_timesheet.dart';
@@ -73,15 +77,71 @@ class _TimeSheetsState extends State<TimeSheets> {
                                 return Padding(
                                   padding: EdgeInsets.only(bottom: 20.h),
                                   child: GestureDetector(
-                                    onTap: () => Navigator.push(
-                                      context,
-                                      CupertinoPageRoute(
-                                        builder: (context) => SingleTimesheet(
-                                          job: job,
-                                          user: widget.user!,
-                                        ),
-                                      ),
-                                    ).then((value) => setState((){})),
+                                    onTap: () => showCupertinoModalPopup(
+                                        context: context,
+                                        builder: (context) {
+                                          return Card(
+                                            margin: EdgeInsets.all(15.w),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(20.r),
+                                            ),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                ListTile(
+                                                  leading: Icon(
+                                                    Icons.assignment,
+                                                    color: kGreen,
+                                                  ),
+                                                  title: Text("Fill the form"),
+                                                  onTap: () {
+                                                    Navigator.pop(context);
+                                                    Navigator.push(
+                                                      context,
+                                                      CupertinoPageRoute(
+                                                        builder: (context) => SingleTimesheet(
+                                                          job: job,
+                                                          user: widget.user!,
+                                                        ),
+                                                      ),
+                                                    ).then((value) => setState(() {}));
+                                                  },
+                                                ),
+                                                ListTile(
+                                                  leading: Icon(
+                                                    Icons.camera_alt,
+                                                    color: kGreen,
+                                                  ),
+                                                  title: Text("Upload a photo"),
+                                                  onTap: () async {
+                                                    final ImagePicker imagePicker = ImagePicker();
+                                                    final XFile? image = await imagePicker
+                                                        .pickImage(source: ImageSource.gallery);
+                                                    if (image != null) {
+                                                      ImageTimeSheet timeSheet =
+                                                          ImageTimeSheet(job);
+                                                      Uint8List imageBytes =
+                                                          await image.readAsBytes();
+
+                                                      bool success =
+                                                          await Provider.of<JobController>(context,
+                                                                  listen: false)
+                                                              .submitImageTimesheet(
+                                                                  timeSheet,
+                                                                  context,
+                                                                  imageBytes,
+                                                                  widget.user!);
+                                                      if (success) {
+                                                        Navigator.pop(context);
+                                                        setState(() {});
+                                                      }
+                                                    }
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }),
                                     child: IntrinsicHeight(
                                       child: Row(
                                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -89,7 +149,7 @@ class _TimeSheetsState extends State<TimeSheets> {
                                           Expanded(
                                             child: ShiftTile(
                                               hospital: job.hospital,
-                                              shiftType: job.shiftType,
+                                              shiftType: job.shiftType.join(","),
                                               shiftTime:
                                                   "${job.shiftStartTime} to ${job.shiftEndTime}",
                                               shiftDate:

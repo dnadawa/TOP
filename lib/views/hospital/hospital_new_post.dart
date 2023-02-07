@@ -127,6 +127,65 @@ class HospitalNewPost extends StatelessWidget {
                   ),
                 ),
 
+                SizedBox(height: 20.h),
+                SizedBox(
+                  width: double.infinity,
+                  child: Button(
+                    text: 'Delete Profile',
+                    color: kRed,
+                    onPressed: () {
+                      TextEditingController email = TextEditingController();
+                      TextEditingController password = TextEditingController();
+
+                      email.text = user?.email ?? '';
+
+                      showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text("Please re-authenticate to delete your account"),
+                              SizedBox(height: 50.h),
+                              InputField(text: "Email", controller: email, enabled: false),
+                              SizedBox(height: 20.h),
+                              InputField(
+                                text: "Password",
+                                isPassword: true,
+                                controller: password,
+                              ),
+                              SizedBox(height: 40.h),
+                              SizedBox(
+                                width: double.infinity,
+                                child: Button(
+                                  text: 'Delete',
+                                  color: kRed,
+                                  onPressed: () async {
+                                    if (email.text.trim().isEmpty || password.text.trim().isEmpty) {
+                                      ToastBar(
+                                          text: 'Please fill relevant fields!',
+                                          color: Colors.red)
+                                          .show();
+                                    } else {
+                                      ToastBar(
+                                          text: 'Please wait...',
+                                          color: Colors.orange)
+                                          .show();
+                                      await Provider.of<UserController>(context, listen: false)
+                                          .deleteUser(
+                                          context, email.text, password.text, user!.uid, isManager: true);
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
                 //log out
                 SizedBox(height: 20.h),
                 SizedBox(

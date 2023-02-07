@@ -10,6 +10,8 @@ import 'package:top/views/timesheets.dart';
 import 'package:top/controllers/user_controller.dart';
 import 'package:top/models/user_model.dart';
 
+import 'all_jobs.dart';
+
 class PageSelector extends StatefulWidget {
 
   @override
@@ -46,7 +48,7 @@ class _PageSelectorState extends State<PageSelector> {
         children: [
           Home(user: user),
           Availability(user: user),
-          MyShifts(user: user),
+          AllJobs(user: user),
           ReleasedShifts(user: user),
           TimeSheets(user: user,),
         ],
@@ -66,7 +68,7 @@ class _PageSelectorState extends State<PageSelector> {
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.event_available), label: 'Availability'),
-          BottomNavigationBarItem(icon: Icon(Icons.assignment), label: 'My Shifts'),
+          BottomNavigationBarItem(icon: Icon(Icons.assignment), label: 'All Jobs'),
           BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Released'),
           BottomNavigationBarItem(icon: Icon(Icons.pending_actions), label: 'Time Sheet'),
         ],

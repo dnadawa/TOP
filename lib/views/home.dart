@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:top/controllers/job_controller.dart';
+import 'package:top/views/all_jobs.dart';
 import 'package:top/widgets/backdrop.dart';
 import 'package:top/constants.dart';
 import 'package:top/widgets/heading_card.dart';
@@ -109,7 +110,7 @@ class Home extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 50.h),
+                SizedBox(height: 30.h),
 
                 //details
                 HeadingCard(
@@ -147,7 +148,66 @@ class Home extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 80.h),
+                SizedBox(height: 30.h),
+
+                SizedBox(
+                  width: double.infinity,
+                  child: Button(
+                    text: 'Delete Profile',
+                    color: kRed,
+                    onPressed: () {
+                      TextEditingController email = TextEditingController();
+                      TextEditingController password = TextEditingController();
+
+                      email.text = user?.email ?? '';
+
+                      showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text("Please re-authenticate to delete your account"),
+                              SizedBox(height: 50.h),
+                              InputField(text: "Email", controller: email, enabled: false),
+                              SizedBox(height: 20.h),
+                              InputField(
+                                text: "Password",
+                                isPassword: true,
+                                controller: password,
+                              ),
+                              SizedBox(height: 40.h),
+                              SizedBox(
+                                width: double.infinity,
+                                child: Button(
+                                  text: 'Delete',
+                                  color: kRed,
+                                  onPressed: () async {
+                                    if (email.text.trim().isEmpty || password.text.trim().isEmpty) {
+                                      ToastBar(
+                                              text: 'Please fill relevant fields!',
+                                              color: Colors.red)
+                                          .show();
+                                    } else {
+                                      ToastBar(
+                                          text: 'Please wait...',
+                                          color: Colors.orange)
+                                          .show();
+                                      await Provider.of<UserController>(context, listen: false)
+                                          .deleteUser(
+                                              context, email.text, password.text, user!.uid);
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: 20.h),
 
                 //log out
                 SizedBox(

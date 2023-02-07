@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:top/controllers/job_controller.dart';
 import 'package:top/controllers/user_controller.dart';
@@ -21,6 +22,9 @@ main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await dotenv.load(fileName: ".env");
+
+  OneSignal.shared.setAppId(dotenv.env["ONESIGNAL"]!);
+  OneSignal.shared.promptUserForPushNotificationPermission();
 
   runApp(MyApp());
 }

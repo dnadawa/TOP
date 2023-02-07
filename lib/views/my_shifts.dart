@@ -89,7 +89,7 @@ class _MyShiftsState extends State<MyShifts> {
                                   padding: EdgeInsets.only(bottom: 20.h),
                                   child: ShiftTile(
                                     hospital: job.hospital,
-                                    shiftType: job.shiftType,
+                                    shiftType: job.shiftType.join(","),
                                     shiftTime: "${job.shiftStartTime} to ${job.shiftEndTime}",
                                     shiftDate: DateFormat('EEEE MMMM dd').format(job.shiftDate),
                                     specialty: job.speciality,
@@ -109,7 +109,7 @@ class _MyShiftsState extends State<MyShifts> {
                                           content: Text(
                                             isAvailable
                                                 ? 'Are you sure you want to accept this job?'
-                                                : 'You are not available on this shift.',
+                                                : 'You are not available on this shift(s).',
                                           ),
                                           actions: [
                                             if (isAvailable)

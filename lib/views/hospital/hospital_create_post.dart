@@ -7,6 +7,7 @@ import 'package:top/models/job_model.dart';
 import 'package:top/widgets/backdrop.dart';
 import 'package:top/constants.dart';
 import 'package:top/widgets/button.dart';
+import 'package:top/widgets/chip_field.dart';
 import 'package:top/widgets/heading_card.dart';
 import 'package:top/widgets/input_filed.dart';
 import 'package:top/widgets/toast.dart';
@@ -16,8 +17,7 @@ class HospitalCreatePost extends StatefulWidget {
   final User manager;
   final String hospitalName;
 
-  const HospitalCreatePost(
-      {super.key, required this.manager, required this.hospitalName});
+  const HospitalCreatePost({super.key, required this.manager, required this.hospitalName});
 
   @override
   State<HospitalCreatePost> createState() => _HospitalCreatePostState();
@@ -31,7 +31,7 @@ class _HospitalCreatePostState extends State<HospitalCreatePost> {
   final TextEditingController shiftEndTime = TextEditingController();
   final TextEditingController additionalDetails = TextEditingController();
 
-  String? selectedShiftType;
+  List<String> selectedShiftType = [];
   String? selectedSpeciality;
   DateTime? selectedShiftDate;
 
@@ -97,13 +97,11 @@ class _HospitalCreatePostState extends State<HospitalCreatePost> {
                               ),
                               value: selectedSpeciality,
                               items: widget.manager.specialities!
-                                  .map((speciality) => DropdownMenuItem(
-                                      value: speciality,
-                                      child: Text(speciality)))
+                                  .map((speciality) =>
+                                      DropdownMenuItem(value: speciality, child: Text(speciality)))
                                   .toList(),
                               onChanged: (value) {
-                                setState(
-                                    () => selectedSpeciality = value as String);
+                                setState(() => selectedSpeciality = value as String);
                               },
                             ),
                           ),
@@ -120,8 +118,7 @@ class _HospitalCreatePostState extends State<HospitalCreatePost> {
                               );
 
                               selectedShiftDate = pickedDate;
-                              shiftDate.text = DateFormat('EEEE MMMM dd')
-                                  .format(pickedDate!);
+                              shiftDate.text = DateFormat('EEEE MMMM dd').format(pickedDate!);
                             },
                             child: InputField(
                               text: 'Shift Date',
@@ -168,33 +165,11 @@ class _HospitalCreatePostState extends State<HospitalCreatePost> {
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 15.w),
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.symmetric(horizontal: 15.w),
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8.r),
-                                border: Border.all(color: kDisabled)),
-                            child: DropdownButton<String?>(
-                              underline: SizedBox.shrink(),
-                              isExpanded: true,
-                              hint: Text(
-                                "Shift Type",
-                                style: TextStyle(color: kDisabled),
-                              ),
-                              value: selectedShiftType,
-                              items: [
-                                DropdownMenuItem(
-                                    value: 'AM', child: Text('AM')),
-                                DropdownMenuItem(
-                                    value: 'PM', child: Text('PM')),
-                                DropdownMenuItem(
-                                    value: 'NS', child: Text('NS')),
-                              ],
-                              onChanged: (value) {
-                                setState(() => selectedShiftType = value);
-                              },
-                            ),
+                          child: ChipField(
+                            text: "Shift Type",
+                            items: ["AM", "PM", "NS"],
+                            onChanged: (List<String> items) => selectedShiftType = items,
+                            initialItems: [],
                           ),
                         ),
                         Padding(
@@ -220,15 +195,11 @@ class _HospitalCreatePostState extends State<HospitalCreatePost> {
                       if (shiftDate.text.isEmpty ||
                           shiftStartTime.text.isEmpty ||
                           shiftEndTime.text.isEmpty ||
-                          selectedShiftType == null ||
+                          selectedShiftType.isEmpty ||
                           selectedSpeciality == null) {
-                        ToastBar(
-                                text: 'Please fill relevant fields!',
-                                color: Colors.red)
-                            .show();
+                        ToastBar(text: 'Please fill relevant fields!', color: Colors.red).show();
                       } else {
-                        ToastBar(text: "Please wait...", color: Colors.orange)
-                            .show();
+                        ToastBar(text: "Please wait...", color: Colors.orange).show();
 
                         Job job = Job(
                             managerName: managerName.text,
@@ -238,15 +209,13 @@ class _HospitalCreatePostState extends State<HospitalCreatePost> {
                             shiftDate: selectedShiftDate!,
                             shiftStartTime: shiftStartTime.text,
                             shiftEndTime: shiftEndTime.text,
-                            shiftType: selectedShiftType!,
+                            shiftType: selectedShiftType,
                             additionalDetails: additionalDetails.text,
                             speciality: selectedSpeciality!,
                             id: '');
 
-                        bool isSuccess = await Provider.of<JobController>(
-                                context,
-                                listen: false)
-                            .createJob(job);
+                        bool isSuccess =
+                            await Provider.of<JobController>(context, listen: false).createJob(job);
                         if (isSuccess) {
                           Navigator.pop(context);
                         }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
 import 'package:top/constants.dart';
+import 'package:top/models/image_timesheet_model.dart';
 import 'package:top/models/timesheet_model.dart';
 import 'package:top/models/job_model.dart';
 import 'package:top/services/email_service.dart';
@@ -19,8 +20,16 @@ class JobController extends ChangeNotifier {
   final EmailService _emailService = EmailService();
 
   String _selectedSpeciality = specialities[0];
+  DateTime? _selectedDate;
 
   String get selectedSpeciality => _selectedSpeciality;
+
+  DateTime? get selectedDate => _selectedDate;
+
+  set selectedDate(DateTime? value) {
+    _selectedDate = value;
+    notifyListeners();
+  }
 
   set selectedSpeciality(String speciality) {
     _selectedSpeciality = speciality;
@@ -30,8 +39,23 @@ class JobController extends ChangeNotifier {
   Future<bool> createJob(Job job) async {
     try {
       await _databaseService.createJob(job);
+
+      List<String> playerIDs = [];
+      List<String> nursesEmails = [];
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> nurses = await _databaseService.getNurses();
+      for (QueryDocumentSnapshot<Map<String, dynamic>> nurse in nurses) {
+        nursesEmails.add(nurse.data()["email"].toString());
+        if (nurse.data().containsKey("notification")) {
+          playerIDs.add(nurse.data()['notification'].toString());
+        }
+      }
+
+      if (playerIDs.isNotEmpty) {
+        await _emailService.sendNotification(heading: "A New Job Posted", playerIDs: playerIDs);
+      }
       await _emailService.sendEmail(
         subject: "A New Job Posted",
+        to: [adminEmail, ...nursesEmails],
         templateID: jobPostedTemplateID,
         templateData: {
           'manager': job.managerName,
@@ -51,8 +75,22 @@ class JobController extends ChangeNotifier {
     return await _databaseService.getJobs(hospitalID, _selectedSpeciality, status);
   }
 
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getJobsByDate(String hospitalID) async {
+    return await _databaseService.getJobsByDate(hospitalID, _selectedDate);
+  }
+
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAcceptedJobs(String nurseID) async {
     return await _databaseService.getAcceptedJobs(nurseID);
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAllJobsForNurse(
+      String nurseID, List specialities) async {
+    return await _databaseService.getAllJobsForNurse(nurseID, _selectedDate, specialities);
+  }
+
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAcceptedJobsForaDateAndShift(
+      String nurseID, DateTime date, String shift) async {
+    return await _databaseService.getAcceptedJobsForaDateAndShift(nurseID, date, shift);
   }
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getReleasedJobs(
@@ -82,9 +120,44 @@ class JobController extends ChangeNotifier {
     try {
       await _databaseService.deleteJob(job.id);
       if (status != JobStatus.Available) {
-        await _databaseService.unBookNurse(job.nurseID!, job.shiftDate.toYYYYMMDDFormat(), job.shiftType);
+        await _databaseService.unBookNurse(
+            job.nurseID!, job.shiftDate.toYYYYMMDDFormat(), job.shiftType);
       }
       ToastBar(text: "Job Deleted Successfully!", color: Colors.green).show();
+      return true;
+    } catch (e) {
+      ToastBar(text: e.toString(), color: Colors.red).show();
+      return false;
+    }
+  }
+
+  Future<bool> editTimes(Job job, String oldStartTime, String oldEndTime) async {
+    try {
+      await _databaseService.editTimes(job);
+
+      if (job.nurseID != null) {
+        String nurseEmail = await _databaseService.getUserEmailFromUID(job.nurseID!);
+        String? playerID = await _databaseService.getUserNotificationIDFromUID(job.nurseID!);
+        if (playerID != null) {
+          await _emailService.sendNotification(heading: "Job Time Changed!", playerIDs: [playerID]);
+        }
+
+        await _emailService.sendEmail(
+          subject: "Job Time Changed!",
+          to: [nurseEmail],
+          templateID: jobTimeChangeTemplateID,
+          templateData: {
+            'start': job.shiftStartTime,
+            'oldStart': oldStartTime,
+            'end': job.shiftEndTime,
+            'oldEnd': oldEndTime,
+            'date': job.shiftDate.toYYYYMMDDFormat(),
+            'hospital': job.hospital,
+          },
+        );
+      }
+
+      ToastBar(text: "Shift Time Changed!", color: Colors.green).show();
       return true;
     } catch (e) {
       ToastBar(text: e.toString(), color: Colors.red).show();
@@ -101,9 +174,28 @@ class JobController extends ChangeNotifier {
         job.shiftType,
       );
 
+      String? playerID = await _databaseService.getUserNotificationIDFromUID(job.managerID);
+      if (playerID != null) {
+        await _emailService.sendNotification(
+            heading: "A Nurse Accepted a Job!",
+            content: "${nurse.name} accepted a job.",
+            playerIDs: [playerID]);
+      }
+
+
+      List<String> emails = [];
+      if(job.managerName != "Admin"){
+        List managers = await _databaseService.getManagerBySpeciality(job.hospitalID, job.speciality);
+        for (var manager in managers) {
+          emails.add(manager['email']);
+        }
+      }
+
+
       await _emailService.sendEmail(
         subject: "A Nurse Accepted a Job",
         templateID: jobAcceptedTemplateID,
+        to: [...emails, adminEmail],
         templateData: {
           'nurse': nurse.name,
           'hospital': job.hospital,
@@ -176,6 +268,63 @@ class JobController extends ChangeNotifier {
           'hospitalSign': timeSheet.hospitalSignatureURL,
           'hospitalSignName': timeSheet.hospitalSignatureName,
           'nurse': nurse.name,
+        },
+      );
+
+      pd.hide();
+      ToastBar(text: "Timesheet Submitted!", color: Colors.green).show();
+      return true;
+    } catch (e) {
+      pd.hide();
+      ToastBar(text: e.toString(), color: Colors.red).show();
+      return false;
+    }
+  }
+
+  Future<bool> submitImageTimesheet(
+      ImageTimeSheet timeSheet, BuildContext context, Uint8List image, User nurse) async {
+    SimpleFontelicoProgressDialog pd =
+        SimpleFontelicoProgressDialog(context: context, barrierDimisable: false);
+    pd.show(
+      message: "Data uploading...",
+      indicatorColor: kGreen,
+      width: 0.6.sw,
+      height: 130.h,
+      textAlign: TextAlign.center,
+      separation: 30.h,
+    );
+    try {
+      //upload signatures
+      timeSheet.url =
+          await _storageService.uploadBytes(timeSheet.job.id, image, location: "timesheets");
+
+      //send to database
+      await _databaseService.submitImageTimesheet(timeSheet);
+
+      String managerEmail = await _databaseService.getUserEmailFromUID(timeSheet.job.managerID);
+
+      //send email
+      await _emailService.sendEmail(
+        subject: "Timesheet Received",
+        templateID: imageTimesheetTemplateID,
+        templateData: {
+          'hospital': timeSheet.job.hospital,
+          'speciality': timeSheet.job.speciality,
+          'date': timeSheet.job.shiftDate.toEEEMMMddFormat(),
+          'image': timeSheet.url,
+        },
+      );
+      await _emailService.sendEmail(
+        from: 'joyceplus.adm@gmail.com',
+        to: [managerEmail, nurse.email!],
+        subject: "Timesheet Received",
+        templateID: imageTimesheetTemplateID,
+        templateData: {
+          'hospital': timeSheet.job.hospital,
+          'speciality': timeSheet.job.speciality,
+          'date': timeSheet.job.shiftDate.toEEEMMMddFormat(),
+          'nurse': nurse.name,
+          'image': timeSheet.url,
         },
       );
 
