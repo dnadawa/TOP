@@ -35,16 +35,10 @@ class _AllJobsState extends State<AllJobs> {
     return Scaffold(
       body: Backdrop(
         child: Padding(
-          padding: EdgeInsets.only(left: 30.w, right: 30.w, bottom: 30.w),
+          padding: EdgeInsets.only(left: 30.w, right: 30.w, bottom: 30.w, top: 30.h),
           child: Column(
             children: [
               SizedBox(height: ScreenUtil().statusBarHeight),
-              Align(
-                alignment: Alignment.topLeft,
-                child: BackButton(
-                  color: kGreyText,
-                ),
-              ),
               Expanded(
                 child: HeadingCard(
                   title: "All Jobs",

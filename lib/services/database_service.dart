@@ -160,7 +160,14 @@ class DatabaseService {
           .orderBy('shiftDate', descending: true)
           .get();
 
-      return [...query1.docs, ...query2.docs];
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> x = [...query1.docs, ...query2.docs];
+      x.sort((a, b) {
+        DateTime first = a['shiftDate'].toDate();
+        DateTime second = b['shiftDate'].toDate();
+        return first.isBefore(second) ? 1 : 0;
+      });
+
+      return x;
     }
 
     var query1 = await _firestore
