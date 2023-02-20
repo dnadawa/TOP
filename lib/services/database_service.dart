@@ -103,21 +103,26 @@ class DatabaseService {
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getJobs(
       String hospitalID, String speciality, JobStatus status) async {
+    DateTime now = DateTime.now();
+
     var sub = await _firestore
         .collection('jobs')
         .where('hospitalID', isEqualTo: hospitalID)
         .where('speciality', isEqualTo: speciality)
         .where('status', isEqualTo: status.name)
+        .where('shiftDate', isGreaterThanOrEqualTo: DateTime(now.year, now.month, now.day))
         .get();
     return sub.docs;
   }
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getJobsByDate(
       String hospitalID, DateTime? date) async {
+    DateTime now = DateTime.now();
     if (date == null) {
       var sub = await _firestore
           .collection('jobs')
           .where('hospitalID', isEqualTo: hospitalID)
+          .where('shiftDate', isGreaterThanOrEqualTo: DateTime(now.year, now.month, now.day))
           .orderBy('shiftDate', descending: true)
           .get();
       return sub.docs;
@@ -145,18 +150,22 @@ class DatabaseService {
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAllJobsForNurse(
       String nurseID, DateTime? date, List specialities) async {
+    DateTime now =  DateTime.now();
+
     if (date == null) {
       var query1 = await _firestore
           .collection('jobs')
           .where('nurse', isNull: true)
           .where('speciality', whereIn: specialities)
           .where('isWeekend', isEqualTo: false)
+          .where('shiftDate', isGreaterThanOrEqualTo: DateTime(now.year, now.month, now.day))
           .orderBy('shiftDate', descending: true)
           .get();
 
       var query2 = await _firestore
           .collection('jobs')
           .where('nurse', isEqualTo: nurseID)
+          .where('shiftDate', isGreaterThanOrEqualTo: DateTime(now.year, now.month, now.day))
           .orderBy('shiftDate', descending: true)
           .get();
 
