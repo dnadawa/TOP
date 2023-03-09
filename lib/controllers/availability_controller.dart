@@ -30,9 +30,6 @@ class AvailabilityController extends ChangeNotifier {
         newDates[key] = value.map((e) => '${e}Booked').toList();
       }
     });
-
-    newDates.removeWhere((key, value) => value.isEmpty);
-
     return newDates;
   }
 

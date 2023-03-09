@@ -52,6 +52,7 @@ class EditAvailability extends StatelessWidget {
             bookedShifts[shift.date] = bookedDates;
           }
         }
+        shifts.removeWhere((key, value) => value.isEmpty);
 
         return AvailabilityController(shifts, bookedShifts);
       },

@@ -150,7 +150,7 @@ class DatabaseService {
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAllJobsForNurse(
       String nurseID, DateTime? date, List specialities) async {
-    DateTime now =  DateTime.now();
+    DateTime now = DateTime.now();
 
     if (date == null) {
       var query1 = await _firestore
@@ -293,24 +293,28 @@ class DatabaseService {
 
   updateAvailability(String uid, Map<String?, List<String>> dates) {
     dates.forEach((key, value) async {
-      await _firestore.collection('users').doc(uid).collection('shifts').doc(key).set({
-        'date': key,
-        'AM': value.contains('AMBooked')
-            ? AvailabilityStatus.Booked.name
-            : value.contains('AM')
-                ? AvailabilityStatus.Available.name
-                : AvailabilityStatus.NotAvailable.name,
-        'PM': value.contains('PMBooked')
-            ? AvailabilityStatus.Booked.name
-            : value.contains('PM')
-                ? AvailabilityStatus.Available.name
-                : AvailabilityStatus.NotAvailable.name,
-        'NS': value.contains('NSBooked')
-            ? AvailabilityStatus.Booked.name
-            : value.contains('NS')
-                ? AvailabilityStatus.Available.name
-                : AvailabilityStatus.NotAvailable.name,
-      });
+      if (value.isNotEmpty) {
+        await _firestore.collection('users').doc(uid).collection('shifts').doc(key).set({
+          'date': key,
+          'AM': value.contains('AMBooked')
+              ? AvailabilityStatus.Booked.name
+              : value.contains('AM')
+                  ? AvailabilityStatus.Available.name
+                  : AvailabilityStatus.NotAvailable.name,
+          'PM': value.contains('PMBooked')
+              ? AvailabilityStatus.Booked.name
+              : value.contains('PM')
+                  ? AvailabilityStatus.Available.name
+                  : AvailabilityStatus.NotAvailable.name,
+          'NS': value.contains('NSBooked')
+              ? AvailabilityStatus.Booked.name
+              : value.contains('NS')
+                  ? AvailabilityStatus.Available.name
+                  : AvailabilityStatus.NotAvailable.name,
+        });
+      } else {
+        await _firestore.collection('users').doc(uid).collection('shifts').doc(key).delete();
+      }
     });
   }
 
