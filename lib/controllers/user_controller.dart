@@ -13,8 +13,6 @@ import 'package:top/services/email_service.dart';
 import 'package:top/views/log_in.dart';
 import 'package:top/widgets/toast.dart';
 
-import '../wrapper.dart';
-
 class UserController {
   final AuthService _authService = AuthService();
   final DatabaseService _databaseService = DatabaseService();

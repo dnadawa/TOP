@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:top/models/user_model.dart';
 import 'package:top/views/log_in.dart';
