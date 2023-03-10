@@ -59,6 +59,11 @@ class DatabaseService {
     return doc.data()!['email'];
   }
 
+  Future<String> getUserNameFromUID(String uid) async {
+    var doc = await _firestore.collection('users').doc(uid).get();
+    return doc.data()!['name'];
+  }
+
   Future<String?> getUserNotificationIDFromUID(String uid) async {
     try {
       var doc = await _firestore.collection('users').doc(uid).get();

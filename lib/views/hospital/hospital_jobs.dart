@@ -127,6 +127,7 @@ class _HospitalJobsState extends State<HospitalJobs> {
                                                 Expanded(
                                                   child: ShiftTile(
                                                     hospital: job.hospital,
+                                                    nurse: job.nurseID,
                                                     shiftType: job.shiftType.join(","),
                                                     shiftTime:
                                                         "${job.shiftStartTime} to ${job.shiftEndTime}",

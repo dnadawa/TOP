@@ -202,4 +202,13 @@ class UserController {
       ToastBar(text: e.toString(), color: Colors.red).show();
     }
   }
+
+  Future<String?> getUserName(String id) async {
+    try {
+      String name = await _databaseService.getUserNameFromUID(id);
+      return name;
+    } on Exception catch (e) {
+      return null;
+    }
+  }
 }

@@ -47,6 +47,7 @@ class _HospitalJobDetailsState extends State<HospitalJobDetails> {
                   padding: EdgeInsets.all(20.w),
                   child: ShiftTile(
                     hospital: widget.job.hospital,
+                    nurse: widget.job.nurseID,
                     shiftType: widget.job.shiftType.join(","),
                     shiftTime: "${widget.job.shiftStartTime} to ${widget.job.shiftEndTime}",
                     shiftDate: DateFormat('EEEE MMMM dd').format(widget.job.shiftDate),

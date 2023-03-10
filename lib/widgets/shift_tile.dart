@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:top/constants.dart';
+import 'package:top/controllers/user_controller.dart';
 import 'package:top/widgets/button.dart';
 import 'package:top/widgets/input_filed.dart';
+
+import '../models/user_model.dart';
 
 class ShiftTile extends StatelessWidget {
   final bool showAcceptButton;
   final String hospital;
+  final String? nurse;
   final String shiftType;
   final String shiftTime;
   final String shiftDate;
@@ -29,7 +34,7 @@ class ShiftTile extends StatelessWidget {
     this.onAcceptButtonPressed,
     required this.specialty,
     required this.shiftDate,
-    required this.additionalDetails, this.frontStripColor,
+    required this.additionalDetails, this.frontStripColor, this.nurse,
   });
 
   final TextEditingController additionalDetailsController = TextEditingController();
@@ -103,6 +108,42 @@ class ShiftTile extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 8.h),
+
+                //Nurse
+                if(nurse != null)
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 80.w,
+                        child: Text(
+                          'Nurse',
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: FutureBuilder<String?>(
+                            future: Provider.of<UserController>(context).getUserName(nurse!),
+                            builder: (context, snapshot) {
+                              return Text(
+                                (snapshot.connectionState == ConnectionState.waiting ||
+                                    !snapshot.hasData)
+                                    ? 'Loading'
+                                    : snapshot.data!,
+                                style: GoogleFonts.sourceSansPro(
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w400,
+                                    color: kGreyText),
+                              );
+                            }),
+                      ),
+                    ],
+                  ),
+                if(nurse != null)
+                  SizedBox(height: 8.h),
 
                 //shift date
                 Row(
