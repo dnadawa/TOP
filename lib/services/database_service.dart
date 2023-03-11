@@ -387,8 +387,8 @@ class DatabaseService {
     return sub.docs;
   }
 
-  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getNurses() async {
-    var sub = await _firestore.collection("users").where("role", isEqualTo: Role.Nurse.name).get();
+  Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getNurses(String speciality) async {
+    var sub = await _firestore.collection("users").where("role", isEqualTo: Role.Nurse.name).where("specialities", arrayContains: speciality).get();
     return sub.docs;
   }
 

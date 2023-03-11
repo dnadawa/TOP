@@ -42,7 +42,7 @@ class JobController extends ChangeNotifier {
 
       List<String> playerIDs = [];
       List<String> nursesEmails = [];
-      List<QueryDocumentSnapshot<Map<String, dynamic>>> nurses = await _databaseService.getNurses();
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> nurses = await _databaseService.getNurses(job.speciality);
       for (QueryDocumentSnapshot<Map<String, dynamic>> nurse in nurses) {
         nursesEmails.add(nurse.data()["email"].toString());
         if (nurse.data().containsKey("notification")) {
