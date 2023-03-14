@@ -56,7 +56,7 @@ class _HospitalAllJobsState extends State<HospitalAllJobs> {
                                   child: SizedBox(
                                     width: 25.w,
                                     height: 20.h,
-                                    child: Badge(text: '', color: kGreen, enabled: true),
+                                    child: BadgeWidget(text: '', color: kGreen, enabled: true),
                                   ),
                                 ),
                                 Text('Available', style: TextStyle(fontSize: 14.sp)),
@@ -66,7 +66,7 @@ class _HospitalAllJobsState extends State<HospitalAllJobs> {
                                   child: SizedBox(
                                     width: 25.w,
                                     height: 20.h,
-                                    child: Badge(text: '', color: kOrange, enabled: true),
+                                    child: BadgeWidget(text: '', color: kOrange, enabled: true),
                                   ),
                                 ),
                                 Text('Confirmed', style: TextStyle(fontSize: 14.sp)),
@@ -76,7 +76,7 @@ class _HospitalAllJobsState extends State<HospitalAllJobs> {
                                   child: SizedBox(
                                     width: 25.w,
                                     height: 20.h,
-                                    child: Badge(text: '', color: kRed, enabled: true),
+                                    child: BadgeWidget(text: '', color: kRed, enabled: true),
                                   ),
                                 ),
                                 Text('Completed', style: TextStyle(fontSize: 14.sp)),

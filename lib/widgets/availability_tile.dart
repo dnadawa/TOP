@@ -111,7 +111,7 @@ class AvailabilityTile extends StatelessWidget {
               ),
             ),
             Expanded(child: SizedBox.shrink()),
-            Badge(
+            BadgeWidget(
               text: 'AM',
               color: am == AvailabilityStatus.Available ? Colors.green : Colors.red,
               enabled: am != AvailabilityStatus.NotAvailable,
@@ -119,14 +119,14 @@ class AvailabilityTile extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.w),
-              child: Badge(
+              child: BadgeWidget(
                 text: 'PM',
                 color: pm == AvailabilityStatus.Available ? Colors.green : Colors.red,
                 enabled: pm != AvailabilityStatus.NotAvailable,
                 onTap: () => onBadgeTapped('PM', pm, context),
               ),
             ),
-            Badge(
+            BadgeWidget(
               text: 'NS',
               color: ns == AvailabilityStatus.Available ? Colors.green : Colors.red,
               enabled: ns != AvailabilityStatus.NotAvailable,

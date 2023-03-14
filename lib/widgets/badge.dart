@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:top/constants.dart';
 
-class Badge extends StatelessWidget {
+class BadgeWidget extends StatelessWidget {
   final String text;
   final Color color;
   final bool enabled;
   final Function()? onTap;
 
-  const Badge({super.key, required this.text, required this.color, required this.enabled, this.onTap});
+  const BadgeWidget({super.key, required this.text, required this.color, required this.enabled, this.onTap});
 
   @override
   Widget build(BuildContext context) {

@@ -50,7 +50,7 @@ class _AvailabilityState extends State<Availability> {
                               child: SizedBox(
                                 width: 25.w,
                                 height: 20.h,
-                                child: Badge(text: '', color: Colors.green, enabled: true),
+                                child: BadgeWidget(text: '', color: Colors.green, enabled: true),
                               ),
                             ),
                             Text('Available', style: TextStyle(fontSize: 14.sp)),
@@ -59,7 +59,7 @@ class _AvailabilityState extends State<Availability> {
                               child: SizedBox(
                                 width: 25.w,
                                 height: 20.h,
-                                child: Badge(text: '', color: Colors.red, enabled: true),
+                                child: BadgeWidget(text: '', color: Colors.red, enabled: true),
                               ),
                             ),
                             Text('Booked', style: TextStyle(fontSize: 14.sp)),
@@ -68,7 +68,7 @@ class _AvailabilityState extends State<Availability> {
                               child: SizedBox(
                                 width: 25.w,
                                 height: 20.h,
-                                child: Badge(text: '', color: Colors.green, enabled: false),
+                                child: BadgeWidget(text: '', color: Colors.green, enabled: false),
                               ),
                             ),
                             Text('Not Available', style: TextStyle(fontSize: 14.sp)),

@@ -38,7 +38,7 @@ class ReleasedShiftTile extends StatelessWidget {
                       ),
                     ),
                     Expanded(child: SizedBox.shrink()),
-                    Badge(text: count, color: kGreyText, enabled: true),
+                    BadgeWidget(text: count, color: kGreyText, enabled: true),
                   ],
                 ),
               ),
