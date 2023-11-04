@@ -419,4 +419,10 @@ class DatabaseService {
       await _firestore.collection("timesheets").doc(jobId).delete();
     }
   }
+  
+  changeSpecialities(List specialities, String uid) async {
+    await _firestore.collection('users').doc(uid).update({
+      'specialities': specialities,
+    });
+  }
 }

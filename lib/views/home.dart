@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,6 +9,7 @@ import 'package:top/controllers/job_controller.dart';
 import 'package:top/views/all_jobs.dart';
 import 'package:top/widgets/backdrop.dart';
 import 'package:top/constants.dart';
+import 'package:top/widgets/chip_field.dart';
 import 'package:top/widgets/heading_card.dart';
 import 'package:top/widgets/input_filed.dart';
 import 'package:top/models/user_model.dart';
@@ -15,21 +18,40 @@ import 'package:top/widgets/button.dart';
 import 'package:top/widgets/toast.dart';
 import 'package:top/wrapper.dart';
 
-class Home extends StatelessWidget {
-  final User? user;
+class Home extends StatefulWidget {
+  const Home({super.key});
 
-  Home({super.key, required this.user});
+  @override
+  State<Home> createState() => _HomeState();
+}
 
+class _HomeState extends State<Home> {
   final TextEditingController speciality = TextEditingController();
   final TextEditingController email = TextEditingController();
   final TextEditingController phone = TextEditingController();
+  User? user;
+  List selectedSpecialities = [];
+
+  getDetails() async {
+    user = await Provider.of<UserController>(context, listen: false).getCurrentUser();
+    setState((){
+      if(user != null){
+        selectedSpecialities = user!.specialities ?? [];
+        email.text = user!.email ?? '';
+        phone.text = user!.phone ?? '';
+        speciality.text = selectedSpecialities.join(', ');
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    getDetails();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    speciality.text = user?.specialities!.join(', ') ?? '';
-    email.text = user?.email ?? '';
-    phone.text = user?.phone ?? '';
-
     return Scaffold(
       body: Backdrop(
         child: SingleChildScrollView(
@@ -129,11 +151,63 @@ class Home extends StatelessWidget {
                         ),
                         Padding(
                           padding: EdgeInsets.symmetric(vertical: 10.w),
-                          child: InputField(
-                            text: 'Speciality',
-                            enabled: false,
-                            multiLine: true,
-                            controller: speciality,
+                          child: GestureDetector(
+                            onTap: () {
+                              if (user != null) {
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: Text("Edit Speciality"),
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        ChipField(
+                                          text: 'Specialities',
+                                          items: specialities,
+                                          initialItems: selectedSpecialities
+                                                  .map((e) => e.toString())
+                                                  .toList() ??
+                                              [],
+                                          onChanged: (value) {
+                                            selectedSpecialities = value;
+                                          },
+                                        ),
+                                        SizedBox(height: 20),
+                                        Button(
+                                          text: 'Save',
+                                          color: kGreen,
+                                          onPressed: () async {
+                                            ToastBar(text: 'Please wait...', color: Colors.orange)
+                                                .show();
+                                            bool success = await Provider.of<UserController>(
+                                                    context,
+                                                    listen: false)
+                                                .changeSpeciality(
+                                                    selectedSpecialities, user!.uid);
+                                            if (success) {
+                                              setState(() {
+                                                speciality.text = selectedSpecialities.join(', ');
+                                              });
+                                              ToastBar(
+                                                      text: 'Specialities Changed!',
+                                                      color: Colors.green)
+                                                  .show();
+                                              Navigator.pop(context);
+                                            }
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                            child: InputField(
+                              text: 'Speciality',
+                              enabled: false,
+                              multiLine: true,
+                              controller: speciality,
+                            ),
                           ),
                         ),
                         Padding(
@@ -189,10 +263,7 @@ class Home extends StatelessWidget {
                                               color: Colors.red)
                                           .show();
                                     } else {
-                                      ToastBar(
-                                          text: 'Please wait...',
-                                          color: Colors.orange)
-                                          .show();
+                                      ToastBar(text: 'Please wait...', color: Colors.orange).show();
                                       await Provider.of<UserController>(context, listen: false)
                                           .deleteUser(
                                               context, email.text, password.text, user!.uid);

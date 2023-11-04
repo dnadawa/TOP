@@ -170,7 +170,8 @@ class UserController {
     return days;
   }
 
-  deleteUser(BuildContext context, String email, String password, String uid, {bool isManager=false}) async {
+  deleteUser(BuildContext context, String email, String password, String uid,
+      {bool isManager = false}) async {
     SimpleFontelicoProgressDialog pd =
         SimpleFontelicoProgressDialog(context: context, barrierDimisable: false);
     try {
@@ -209,6 +210,15 @@ class UserController {
       return name;
     } on Exception catch (e) {
       return null;
+    }
+  }
+
+  Future<bool> changeSpeciality(List specialities, String uid) async {
+    try {
+      await _databaseService.changeSpecialities(specialities, uid);
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 }

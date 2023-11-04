@@ -46,7 +46,7 @@ class _PageSelectorState extends State<PageSelector> {
         controller: controller,
         physics: NeverScrollableScrollPhysics(),
         children: [
-          Home(user: user),
+          Home(),
           Availability(user: user),
           AllJobs(user: user),
           ReleasedShifts(user: user),
