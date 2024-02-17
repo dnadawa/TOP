@@ -26,7 +26,7 @@ class EmailService {
           bcc: toAddresses.length > 1 ? toAddresses : null);
 
       final email = Email([personalization], fromAddress, subject, templateId: templateID);
-      await mailer.send(email).then((result) => print(result));
+      await mailer.send(email).then((result) => print(result.asError?.error.toString()));
       return true;
     } catch (e) {
       print("mail error : $e");
