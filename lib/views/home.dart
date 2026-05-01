@@ -1,12 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:top/controllers/job_controller.dart';
-import 'package:top/views/all_jobs.dart';
 import 'package:top/widgets/backdrop.dart';
 import 'package:top/constants.dart';
 import 'package:top/widgets/chip_field.dart';
@@ -32,10 +29,10 @@ class _HomeState extends State<Home> {
   User? user;
   List selectedSpecialities = [];
 
-  getDetails() async {
+  Future<void> getDetails() async {
     user = await Provider.of<UserController>(context, listen: false).getCurrentUser();
-    setState((){
-      if(user != null){
+    setState(() {
+      if (user != null) {
         selectedSpecialities = user!.specialities ?? [];
         email.text = user!.email ?? '';
         phone.text = user!.phone ?? '';
@@ -112,7 +109,7 @@ class _HomeState extends State<Home> {
                         children: [
                           Text(
                             'Hello,',
-                            style: GoogleFonts.sourceSansPro(
+                            style: GoogleFonts.sourceSans3(
                               color: kRed,
                               fontSize: 25.sp,
                             ),
@@ -166,8 +163,7 @@ class _HomeState extends State<Home> {
                                           items: specialities,
                                           initialItems: selectedSpecialities
                                                   .map((e) => e.toString())
-                                                  .toList() ??
-                                              [],
+                                                  .toList(),
                                           onChanged: (value) {
                                             selectedSpecialities = value;
                                           },

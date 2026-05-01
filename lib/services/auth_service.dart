@@ -1,7 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:top/models/user_model.dart';
-import 'package:top/views/log_in.dart';
 import 'package:top/widgets/toast.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 
@@ -80,7 +78,7 @@ class AuthService {
     }
   }
 
-  reAuthenticate(String email, String password) async {
+  Future<bool> reAuthenticate(String email, String password) async {
     try {
       auth.AuthCredential credentials =
           auth.EmailAuthProvider.credential(email: email, password: password);
@@ -94,7 +92,7 @@ class AuthService {
     }
   }
 
-  deleteUser(BuildContext context) async {
+  Future<bool> deleteUser(BuildContext context) async {
     try {
       await _auth.currentUser?.delete();
       return true;

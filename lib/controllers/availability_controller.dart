@@ -33,20 +33,20 @@ class AvailabilityController extends ChangeNotifier {
     return newDates;
   }
 
-  onDaySelected(DateTime selectedDay, DateTime newFocusedDay) {
+  void onDaySelected(DateTime selectedDay, DateTime newFocusedDay) {
     _currentDate = selectedDay.toYYYYMMDDFormat();
     if (!_selectedDatesAndShifts.containsKey(_currentDate)) {
-      setShiftAndDate([].cast());
+      setShiftAndDate(<String>[]);
     } else {
       notifyListeners();
     }
   }
 
-  onPageChanged(DateTime newFocusedDay) {
+  void onPageChanged(DateTime newFocusedDay) {
     _focusedDay = newFocusedDay;
   }
 
-  setShiftAndDate(List<String> value) {
+  void setShiftAndDate(List<String> value) {
     _selectedDatesAndShifts[_currentDate] = value;
     notifyListeners();
   }

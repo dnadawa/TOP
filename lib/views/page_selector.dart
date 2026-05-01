@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:top/constants.dart';
+import 'package:top/views/all_jobs.dart';
 import 'package:top/views/availability.dart';
 import 'package:top/views/home.dart';
-import 'package:top/views/my_shifts.dart';
 import 'package:top/views/released_shifts.dart';
 import 'package:top/views/timesheets.dart';
 import 'package:top/controllers/user_controller.dart';
 import 'package:top/models/user_model.dart';
 
-import 'all_jobs.dart';
-
 class PageSelector extends StatefulWidget {
+  const PageSelector({super.key});
 
   @override
   State<PageSelector> createState() => _PageSelectorState();
@@ -23,16 +22,16 @@ class _PageSelectorState extends State<PageSelector> {
   int currentIndex = 0;
   User? user;
 
-  getDetails() async {
+  Future<void> getDetails() async {
     user = await Provider.of<UserController>(context, listen: false).getCurrentUser();
-    setState((){});
+    setState(() {});
   }
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     getDetails();
-    if(mounted){
+    if (mounted) {
       controller.addListener(() {
         setState(() => currentIndex = controller.page!.toInt());
       });
@@ -50,7 +49,7 @@ class _PageSelectorState extends State<PageSelector> {
           Availability(user: user),
           AllJobs(user: user),
           ReleasedShifts(user: user),
-          TimeSheets(user: user,),
+          TimeSheets(user: user),
         ],
       ),
 
@@ -62,8 +61,9 @@ class _PageSelectorState extends State<PageSelector> {
         unselectedLabelStyle: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w400),
         type: BottomNavigationBarType.fixed,
         currentIndex: currentIndex,
-        onTap: (index){
-          controller.animateToPage(index, duration: Duration(milliseconds: 100), curve: Curves.easeInOut);
+        onTap: (index) {
+          controller.animateToPage(index,
+              duration: const Duration(milliseconds: 100), curve: Curves.easeInOut);
         },
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),

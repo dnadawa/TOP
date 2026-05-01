@@ -47,9 +47,11 @@ class DatabaseService {
     return role;
   }
 
-  setNotificationID(String uid) async {
-    var status = await OneSignal.shared.getDeviceState();
-    var playerId = status?.userId;
+  Future<void> setNotificationID(String uid) async {
+    final playerId = OneSignal.User.pushSubscription.id;
+    if (playerId == null || playerId.isEmpty) {
+      return;
+    }
 
     await _firestore.collection("users").doc(uid).update({"notification": playerId});
   }
@@ -86,7 +88,7 @@ class DatabaseService {
     return sub.docs;
   }
 
-  createJob(Job job) async {
+  Future<void> createJob(Job job) async {
     bool isWeekend =
         (job.shiftDate.weekday == DateTime.saturday) || (job.shiftDate.weekday == DateTime.sunday);
     await _firestore.collection('jobs').add({
@@ -253,7 +255,7 @@ class DatabaseService {
     return sub.docs[0]['name'];
   }
 
-  acceptJob(String jobID, String nurseID, String shiftID, List shiftTypes) async {
+  Future<void> acceptJob(String jobID, String nurseID, String shiftID, List shiftTypes) async {
     await _firestore.collection('jobs').doc(jobID).update({
       'nurse': nurseID,
       'status': JobStatus.Confirmed.name,
@@ -272,18 +274,18 @@ class DatabaseService {
         .update(toUpdate);
   }
 
-  editTimes(Job job) async {
+  Future<void> editTimes(Job job) async {
     await _firestore.collection('jobs').doc(job.id).update({
       'shiftStartTime': job.shiftStartTime,
       'shiftEndTime': job.shiftEndTime,
     });
   }
 
-  deleteJob(String id) async {
+  Future<void> deleteJob(String id) async {
     await _firestore.collection('jobs').doc(id).delete();
   }
 
-  unBookNurse(String nurseID, String shiftID, List shiftTypes) async {
+  Future<void> unBookNurse(String nurseID, String shiftID, List shiftTypes) async {
     Map<String, String> toUpdate = {};
     for (var shift in shiftTypes) {
       toUpdate[shift] = AvailabilityStatus.Available.name;
@@ -296,8 +298,10 @@ class DatabaseService {
         .update(toUpdate);
   }
 
-  updateAvailability(String uid, Map<String?, List<String>> dates) {
-    dates.forEach((key, value) async {
+  Future<void> updateAvailability(String uid, Map<String?, List<String>> dates) async {
+    for (final entry in dates.entries) {
+      final key = entry.key;
+      final value = entry.value;
       if (value.isNotEmpty) {
         await _firestore.collection('users').doc(uid).collection('shifts').doc(key).set({
           'date': key,
@@ -320,7 +324,7 @@ class DatabaseService {
       } else {
         await _firestore.collection('users').doc(uid).collection('shifts').doc(key).delete();
       }
-    });
+    }
   }
 
   Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>> getAllAvailability(String uid) async {
@@ -349,7 +353,7 @@ class DatabaseService {
     return sub.docs;
   }
 
-  submitTimesheet(TimeSheet timeSheet) async {
+  Future<void> submitTimesheet(TimeSheet timeSheet) async {
     await _firestore.collection('timesheets').add({
       'jobID': timeSheet.job.id,
       'shiftStartTime': timeSheet.startTime,
@@ -369,7 +373,7 @@ class DatabaseService {
     });
   }
 
-  submitImageTimesheet(ImageTimeSheet timeSheet) async {
+  Future<void> submitImageTimesheet(ImageTimeSheet timeSheet) async {
     await _firestore.collection('timesheets').add({
       'jobID': timeSheet.job.id,
       'date': timeSheet.job.shiftDate.toYYYYMMDDFormat(),
@@ -392,12 +396,12 @@ class DatabaseService {
     return sub.docs;
   }
 
-  deleteUser(String uid) async {
+  Future<void> deleteUser(String uid) async {
     await _firestore.collection('users').doc(uid).delete();
   }
 
-  deleteJobs(String uid, bool isManager) async {
-    var sub;
+  Future<void> deleteJobs(String uid, bool isManager) async {
+    QuerySnapshot<Map<String, dynamic>> sub;
     if (isManager) {
       sub = await _firestore.collection("jobs").where("managerID", isEqualTo: uid).get();
     } else {
@@ -411,7 +415,7 @@ class DatabaseService {
     }
   }
 
-  _deleteTimeSheets(String jobID) async {
+  Future<void> _deleteTimeSheets(String jobID) async {
     var sub = await _firestore.collection("timesheets").where("jobID", isEqualTo: jobID).get();
     var jobList = sub.docs;
     for (var job in jobList) {
@@ -420,7 +424,7 @@ class DatabaseService {
     }
   }
   
-  changeSpecialities(List specialities, String uid) async {
+  Future<void> changeSpecialities(List specialities, String uid) async {
     await _firestore.collection('users').doc(uid).update({
       'specialities': specialities,
     });

@@ -31,7 +31,7 @@ class ReleasedShiftTile extends StatelessWidget {
                   children: [
                     Text(
                       DateTime.parse(dateString).toEEEMMMddFormat(),
-                      style: GoogleFonts.sourceSansPro(
+                      style: GoogleFonts.sourceSans3(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w600,
                         color: kGreyText,

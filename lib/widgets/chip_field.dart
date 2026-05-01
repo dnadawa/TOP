@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ChipField extends StatefulWidget {
   final String text;
   final List<String> items;
-  final Function onChanged;
+  final ValueChanged<List<String>> onChanged;
   final List<String> initialItems;
 
   const ChipField({
@@ -20,10 +20,10 @@ class ChipField extends StatefulWidget {
 }
 
 class _ChipFieldState extends State<ChipField> {
-  List<Widget> items = [];
-  List<String> selectedItems = [];
+  final List<Widget> items = <Widget>[];
+  List<String> selectedItems = <String>[];
 
-  buildItems() {
+  void buildItems() {
     items.clear();
 
     for (var element in widget.items) {

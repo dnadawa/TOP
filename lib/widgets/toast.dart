@@ -1,22 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
+final scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
-class ToastBar{
-
+class ToastBar {
   final String text;
   final Color color;
 
   ToastBar({required this.text, required this.color});
 
-  show(){
-    Fluttertoast.showToast(
-      msg: text,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: color,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
+  void show() {
+    final messenger = scaffoldMessengerKey.currentState;
+    if (messenger == null) {
+      debugPrint('Toast skipped before ScaffoldMessenger was ready: $text');
+      return;
+    }
+
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(text),
+          backgroundColor: color,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+        ),
+      );
   }
 }

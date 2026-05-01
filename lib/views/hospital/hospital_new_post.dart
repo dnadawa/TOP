@@ -48,7 +48,7 @@ class HospitalNewPost extends StatelessWidget {
                         children: [
                           Text(
                             'Hello,',
-                            style: GoogleFonts.sourceSansPro(
+                            style: GoogleFonts.sourceSans3(
                               color: kRed,
                               fontSize: 25.sp,
                             ),

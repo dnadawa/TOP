@@ -55,32 +55,30 @@ class LogIn extends StatelessWidget {
                 //heading
                 RichText(
                   text: TextSpan(
-                    text: 'Login to',
-                      style: GoogleFonts.sourceSansPro(
+                      text: 'Login to',
+                      style: GoogleFonts.sourceSans3(
                         fontWeight: FontWeight.w700,
                         fontSize: 35.sp,
                         color: Colors.black,
                       ),
-                    children: [
-                      TextSpan(
-                        text: ' TOP',
-                        style: TextStyle(
-                          color: kGreen,
-                        ),
-                      )
-                    ]
-                  ),
+                      children: [
+                        TextSpan(
+                          text: ' TOP',
+                          style: TextStyle(
+                            color: kGreen,
+                          ),
+                        )
+                      ]),
                 ),
                 Text(
                   "Theatre Operation Professional",
-                  style: GoogleFonts.sourceSansPro(
+                  style: GoogleFonts.sourceSans3(
                     fontWeight: FontWeight.w600,
                     fontSize: 23.sp,
                     color: kGreen,
                   ),
                 ),
                 SizedBox(height: 35.h),
-
 
                 //text fields
                 InputField(
@@ -94,34 +92,40 @@ class LogIn extends StatelessWidget {
                   isPassword: true,
                 ),
 
-
                 //forget password
                 Align(
                   alignment: Alignment.topRight,
                   child: Padding(
-                    padding: EdgeInsets.fromLTRB(25.w,25.h,0,40.h),
+                    padding: EdgeInsets.fromLTRB(25.w, 25.h, 0, 40.h),
                     child: GestureDetector(
                       onTap: () async {
                         if (email.text.trim().isEmpty) {
-                          ToastBar(text: 'Please fill email!', color: Colors.red).show();
+                          ToastBar(
+                                  text: 'Please fill email!', color: Colors.red)
+                              .show();
                         } else {
-                          ToastBar(text: 'Please wait...', color: Colors.orange).show();
+                          ToastBar(text: 'Please wait...', color: Colors.orange)
+                              .show();
 
-                          bool success =
-                          await Provider.of<UserController>(context, listen: false)
+                          bool success = await Provider.of<UserController>(
+                                  context,
+                                  listen: false)
                               .forgetPassword(email.text.trim());
                           if (success) {
                             ToastBar(
-                                text: 'Password reset link sent to your email! Check your inbox or spam folders.',
-                                color: Colors.green)
+                                    text:
+                                        'Password reset link sent to your email! Check your inbox or spam folders.',
+                                    color: Colors.green)
                                 .show();
                           }
                         }
                       },
                       child: Text(
                         'Forgot Password ?',
-                        style:
-                        TextStyle(color: kGreen, fontSize: 18.sp, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                            color: kGreen,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -134,25 +138,39 @@ class LogIn extends StatelessWidget {
                     text: 'Login',
                     color: kRed,
                     onPressed: () async {
-                      if (email.text.trim().isEmpty || password.text.trim().isEmpty) {
-                        ToastBar(text: 'Please fill all the fields!', color: Colors.red)
+                      if (email.text.trim().isEmpty ||
+                          password.text.trim().isEmpty) {
+                        ToastBar(
+                                text: 'Please fill all the fields!',
+                                color: Colors.red)
                             .show();
                       } else {
-                        ToastBar(text: 'Please wait...', color: Colors.orange).show();
+                        ToastBar(text: 'Please wait...', color: Colors.orange)
+                            .show();
 
-                        User? user =
-                        await Provider.of<UserController>(context, listen: false)
+                        User? user = await Provider.of<UserController>(context,
+                                listen: false)
                             .signIn(email.text.trim(), password.text.trim());
 
                         if (user != null) {
-                          if(user.isApproved!){
+                          if (user.isApproved!) {
                             Navigator.pushAndRemoveUntil(
                                 context,
-                                CupertinoPageRoute(builder: (context) => user.role == Role.Nurse ? PageSelector() : HospitalPageSelector()),
-                                    (Route<dynamic> route) => false);
+                                CupertinoPageRoute(
+                                    builder: (context) =>
+                                        user.role == Role.Nurse
+                                            ? PageSelector()
+                                            : HospitalPageSelector()),
+                                (Route<dynamic> route) => false);
                           } else {
-                            ToastBar(text: 'Your account is deleted or not approved!', color: Colors.red).show();
-                            await Provider.of<UserController>(context, listen: false).signOut();
+                            ToastBar(
+                                    text:
+                                        'Your account is deleted or not approved!',
+                                    color: Colors.red)
+                                .show();
+                            await Provider.of<UserController>(context,
+                                    listen: false)
+                                .signOut();
                           }
                         }
                       }
@@ -162,14 +180,11 @@ class LogIn extends StatelessWidget {
 
                 //or
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 40.h),
+                  padding: EdgeInsets.symmetric(vertical: 20.h),
                   child: Center(
                     child: Text(
                       "OR",
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        color: kDisabled
-                      ),
+                      style: TextStyle(fontSize: 20.sp, color: kDisabled),
                     ),
                   ),
                 ),
@@ -180,7 +195,8 @@ class LogIn extends StatelessWidget {
                   child: Button(
                     text: 'Signup',
                     color: kGreen,
-                    onPressed: () => Navigator.push(context, CupertinoPageRoute(builder: (_) => SignUp())),
+                    onPressed: () => Navigator.push(
+                        context, CupertinoPageRoute(builder: (_) => SignUp())),
                   ),
                 ),
               ],

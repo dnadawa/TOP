@@ -4,16 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:simple_fontellico_progress_dialog/simple_fontico_loading.dart';
+import 'package:top/constants.dart';
 import 'package:top/models/shift_model.dart';
 import 'package:top/services/auth_service.dart';
-import 'package:top/constants.dart';
 import 'package:top/models/user_model.dart';
 import 'package:top/services/database_service.dart';
 import 'package:top/services/email_service.dart';
 import 'package:top/views/log_in.dart';
 import 'package:top/widgets/toast.dart';
-
-import '../wrapper.dart';
 
 class UserController {
   final AuthService _authService = AuthService();
@@ -30,8 +28,8 @@ class UserController {
     Role role = await _databaseService.getUserRole(user);
 
     user.role = role;
-    OneSignal.shared.setExternalUserId(user.uid);
-    _databaseService.setNotificationID(user.uid);
+    await OneSignal.login(user.uid);
+    await _databaseService.setNotificationID(user.uid);
 
     return user;
   }
@@ -78,12 +76,12 @@ class UserController {
     }
 
     await _databaseService.getUserRole(user);
-    OneSignal.shared.setExternalUserId(user.uid);
+    await OneSignal.login(user.uid);
     return user;
   }
 
   Future<bool> signOut() async {
-    OneSignal.shared.removeExternalUserId();
+    await OneSignal.logout();
     return await _authService.signOut();
   }
 
@@ -170,7 +168,7 @@ class UserController {
     return days;
   }
 
-  deleteUser(BuildContext context, String email, String password, String uid,
+  Future<void> deleteUser(BuildContext context, String email, String password, String uid,
       {bool isManager = false}) async {
     SimpleFontelicoProgressDialog pd =
         SimpleFontelicoProgressDialog(context: context, barrierDimisable: false);
@@ -208,7 +206,7 @@ class UserController {
     try {
       String name = await _databaseService.getUserNameFromUID(id);
       return name;
-    } on Exception catch (e) {
+    } on Exception {
       return null;
     }
   }

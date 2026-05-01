@@ -11,6 +11,8 @@ import 'package:top/controllers/user_controller.dart';
 import 'package:top/widgets/chip_field.dart';
 
 class SignUp extends StatefulWidget {
+  const SignUp({super.key});
+
   @override
   State<SignUp> createState() => _SignUpState();
 }
@@ -27,7 +29,7 @@ class _SignUpState extends State<SignUp> {
   String? selectedHospital;
   List hospitals = [];
 
-  setDropDownData() async {
+  Future<void> setDropDownData() async {
     hospitals = await Provider.of<UserController>(context, listen: false).getHospitals();
     setState(() {});
   }
@@ -76,7 +78,7 @@ class _SignUpState extends State<SignUp> {
                 RichText(
                   text: TextSpan(
                       text: 'Signup to',
-                      style: GoogleFonts.sourceSansPro(
+                      style: GoogleFonts.sourceSans3(
                         fontWeight: FontWeight.w700,
                         fontSize: 35.sp,
                         color: Colors.black,
@@ -92,7 +94,7 @@ class _SignUpState extends State<SignUp> {
                 ),
                 Text(
                   "Theatre Operation Professional",
-                  style: GoogleFonts.sourceSansPro(
+                  style: GoogleFonts.sourceSans3(
                     fontWeight: FontWeight.w600,
                     fontSize: 23.sp,
                     color: kGreen,

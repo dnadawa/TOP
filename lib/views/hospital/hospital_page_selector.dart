@@ -9,6 +9,8 @@ import 'package:top/views/hospital/hospital_jobs.dart';
 import 'package:top/views/hospital/hospital_new_post.dart';
 
 class HospitalPageSelector extends StatefulWidget {
+  const HospitalPageSelector({super.key});
+
   @override
   State<HospitalPageSelector> createState() => _HospitalPageSelectorState();
 }
@@ -18,9 +20,9 @@ class _HospitalPageSelectorState extends State<HospitalPageSelector> {
   int tabIndex = 0;
   User? user;
 
-  getDetails() async {
+  Future<void> getDetails() async {
     user = await Provider.of<UserController>(context, listen: false).getCurrentUser();
-    setState((){});
+    setState(() {});
   }
 
   @override
@@ -62,16 +64,16 @@ class _HospitalPageSelectorState extends State<HospitalPageSelector> {
           setState(() {
             tabIndex = index;
           });
-          if(tabIndex == 0 || tabIndex == 1){
+          if (tabIndex == 0 || tabIndex == 1) {
             controller.animateToPage(
               tabIndex,
-              duration: Duration(milliseconds: 100),
+              duration: const Duration(milliseconds: 100),
               curve: Curves.easeInOut,
             );
           } else {
             controller.animateToPage(
               2,
-              duration: Duration(milliseconds: 100),
+              duration: const Duration(milliseconds: 100),
               curve: Curves.easeInOut,
             );
           }

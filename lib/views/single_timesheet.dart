@@ -126,7 +126,7 @@ class _SingleTimesheetState extends State<SingleTimesheet> {
                                 contentPadding: EdgeInsets.zero,
                                 title: Text(
                                   'Meal break included in the shift',
-                                  style: GoogleFonts.sourceSansPro(
+                                  style: GoogleFonts.sourceSans3(
                                     fontSize: 18.sp,
                                     fontWeight: FontWeight.w400,
                                   ),

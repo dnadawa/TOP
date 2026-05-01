@@ -1,49 +1,58 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
-import 'package:sendgrid_mailer/sendgrid_mailer.dart';
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
 import 'package:top/constants.dart';
 
 class EmailService {
-  sendEmail(
+  Future<bool> sendEmail(
       {List<String>? to,
       required String subject,
       Map<String, dynamic>? templateData,
       required String templateID,
       String from = 'topnurseagency@gmail.com'}) async {
     try {
-      final mailer = Mailer(dotenv.env['SENDGRID']!);
-      if(to != null){
+      if (to != null) {
         to = [...{...to}];
       }
-      List<Address> toAddresses =
-          to == null ? [Address(adminEmail)] : to.map((e) => Address(e)).toList();
-      final fromAddress = Address(from, "TOP Nurse Agency");
 
-      final personalization = Personalization(
-          toAddresses.length > 1 ? [Address("topnurseagency@gmail.com")] : toAddresses,
-          dynamicTemplateData: templateData,
-          subject: subject,
-          bcc: toAddresses.length > 1 ? toAddresses : null);
+      final recipients = to ?? [adminEmail];
+      final response = await http.post(
+        Uri.parse("https://api.topnurseagency.com/sendEmailFromApp"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          'toAddress': recipients.length > 1 ? ["topnurseagency@gmail.com"] : recipients,
+          'subject': subject,
+          'bcc': recipients.length > 1 ? recipients : null,
+          'templateData': templateData,
+          'templateId': templateID,
+        }),
+      );
 
-      final email = Email([personalization], fromAddress, subject, templateId: templateID);
-      await mailer.send(email).then((result) => print(result.asError?.error.toString()));
-      return true;
+      final success = jsonDecode(response.body)['success'] == true;
+      if (success != true) {
+        print("mail error : ${response.body}");
+      }
+      return success;
     } catch (e) {
       print("mail error : $e");
       return false;
     }
   }
 
-  sendNotification(
+  Future<bool> sendNotification(
       {required List<String> playerIDs, String? content, required String heading}) async {
     try {
-      await OneSignal.shared.postNotification(OSCreateNotification(
-        playerIds: playerIDs,
-        content: content ?? heading,
-        heading: heading,
-      ));
+      final response = await http.post(
+        Uri.parse("https://api.topnurseagency.com/sendNotification"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          'playerIds': playerIDs,
+          'heading': heading,
+          'content': content,
+        }),
+      );
 
-      return true;
+      return jsonDecode(response.body)['success'] == true;
     } catch (e) {
       return false;
     }

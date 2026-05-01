@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:top/constants.dart';
 import 'package:top/controllers/user_controller.dart';
@@ -11,6 +10,7 @@ import 'package:top/widgets/toast.dart';
 
 
 class Wrapper extends StatelessWidget {
+  const Wrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,17 +18,21 @@ class Wrapper extends StatelessWidget {
 
     return FutureBuilder<User?>(
       future: userController.getCurrentUser(),
-      builder: (context, snapshot){
-        if (snapshot.connectionState == ConnectionState.waiting){
-          return Center(child: CircularProgressIndicator());
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
         }
 
-        if(snapshot.data != null && !snapshot.data!.isApproved!){
+        if (snapshot.data != null && !snapshot.data!.isApproved!) {
           userController.signOut();
           ToastBar(text: 'Your account is deleted or not approved!', color: Colors.red).show();
         }
 
-        return (snapshot.data == null || !snapshot.data!.isApproved!) ? LogIn() : snapshot.data!.role == Role.Nurse ? PageSelector() : HospitalPageSelector();
+        return (snapshot.data == null || !snapshot.data!.isApproved!)
+            ? LogIn()
+            : snapshot.data!.role == Role.Nurse
+                ? const PageSelector()
+                : const HospitalPageSelector();
       },
     );
   }

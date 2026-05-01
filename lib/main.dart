@@ -10,8 +10,9 @@ import 'package:top/controllers/job_controller.dart';
 import 'package:top/controllers/user_controller.dart';
 import 'package:top/wrapper.dart';
 import 'package:top/firebase_options.dart';
+import 'package:top/widgets/toast.dart';
 
-main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   SystemChrome.setPreferredOrientations([
@@ -23,8 +24,8 @@ main() async {
   );
   await dotenv.load(fileName: ".env");
 
-  OneSignal.shared.setAppId(dotenv.env["ONESIGNAL"]!);
-  OneSignal.shared.promptUserForPushNotificationPermission();
+  await OneSignal.initialize(dotenv.env["ONESIGNAL"]!);
+  await OneSignal.Notifications.requestPermission(true);
 
   runApp(MyApp());
 }
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
+          scaffoldMessengerKey: scaffoldMessengerKey,
           theme: ThemeData(
             textTheme: GoogleFonts.outfitTextTheme(),
             // primaryColor: kBackgroundColor,
@@ -50,7 +52,7 @@ class MyApp extends StatelessWidget {
               centerTitle: true,
               // backgroundColor: kBackgroundColor,
               elevation: 0,
-              titleTextStyle: GoogleFonts.sourceSansPro(
+              titleTextStyle: GoogleFonts.sourceSans3(
                 color: Colors.white,
                 fontSize: 35.sp,
                 fontWeight: FontWeight.w600,

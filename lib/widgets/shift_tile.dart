@@ -7,8 +7,6 @@ import 'package:top/controllers/user_controller.dart';
 import 'package:top/widgets/button.dart';
 import 'package:top/widgets/input_filed.dart';
 
-import '../models/user_model.dart';
-
 class ShiftTile extends StatelessWidget {
   final bool showAcceptButton;
   final String hospital;
@@ -23,7 +21,7 @@ class ShiftTile extends StatelessWidget {
   final Function? onAcceptButtonPressed;
   final Color? frontStripColor;
 
-  ShiftTile({
+  const ShiftTile({
     super.key,
     this.showAcceptButton = false,
     required this.hospital,
@@ -34,14 +32,14 @@ class ShiftTile extends StatelessWidget {
     this.onAcceptButtonPressed,
     required this.specialty,
     required this.shiftDate,
-    required this.additionalDetails, this.frontStripColor, this.nurse,
+    required this.additionalDetails,
+    this.frontStripColor,
+    this.nurse,
   });
-
-  final TextEditingController additionalDetailsController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    additionalDetailsController.text = additionalDetails;
+    final additionalDetailsController = TextEditingController(text: additionalDetails);
 
     return Material(
       elevation: 5,
@@ -80,7 +78,7 @@ class ShiftTile extends StatelessWidget {
                     ),
                     Text(
                       hospital,
-                      style: GoogleFonts.sourceSansPro(
+                      style: GoogleFonts.sourceSans3(
                           fontSize: 15.sp, fontWeight: FontWeight.w400, color: kGreyText),
                     ),
                   ],
@@ -102,7 +100,7 @@ class ShiftTile extends StatelessWidget {
                     ),
                     Text(
                       specialty,
-                      style: GoogleFonts.sourceSansPro(
+                      style: GoogleFonts.sourceSans3(
                           fontSize: 15.sp, fontWeight: FontWeight.w400, color: kGreyText),
                     ),
                   ],
@@ -133,7 +131,7 @@ class ShiftTile extends StatelessWidget {
                                     !snapshot.hasData)
                                     ? 'Loading'
                                     : snapshot.data!,
-                                style: GoogleFonts.sourceSansPro(
+                                style: GoogleFonts.sourceSans3(
                                     fontSize: 15.sp,
                                     fontWeight: FontWeight.w400,
                                     color: kGreyText),
@@ -160,7 +158,7 @@ class ShiftTile extends StatelessWidget {
                     ),
                     Text(
                       shiftDate,
-                      style: GoogleFonts.sourceSansPro(
+                      style: GoogleFonts.sourceSans3(
                           fontSize: 15.sp, fontWeight: FontWeight.w400, color: kGreyText),
                     ),
                   ],
@@ -182,7 +180,7 @@ class ShiftTile extends StatelessWidget {
                     ),
                     Text(
                       shiftTime,
-                      style: GoogleFonts.sourceSansPro(
+                      style: GoogleFonts.sourceSans3(
                           fontSize: 15.sp, fontWeight: FontWeight.w400, color: kGreyText),
                     ),
                   ],
@@ -204,7 +202,7 @@ class ShiftTile extends StatelessWidget {
                     ),
                     Text(
                       shiftType,
-                      style: GoogleFonts.sourceSansPro(
+                      style: GoogleFonts.sourceSans3(
                           fontSize: 15.sp, fontWeight: FontWeight.w400, color: kGreyText),
                     ),
                   ],
